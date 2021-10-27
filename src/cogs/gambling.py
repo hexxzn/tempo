@@ -20,7 +20,7 @@ class Dice(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name = 'balance')
+    @commands.command(name='balance')
     async def balance(self, ctx):
         """- Check your balance"""
         p1_id = ctx.author.id   # player id
@@ -89,7 +89,7 @@ class Dice(commands.Cog):
             wagers[p1_id]['user_name'] = p1_name
             with open(r'./wagers.yaml', 'w') as file: yaml.dump(wagers, file)
 
-            wager_message = await ctx.send("<@" + str(p1_id) + "> **wagers " + f"{wagers[p1_id]['wager']:,}" + " coins.**" + "\n" + "Type **!accept " + str(p1_id) + "** to accept.")
+            wager_message = await ctx.send("🪙  " + "<@" + str(p1_id) + "> **wagers " + f"{wagers[p1_id]['wager']:,}" + " coins.**" + "\n" + "🪙  " + "Type **!accept " + str(p1_id) + "** to accept.")
             wagers[p1_id]['user_message'] = ctx.message.id
             wagers[p1_id]['bot_message'] = wager_message.id
             with open(r'./wagers.yaml', 'w') as file: yaml.dump(wagers, file)
@@ -197,6 +197,9 @@ class Dice(commands.Cog):
         else:
             await ctx.send("<@" + str(ctx.author.id) + "> **You don't have an active wager.**")
 
-    # @commands.command(name='cancel')
+    @commands.command(name='duel')
+    async def duel(self, ctx):
+        """- Challenge user to a dice duel"""
+        
 def setup(bot):
     bot.add_cog(Dice(bot))
