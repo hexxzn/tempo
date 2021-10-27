@@ -1,0 +1,14 @@
+!cancel
+    cancels user's existing wager
+
+!duel
+    wager that only a specific person can accept
+
+!deposit <id> <amount>
+    admin only command - deposits amount of coins to id bank
+
+!withdraw <id> <amount>
+    admin only command - withdraws amount of coins from id bank
+
+
+You can only have one active wager. If you start a second wager before the first one is accepted the first wager will be deleted.

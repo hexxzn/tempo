@@ -2,7 +2,7 @@ import lavalink
 from discord import Embed
 from discord.ext import commands
 
-class MusicCog(commands.Cog):
+class Music(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.bot.music = lavalink.Client(self.bot.user.id)
@@ -106,4 +106,4 @@ class MusicCog(commands.Cog):
         await ws.voice_state(str(guild_id), channel_id)
 
 def setup(bot):
-    bot.add_cog(MusicCog(bot))
+    bot.add_cog(Music(bot))
