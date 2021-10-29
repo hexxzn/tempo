@@ -1,7 +1,4 @@
-import asyncio
 import discord
-import os
-from discord import player
 from discord.ext import commands
 
 bot = commands.Bot(command_prefix = '!')
