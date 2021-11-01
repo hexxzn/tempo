@@ -1,41 +1,66 @@
-2021-10-29 07:15:53.630  INFO 4184 --- [XNIO-1 I/O-13] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:51560 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key music-node
-2021-10-29 07:56:03.339  INFO 13332 --- [main] lavalink.server.Launcher                 : 
-
-[32m       .  [31m _                  _ _       _    [32m__ _ _
-[32m      /\\ [31m| | __ ___   ____ _| (_)_ __ | | __[32m\ \ \ \
-[32m     ( ( )[31m| |/ _` \ \ / / _` | | | '_ \| |/ /[32m \ \ \ \
-[32m      \\/ [31m| | (_| |\ V / (_| | | | | | |   < [32m  ) ) ) )
-[32m       '  [31m|_|\__,_| \_/ \__,_|_|_|_| |_|_|\_\[32m / / / /
-[0m    =========================================[32m/_/_/_/[0m
-
-	Version:        3.3.2.5
-	Build:          1222
-	Build time:     11.04.2021 08:07:27 UTC
-	Branch          master
-	Commit:         7b914f2
-	Commit time:    09.04.2021 17:14:27 UTC
-	JVM:            13.0.2
-	Lavaplayer      1.3.76
-
-2021-10-29 07:56:03.416  INFO 13332 --- [main] lavalink.server.Launcher                 : Starting Launcher on DESKTOP-GEORGE with PID 13332 (P:\Programming\Python\Personal Projects\Tempo\Lavalink.jar started by George in P:\Programming\Python\Personal Projects\Tempo)
-2021-10-29 07:56:03.416  INFO 13332 --- [main] lavalink.server.Launcher                 : No active profile set, falling back to default profiles: default
-2021-10-29 07:56:03.459  WARN 13332 --- [background-preinit] o.s.h.c.j.Jackson2ObjectMapperBuilder    : For Jackson Kotlin classes support please add "com.fasterxml.jackson.module:jackson-module-kotlin" to the classpath
-2021-10-29 07:56:04.408  WARN 13332 --- [main] io.undertow.websockets.jsr               : UT026010: Buffer pool was not set on WebSocketDeploymentInfo, the default pool will be used
-2021-10-29 07:56:04.428  INFO 13332 --- [main] io.undertow.servlet                      : Initializing Spring embedded WebApplicationContext
-2021-10-29 07:56:04.429  INFO 13332 --- [main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 988 ms
-2021-10-29 07:56:04.725  WARN 13332 --- [main] l.server.config.SentryConfiguration      : Turning off sentry
-2021-10-29 07:56:04.960  INFO 13332 --- [main] c.s.d.l.tools.GarbageCollectionMonitor   : GC monitoring enabled, reporting results every 2 minutes.
-2021-10-29 07:56:05.301  INFO 13332 --- [main] lavalink.server.config.KoeConfiguration  : OS: Windows 10, Arch: amd64
-2021-10-29 07:56:05.302  WARN 13332 --- [main] lavalink.server.config.KoeConfiguration  : This system and architecture appears to not support native audio sending! GC pauses may cause your bot to stutter during playback.
-2021-10-29 07:56:05.446  INFO 13332 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
-2021-10-29 07:56:05.603  INFO 13332 --- [main] org.xnio                                 : XNIO version 3.3.8.Final
-2021-10-29 07:56:05.609  INFO 13332 --- [main] org.xnio.nio                             : XNIO NIO Implementation Version 3.3.8.Final
-2021-10-29 07:56:05.647  INFO 13332 --- [main] o.s.b.w.e.u.UndertowServletWebServer     : Undertow started on port(s) 7000 (http) with context path ''
-2021-10-29 07:56:05.651  INFO 13332 --- [main] lavalink.server.Launcher                 : Started Launcher in 2.785 seconds (JVM running for 3.807)
-2021-10-29 07:56:05.652  INFO 13332 --- [main] lavalink.server.Launcher                 : You can safely ignore the big red warning about illegal reflection. See https://github.com/Frederikam/Lavalink/issues/295
-2021-10-29 07:56:32.912  INFO 13332 --- [XNIO-1 task-1] io.undertow.servlet                      : Initializing Spring DispatcherServlet 'dispatcherServlet'
-2021-10-29 07:56:32.912  INFO 13332 --- [XNIO-1 task-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
-2021-10-29 07:56:32.918  INFO 13332 --- [XNIO-1 task-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 5 ms
-2021-10-29 07:56:32.935  INFO 13332 --- [XNIO-1 task-1] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:53476
-2021-10-29 07:56:33.012  INFO 13332 --- [XNIO-1 task-1] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:53476
-2021-10-29 07:56:33.032  INFO 13332 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "music-node", "timeout": 60}
+2021-11-01 09:01:37.725  INFO 13332 --- [XNIO-1 I/O-18] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:53095 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key music-node
+2021-11-01 09:01:45.152  INFO 13332 --- [XNIO-1 task-51] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:63065
+2021-11-01 09:01:45.187  INFO 13332 --- [XNIO-1 task-51] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:63065
+2021-11-01 09:01:45.189  INFO 13332 --- [XNIO-1 I/O-8] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "music-node", "timeout": 60}
+2021-11-01 09:02:37.726  INFO 13332 --- [pool-50-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2021-11-01 09:02:52.481  INFO 13332 --- [XNIO-1 I/O-8] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:63065 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key music-node
+2021-11-01 09:02:57.709  INFO 13332 --- [XNIO-1 task-52] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:63095
+2021-11-01 09:02:57.716  INFO 13332 --- [XNIO-1 task-52] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:63095
+2021-11-01 09:02:57.718  INFO 13332 --- [XNIO-1 I/O-18] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "music-node", "timeout": 60}
+2021-11-01 09:03:52.484  INFO 13332 --- [pool-52-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2021-11-01 09:04:35.470  INFO 13332 --- [XNIO-1 I/O-18] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:63095 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key music-node
+2021-11-01 09:04:40.630  INFO 13332 --- [XNIO-1 task-53] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:63118
+2021-11-01 09:04:40.632  INFO 13332 --- [XNIO-1 task-53] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:63118
+2021-11-01 09:04:40.633  INFO 13332 --- [XNIO-1 I/O-7] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "music-node", "timeout": 60}
+2021-11-01 09:04:47.067  WARN 13332 --- [XNIO-1 I/O-7] lavalink.server.io.SocketServer          : Shutdown resumable session with key music-node because it has the same key as a newly disconnected resumable session.
+2021-11-01 09:04:47.068  INFO 13332 --- [XNIO-1 I/O-7] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2021-11-01 09:04:47.068  INFO 13332 --- [XNIO-1 I/O-7] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:63118 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key music-node
+2021-11-01 09:04:52.288  INFO 13332 --- [XNIO-1 task-54] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:63129
+2021-11-01 09:04:52.290  INFO 13332 --- [XNIO-1 task-54] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:63129
+2021-11-01 09:04:52.290  INFO 13332 --- [XNIO-1 I/O-20] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "music-node", "timeout": 60}
+2021-11-01 09:05:35.480  INFO 13332 --- [pool-53-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2021-11-01 09:05:47.078  INFO 13332 --- [pool-54-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2021-11-01 09:27:47.416  INFO 13332 --- [XNIO-1 I/O-20] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:63129 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key music-node
+2021-11-01 09:27:52.775  INFO 13332 --- [XNIO-1 task-55] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:55994
+2021-11-01 09:27:52.780  INFO 13332 --- [XNIO-1 task-55] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:55994
+2021-11-01 09:27:52.781  INFO 13332 --- [XNIO-1 I/O-15] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "music-node", "timeout": 60}
+2021-11-01 09:28:14.692  WARN 13332 --- [XNIO-1 I/O-15] lavalink.server.io.SocketServer          : Shutdown resumable session with key music-node because it has the same key as a newly disconnected resumable session.
+2021-11-01 09:28:14.693  INFO 13332 --- [XNIO-1 I/O-15] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2021-11-01 09:28:14.693  INFO 13332 --- [XNIO-1 I/O-15] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:55994 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key music-node
+2021-11-01 09:28:19.871  INFO 13332 --- [XNIO-1 task-56] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:56023
+2021-11-01 09:28:19.876  INFO 13332 --- [XNIO-1 task-56] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:56023
+2021-11-01 09:28:19.877  INFO 13332 --- [XNIO-1 I/O-2] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "music-node", "timeout": 60}
+2021-11-01 09:28:47.421  INFO 13332 --- [pool-55-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2021-11-01 09:29:14.705  INFO 13332 --- [pool-56-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2021-11-01 10:12:33.826  INFO 13332 --- [XNIO-1 I/O-2] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:56023 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key music-node
+2021-11-01 10:12:40.412  INFO 13332 --- [XNIO-1 task-57] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:60372
+2021-11-01 10:12:40.422  INFO 13332 --- [XNIO-1 task-57] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:60372
+2021-11-01 10:12:40.424  INFO 13332 --- [XNIO-1 I/O-9] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "music-node", "timeout": 60}
+2021-11-01 10:13:28.807  WARN 13332 --- [XNIO-1 I/O-9] lavalink.server.io.SocketServer          : Shutdown resumable session with key music-node because it has the same key as a newly disconnected resumable session.
+2021-11-01 10:13:28.808  INFO 13332 --- [XNIO-1 I/O-9] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2021-11-01 10:13:28.808  INFO 13332 --- [XNIO-1 I/O-9] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:60372 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key music-node
+2021-11-01 10:13:33.829  INFO 13332 --- [pool-57-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2021-11-01 10:13:33.841  INFO 13332 --- [XNIO-1 task-58] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:60412
+2021-11-01 10:13:33.845  INFO 13332 --- [XNIO-1 task-58] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:60412
+2021-11-01 10:13:33.848  INFO 13332 --- [XNIO-1 I/O-9] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "music-node", "timeout": 60}
+2021-11-01 10:14:15.678  INFO 13332 --- [XNIO-1 I/O-9] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:60412 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key music-node
+2021-11-01 10:14:20.560  INFO 13332 --- [XNIO-1 task-59] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:60431
+2021-11-01 10:14:20.564  INFO 13332 --- [XNIO-1 task-59] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:60431
+2021-11-01 10:14:20.565  INFO 13332 --- [XNIO-1 I/O-6] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "music-node", "timeout": 60}
+2021-11-01 10:14:28.815  INFO 13332 --- [pool-58-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2021-11-01 10:15:15.689  INFO 13332 --- [pool-59-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2021-11-01 10:28:35.274  INFO 13332 --- [XNIO-1 I/O-6] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:60431 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key music-node
+2021-11-01 10:28:40.551  INFO 13332 --- [XNIO-1 task-60] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:60993
+2021-11-01 10:28:40.559  INFO 13332 --- [XNIO-1 task-60] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:60993
+2021-11-01 10:28:40.560  INFO 13332 --- [XNIO-1 I/O-12] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "music-node", "timeout": 60}
+2021-11-01 10:29:35.280  INFO 13332 --- [pool-60-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2021-11-01 10:33:05.588  INFO 13332 --- [XNIO-1 I/O-12] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:60993 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key music-node
+2021-11-01 10:33:10.787  INFO 13332 --- [XNIO-1 task-61] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:61066
+2021-11-01 10:33:10.791  INFO 13332 --- [XNIO-1 task-61] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:61066
+2021-11-01 10:33:10.793  INFO 13332 --- [XNIO-1 I/O-11] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "music-node", "timeout": 60}
+2021-11-01 10:34:05.594  INFO 13332 --- [pool-61-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2021-11-01 11:17:14.179  INFO 13332 --- [XNIO-1 I/O-11] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:61066 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key music-node
+2021-11-01 11:17:19.337  INFO 13332 --- [XNIO-1 task-62] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:51741
+2021-11-01 11:17:19.345  INFO 13332 --- [XNIO-1 task-62] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:51741
+2021-11-01 11:17:19.346  INFO 13332 --- [XNIO-1 I/O-16] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "music-node", "timeout": 60}
+2021-11-01 11:18:14.184  INFO 13332 --- [pool-62-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.

@@ -1,4 +1,5 @@
 from discord.ext import commands
+from datetime import datetime
 from random import random
 from random import seed
 import locale
@@ -11,10 +12,14 @@ locale.setlocale(locale.LC_ALL, '')
 
 seed()
 
+channels = [898136770628190208, 897862146954784780]
+
 with open(r'./bank.yaml') as file:
     bank = yaml.load(file, Loader=yaml.FullLoader)
 with open(r'./wagers.yaml') as file:
     wagers = yaml.load(file, Loader=yaml.FullLoader)
+with open(r'./logs.yaml') as file:
+    logs = yaml.load(file, Loader=yaml.FullLoader)
 
 async def bank_update(ctx):   # adds user to bank or updates existing info
         name = ctx.author.name
@@ -41,6 +46,7 @@ class Dice(commands.Cog):
     @commands.command(name='balance')
     async def balance(self, ctx):
         """- Check your balance"""
+
         p1_id = ctx.author.id   # player id
         p1_name = ctx.author.name   # player name
         await bank_update(ctx)
@@ -49,6 +55,10 @@ class Dice(commands.Cog):
     @commands.command(name='wager')
     async def wager(self, ctx, coins=None):
         """- Offer a wager"""
+        if ctx.channel.id not in channels:   # if channel id not in list, do nothing
+            await ctx.send("<@" + str(ctx.author.id) + "> **You can only use !wager in the dice channel.**")
+            return
+
         p1_id = ctx.author.id   # player id
         p1_name = ctx.author.name   # player name
         p1_name_disc = ctx.author.name + "#" + ctx.author.discriminator
@@ -95,14 +105,20 @@ class Dice(commands.Cog):
     @commands.command(name='accept')
     async def accept(self, ctx, wager_id):
         """- Accept a wager"""
+        if ctx.channel.id not in channels:   # if channel id not in list, do nothing
+            await ctx.send("<@" + str(ctx.author.id) + "> **You can only use !accept in the dice channel.**")
+            return
+
         if int(wager_id) not in wagers:
             await ctx.send("<@" + str(ctx.author.id) + "> **Invalid wager code.**")
             return
         
         p1_id = int(wager_id)
         p1_name = bank[p1_id]['name']
+        p1_name_disc = bank[p1_id]['name_disc']
         p2_id = ctx.author.id
         p2_name = ctx.author.name
+        p2_name_disc = str(ctx.author.name + "#" + ctx.author.discriminator)
         if wagers[p1_id]['wager'] >= 100:
             tax = 0.05
         else:
@@ -133,6 +149,21 @@ class Dice(commands.Cog):
                     bank[123456789]['balance'] += math.ceil(wagers[p1_id]['wager'] * tax)
                     bank[p1_id]['stats_win'] += 1
                     bank[p2_id]['stats_loss'] += 1
+                    bank[p1_id]['stats_total_winnings'] += math.floor(wagers[p1_id]['wager'] * (1-tax))
+
+                    wager_number = len(logs) + 1
+                    now = datetime.now()
+                    logs[wager_number] = {}
+                    logs[wager_number]['created_by_name'] = p1_name_disc
+                    logs[wager_number]['created_by_id'] = p1_id
+                    logs[wager_number]['accepted_by_name'] = p2_name_disc
+                    logs[wager_number]['accepted_by_id'] = p2_id
+                    logs[wager_number]['accepted_datetime'] = now.strftime("%m/%d/%Y, %H:%M:%S")
+                    logs[wager_number]['amount_before_tax'] = wagers[p1_id]['wager']
+                    logs[wager_number]['amount_after_tax'] = math.floor(wagers[p1_id]['wager'] * (1-tax))
+                    logs[wager_number]['tax_collected'] = math.ceil(wagers[p1_id]['wager'] * tax)
+                    logs[wager_number]['winner'] = p1_name_disc
+                    with open(r'./logs.yaml', 'w') as file: yaml.dump(logs, file)
                     
                     try:
                         # wager_create_user_message = await ctx.fetch_message(wagers[p1_id]['user_message'])
@@ -159,6 +190,21 @@ class Dice(commands.Cog):
                     bank[123456789]['balance'] += math.ceil(wagers[p1_id]['wager'] * tax)
                     bank[p1_id]['stats_loss'] += 1
                     bank[p2_id]['stats_win'] += 1
+                    bank[p2_id]['stats_total_winnings'] += math.floor(wagers[p1_id]['wager'] * (1-tax))
+
+                    wager_number = len(logs) + 1
+                    now = datetime.now()
+                    logs[wager_number] = {}
+                    logs[wager_number]['created_by_name'] = p1_name_disc
+                    logs[wager_number]['created_by_id'] = p1_id
+                    logs[wager_number]['accepted_by_name'] = p2_name_disc
+                    logs[wager_number]['accepted_by_id'] = p2_id
+                    logs[wager_number]['accepted_datetime'] = now.strftime("%m/%d/%Y, %H:%M:%S")
+                    logs[wager_number]['amount_before_tax'] = wagers[p1_id]['wager']
+                    logs[wager_number]['amount_after_tax'] = math.floor(wagers[p1_id]['wager'] * (1-tax))
+                    logs[wager_number]['tax_collected'] = math.ceil(wagers[p1_id]['wager'] * tax)
+                    logs[wager_number]['winner'] = p1_name_disc
+                    with open(r'./logs.yaml', 'w') as file: yaml.dump(logs, file)
 
                     try:
                         # wager_create_user_message = await ctx.fetch_message(wagers[p1_id]['user_message'])
@@ -194,6 +240,10 @@ class Dice(commands.Cog):
     @commands.command(name='cancel')
     async def cancel(self, ctx):
         """- Cancel your wager"""
+        if ctx.channel.id not in channels:   # if channel id not in list, do nothing
+            await ctx.send("<@" + str(ctx.author.id) + "> **You can only use !cancel in the dice channel.**")
+            return
+
         if ctx.author.id in wagers:
             wager_create_bot_message = await ctx.fetch_message(wagers[ctx.author.id]['bot_message'])
             await wager_create_bot_message.delete()
@@ -206,6 +256,10 @@ class Dice(commands.Cog):
     @commands.command(name='offers')
     async def offers(self, ctx):
         """- Get a list of all active wagers"""
+        if ctx.channel.id not in channels:   # if channel id not in list, do nothing
+            await ctx.send("<@" + str(ctx.author.id) + "> **You can only use !offers in the dice channel.**")
+            return
+
         p1_id = ctx.author.id
         if len(wagers) > 0:
             msg_offers = "```"
@@ -234,9 +288,27 @@ class Dice(commands.Cog):
         except Exception as error:
             await ctx.send("<@" + str(ctx.author.id) + "> " + "**You must enable direct messages.**" + "\n" + "User Settings > Privacy & Safety > Allow direct messages from server members")
 
-    # @commands.command(name='duel')
-    #     # async def duel(self, ctx):
-    #     #     """- Challenge user to a dice duel"""
+    @commands.command(name='stats')
+    async def stats(self, ctx):
+        """- Check your stats"""
+
+        await bank_update(ctx)
+        id = ctx.author.id
+
+        wins = bank[id]['stats_win']
+        losses = bank[id]['stats_loss']
+        if losses != 0: ratio = round((wins/losses), 2)
+        else: ratio = wins
+        winnings = bank[id]['stats_total_winnings']
+
+        await ctx.send("<@" + str(id) + ">" + "\n" + "Win: " + str(wins) + "\n" + "Loss: " + str(losses) + "\n" + "W/L Ratio: " + str(ratio) + "\n" + "Total Winnings: " + str(winnings) + " coins")
+
+    # @commands.command(name='add')
+    # async def add(self, ctx):
+    #     for key in bank:
+    #         bank[key]['stats_total_winnings'] = 0
+
+    #     with open(r'./bank.yaml', 'w') as file: yaml.dump(bank, file)
 
 def setup(bot):
     bot.add_cog(Dice(bot))

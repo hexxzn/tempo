@@ -1,8 +1,12 @@
-change ctx to single channel. bot can currently execute commands in DMs and hidden channels. 
-
-logs to record each wager
-
-implement pretty_help
+logs
+    only log wager if it is accepted
+    created_by_name
+    created_by_id
+    accepted_by_name
+    accepted_by_id
+    accepted_datetime
+    amount_before_tax
+    amount_after_tax
 
 !duel <username>
     wager that only a specific person can accept
