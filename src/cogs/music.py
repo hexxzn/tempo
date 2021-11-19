@@ -33,7 +33,7 @@ class Music(commands.Cog):
                 i = i + 1
                 query_result = query_result + f'**{i}.** {track["info"]["title"]}\n'
                 track_list = Embed()
-                track_list.title = "__Enter a Number__"
+                track_list.title = "__Enter Desired Track Number__"
                 track_list.description = query_result
             embed_message = await ctx.channel.send(embed=track_list)
 
@@ -54,7 +54,10 @@ class Music(commands.Cog):
                 await response.delete()
                 await ctx.send('**Queued**: ' + track["info"]["title"])
         except Exception as error:
-            await embed_message.delete()
+            try:
+                await embed_message.delete()
+            except Exception as error:
+                print(error)
             print(error)
     
     @commands.command(name='clean')
@@ -65,17 +68,23 @@ class Music(commands.Cog):
     @commands.command(name='skip')
     async def skip(self, ctx):
         """- Skips current song"""
-        player = self.bot.music.player_manager.get(ctx.guild.id)
-        await player.skip()
-        track = player.current.title
-        await ctx.send('**Now Playing**: ' + track)
+        try:
+            player = self.bot.music.player_manager.get(ctx.guild.id)
+            await player.skip()
+            track = player.current.title
+            await ctx.send('**Now Playing**: ' + track)
+        except Exception as error:
+            print(error)
 
     @commands.command(name='pause')
     async def pause(self, ctx):
         """- Pauses music"""
-        player = self.bot.music.player_manager.get(ctx.guild.id)
-        await player.set_pause(True)
-        await ctx.send('**Paused**')
+        try:
+            player = self.bot.music.player_manager.get(ctx.guild.id)
+            await player.set_pause(True)
+            await ctx.send('**Paused**')
+        except Exception as error:
+            print(error)
 
     @commands.command(name='resume')
     async def resume(self, ctx):
