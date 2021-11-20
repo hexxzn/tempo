@@ -13,4 +13,4 @@ async def on_ready():
     bot.load_extension('cogs.music')
     await bot.change_presence(activity=discord.Game(name="!help"))
 
-bot.run("ODk3ODY0ODg2MDk1MzQzNjg3.YWb31g.7AdVm_bYXeLKCfqI8PXtt9GgPxs")
+bot.run("")
