@@ -60,10 +60,10 @@ class Music(commands.Cog):
                 print(error)
             print(error)
     
-    @commands.command(name='clean')
-    async def clean(self, ctx):
-        """- Deletes messages in text channel"""
-        await ctx.channel.purge()
+    # @commands.command(name='clean')
+    # async def clean(self, ctx):
+    #     """- Deletes messages in text channel"""
+    #     await ctx.channel.purge()
 
     @commands.command(name='skip')
     async def skip(self, ctx):
