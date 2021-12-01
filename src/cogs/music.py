@@ -16,7 +16,11 @@ class Music(commands.Cog):
     async def play(self, ctx, *, query):
         """- Plays or queues a song"""
         member = ctx.author.name
-        vc = ctx.author.voice.channel
+        try:
+            vc = ctx.author.voice.channel
+        except:
+            vc = None
+            await ctx.send("**Error**: Unable to locate user voice channel.")
         if member is not None and vc is not None:
             player = self.bot.music.player_manager.create(ctx.guild.id, endpoint=str(ctx.guild.region))
             if not player.is_connected:
