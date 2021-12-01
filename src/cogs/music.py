@@ -1,4 +1,6 @@
+from discord.ext.commands import bot
 import lavalink
+import discord
 from discord import Embed
 from discord.ext import commands
 
@@ -25,13 +27,14 @@ class Music(commands.Cog):
             player = self.bot.music.player_manager.get(ctx.guild.id)
             query = f'ytsearch:{query}'
             results = await player.node.get_tracks(query)
-            tracks = results['tracks'][0:10]
+            tracks = results['tracks'][0:5]
             query_result = ''
             i = 0
 
             for track in tracks:
                 i = i + 1
                 query_result = query_result + f'**{i}.** {track["info"]["title"]}\n'
+                # track_list = Embed(color=discord.Color.from_rgb(0, 198, 236))
                 track_list = Embed()
                 track_list.title = "__Enter Desired Track Number__"
                 track_list.description = query_result
@@ -44,20 +47,22 @@ class Music(commands.Cog):
             track = tracks[int(response.content)-1]
             player.add(requester=ctx.author.id, track=track)
             if not player.is_playing:
-                await embed_message.delete()
-                await response.delete()
+                try:
+                    await embed_message.delete()
+                    await response.delete()
+                except:
+                    await ctx.send("**Warning**: Bot needs __Manage Messages__ permission to remove track selection messages.")
                 await ctx.send('**Now Playing**: ' + track["info"]["title"])
                 await player.play()
                 await player.set_volume(15)
             else:
-                await embed_message.delete()
-                await response.delete()
+                try:
+                    await embed_message.delete()
+                    await response.delete()
+                except:
+                    await ctx.send("**Warning**: Bot needs __Manage Messages__ permission to remove track selection messages.")
                 await ctx.send('**Queued**: ' + track["info"]["title"])
         except Exception as error:
-            try:
-                await embed_message.delete()
-            except Exception as error:
-                print(error)
             print(error)
     
     # @commands.command(name='clean')
