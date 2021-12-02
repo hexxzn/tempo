@@ -107,8 +107,14 @@ class Music(commands.Cog):
         """!stop || stop playback and clear queue"""
         try:
             player = self.bot.music.player_manager.get(ctx.guild.id)
+            await player.queue.clear()
+        except Exception as error:
+            print(error)
+        try:
+            player = self.bot.music.player_manager.get(ctx.guild.id)
             guild_id = int(player.guild_id)
             await player.stop()
+            
             await self.connect_to(guild_id, None)
             await ctx.send('**Stopped**: Queue cleared')
         except Exception as error:
@@ -148,19 +154,41 @@ class Music(commands.Cog):
             await ctx.send('Bot is not playing music.')
             print(error)
 
-    @commands.command(name='q')
-    async def q(self, ctx):
-        """!q || check length of queue"""
+    @commands.command(name='qq')
+    async def qq(self, ctx):
+        """!qq || check length of queue"""
         player = self.bot.music.player_manager.get(ctx.guild.id)
         if player == None:
             await ctx.send("**Queue**: 0")
         else:
             await ctx.send("**Queue**: " + str(len(player.queue)))
 
-    @commands.command(name='tempo')
-    async def tempo(self, ctx):
-        """!tempo || bot developed by hexxzn"""
-        await ctx.send(':wave:')
+    @commands.command(name='help')
+    async def help(self, ctx):
+        help_menu = Embed()
+        help_menu.title = "__Tempo Commands__"
+        help_menu.description = ("**!play <song name, artist>** \n" +
+                                "— play a song or add to queue \n" +
+                                "**!stop** \n" +
+                                "— stop playback and clear queue \n" +
+                                "**!skip** \n" +
+                                "— skip to next song in queue \n" +
+                                "**!pause** \n" +
+                                "— pause playback \n" +
+                                "**!resume** \n" +
+                                "— resume playback \n" +
+                                "**!restart** \n" +
+                                "— return to beginning of current track \n" +
+                                "**!ff <seconds>** \n" +
+                                "— fast forward given number of seconds \n" +
+                                "**!rw <seconds>** \n" +
+                                "— rewind given number of seconds \n" +
+                                "**!qq** \n" +
+                                "— check length of queue \n" +
+                                "**!clean** \n" +
+                                "— delete messages in text channel \n\n" +
+                                "__**Developed by Hexxzn**__")
+        await ctx.channel.send(embed=help_menu)
 
     async def track_hook(self, event):
         if isinstance(event, lavalink.events.QueueEndEvent):
@@ -176,11 +204,16 @@ class Music(commands.Cog):
     async def connect_to(self, guild_id: int, channel_id: str):
         ws = self.bot._connection._get_websocket(guild_id)
         await ws.voice_state(str(guild_id), channel_id)
+    
+    # @commands.command(name='tempo')
+    # async def tempo(self, ctx):
+    #     """!tempo || bot developed by hexxzn"""
+    #     await ctx.send(':wave:')
 
-    # @commands.command(name='test')
-    # async def tempot(self, ctx):
-    #     player = self.bot.music.player_manager.get(ctx.guild.id)
-    #     print(len(player.queue))
+    @commands.command(name='test')
+    async def tempot(self, ctx):
+        player = self.bot.music.player_manager.get(ctx.guild.id)
+        await player.queue.clear()
 
 def setup(bot):
     bot.add_cog(Music(bot))

@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 import discord
 import os
 
-bot = commands.Bot(command_prefix = '!')
+bot = commands.Bot(command_prefix = '!', help_command = None)
 
 class MainCog(commands.Cog):
     def __init__(self, bot):
