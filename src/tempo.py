@@ -26,5 +26,4 @@ async def on_voice_state_update(member, before, after):
 
 load_dotenv()
 token = os.getenv('TOKEN')
-
 bot.run(token)
