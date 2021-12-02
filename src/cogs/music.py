@@ -150,7 +150,7 @@ class Music(commands.Cog):
 
     @commands.command(name='q')
     async def q(self, ctx):
-        """!queue || check length of queue"""
+        """!q || check length of queue"""
         player = self.bot.music.player_manager.get(ctx.guild.id)
         if player == None:
             await ctx.send("**Queue**: 0")
