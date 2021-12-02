@@ -1,5 +1,7 @@
-import discord
 from discord.ext import commands
+from dotenv import load_dotenv
+import discord
+import os
 
 bot = commands.Bot(command_prefix = '!')
 
@@ -22,4 +24,7 @@ async def on_voice_state_update(member, before, after):
         elif player != None and before.channel != None and after.channel == None:   # stop player if bot disconnects
             await player.stop()
 
-bot.run("token")
+load_dotenv()
+token = os.getenv('TOKEN')
+
+bot.run(token)
