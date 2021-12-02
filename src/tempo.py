@@ -13,4 +13,4 @@ async def on_ready():
     bot.load_extension('cogs.music')
     await bot.change_presence(activity=discord.Game(name="!help"))
 
-bot.run("")
+bot.run("token")
