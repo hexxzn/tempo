@@ -1,6 +1,7 @@
 from discord.ext import commands
 from discord import Embed
 import lavalink
+import asyncio
 
 class Music(commands.Cog):
     def __init__(self, bot):
@@ -78,8 +79,9 @@ class Music(commands.Cog):
         try:
             player = self.bot.music.player_manager.get(ctx.guild.id)
             await player.skip()
-            track = player.current.title
-            await ctx.send('**Now Playing**: ' + track)
+            if len(player.queue) > 0:
+                track = player.current.title
+                await ctx.send('**Now Playing**: ' + track)
         except Exception as error:
             print(error)
 
@@ -105,7 +107,9 @@ class Music(commands.Cog):
         """!stop || stop playback and clear queue"""
         try:
             player = self.bot.music.player_manager.get(ctx.guild.id)
+            guild_id = int(player.guild_id)
             await player.stop()
+            await self.connect_to(guild_id, None)
             await ctx.send('**Stopped**: Queue cleared')
         except Exception as error:
             await ctx.send('Bot is not playing music.')
@@ -144,6 +148,15 @@ class Music(commands.Cog):
             await ctx.send('Bot is not playing music.')
             print(error)
 
+    @commands.command(name='q')
+    async def q(self, ctx):
+        """!queue || check length of queue"""
+        player = self.bot.music.player_manager.get(ctx.guild.id)
+        if player == None:
+            await ctx.send("**Queue**: 0")
+        else:
+            await ctx.send("**Queue**: " + str(len(player.queue)))
+
     @commands.command(name='tempo')
     async def tempo(self, ctx):
         """!tempo || bot developed by hexxzn"""
@@ -152,13 +165,22 @@ class Music(commands.Cog):
     async def track_hook(self, event):
         if isinstance(event, lavalink.events.QueueEndEvent):
             guild_id = int(event.player.guild_id)
-            await self.connect_to(guild_id, None)
+            player = self.bot.music.player_manager.get(guild_id)
+            print("queue empty. disconnect in 180 seconds.")
+            await asyncio.sleep(180)
+            if not player.is_playing:
+                print("queue empty for 180 seconds. disconnecting.")
+                await player.stop()
+                await self.connect_to(guild_id, None)
 
     async def connect_to(self, guild_id: int, channel_id: str):
         ws = self.bot._connection._get_websocket(guild_id)
         await ws.voice_state(str(guild_id), channel_id)
 
+    # @commands.command(name='test')
+    # async def tempot(self, ctx):
+    #     player = self.bot.music.player_manager.get(ctx.guild.id)
+    #     print(len(player.queue))
+
 def setup(bot):
     bot.add_cog(Music(bot))
-
-# test clean command
