@@ -91,7 +91,7 @@ class Music(commands.Cog):
         try:
             player = self.bot.music.player_manager.get(ctx.guild.id)
             await player.set_pause(True)
-            await ctx.send('**Paused**: ' + "Enter **!resume** to unpause")
+            await ctx.send('**Paused**: ' + "Use command **!resume** to unpause")
         except Exception as error:
             print(error)
 
@@ -176,7 +176,7 @@ class Music(commands.Cog):
                                 "**!pause** \n" +
                                 "— pause playback \n" +
                                 "**!resume** \n" +
-                                "— resume playback \n" +
+                                "— unpause playback \n" +
                                 "**!restart** \n" +
                                 "— return to beginning of current track \n" +
                                 "**!ff <seconds>** \n" +
@@ -210,10 +210,10 @@ class Music(commands.Cog):
     #     """!tempo || bot developed by hexxzn"""
     #     await ctx.send(':wave:')
 
-    @commands.command(name='test')
-    async def tempot(self, ctx):
-        player = self.bot.music.player_manager.get(ctx.guild.id)
-        await player.queue.clear()
+    # @commands.command(name='test')
+    # async def tempot(self, ctx):
+    #     player = self.bot.music.player_manager.get(ctx.guild.id)
+    #     await player.queue.clear()
 
 def setup(bot):
     bot.add_cog(Music(bot))
