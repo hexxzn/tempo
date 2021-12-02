@@ -1,8 +1,6 @@
-from discord.ext.commands import bot
-import lavalink
-import discord
-from discord import Embed
 from discord.ext import commands
+from discord import Embed
+import lavalink
 
 class Music(commands.Cog):
     def __init__(self, bot):
@@ -14,13 +12,13 @@ class Music(commands.Cog):
 
     @commands.command(name='play')
     async def play(self, ctx, *, query):
-        """- Plays or queues a song"""
+        """!play <song name, artist> || play a song or add to queue"""
         member = ctx.author.name
         try:
             vc = ctx.author.voice.channel
         except:
             vc = None
-            await ctx.send("**Error**: Unable to locate user voice channel.")
+            await ctx.send("Unable to locate user voice channel.")
         if member is not None and vc is not None:
             player = self.bot.music.player_manager.create(ctx.guild.id, endpoint=str(ctx.guild.region))
             if not player.is_connected:
@@ -69,14 +67,14 @@ class Music(commands.Cog):
         except Exception as error:
             print(error)
     
-    # @commands.command(name='clean')
-    # async def clean(self, ctx):
-    #     """- Deletes messages in text channel"""
-    #     await ctx.channel.purge()
+    @commands.command(name='clean')
+    async def clean(self, ctx):
+        """!clean || delete messages in text channel"""
+        await ctx.channel.purge()
 
     @commands.command(name='skip')
     async def skip(self, ctx):
-        """- Skips current song"""
+        """!skip || skip to next song in queue"""
         try:
             player = self.bot.music.player_manager.get(ctx.guild.id)
             await player.skip()
@@ -87,31 +85,68 @@ class Music(commands.Cog):
 
     @commands.command(name='pause')
     async def pause(self, ctx):
-        """- Pauses music"""
+        """!pause || pause playback"""
         try:
             player = self.bot.music.player_manager.get(ctx.guild.id)
             await player.set_pause(True)
-            await ctx.send('**Paused**')
+            await ctx.send('**Paused**: ' + "Enter **!resume** to unpause")
         except Exception as error:
             print(error)
 
     @commands.command(name='resume')
     async def resume(self, ctx):
-        """- Resumes music"""
+        """!resume || resume playback"""
         player = self.bot.music.player_manager.get(ctx.guild.id)
         await player.set_pause(False)
-        await ctx.send('**Resumed**')
+        await ctx.send('**Resumed**: ' + player.current.title)
 
     @commands.command(name='stop')
     async def stop(self, ctx):
-        """- Stops music"""
-        player = self.bot.music.player_manager.get(ctx.guild.id)
-        await player.stop()
-        await ctx.send('**Stopped**')
+        """!stop || stop playback and clear queue"""
+        try:
+            player = self.bot.music.player_manager.get(ctx.guild.id)
+            await player.stop()
+            await ctx.send('**Stopped**: Queue cleared')
+        except Exception as error:
+            await ctx.send('Bot is not playing music.')
+            print(error)
+
+    @commands.command(name='rw')
+    async def rw(self, ctx, seconds):
+        """!rw <seconds> || rewind given number of seconds"""
+        try:
+            player = self.bot.music.player_manager.get(ctx.guild.id)
+            await player.seek(player.position - int(seconds) * 1000)
+            await ctx.send("**Rewind**: " + seconds + " seconds \n" + "Buffering...")
+        except Exception as error:
+            await ctx.send('Bot is not playing music.')
+            print(error)
+
+    @commands.command(name='ff')
+    async def ff(self, ctx, seconds):
+        """!ff <seconds> || fast forward given number of seconds"""
+        try:
+            player = self.bot.music.player_manager.get(ctx.guild.id)
+            await player.seek(player.position + int(seconds) * 1000)
+            await ctx.send("**Fast Forward**: " + seconds + " seconds \n" + "Buffering...")
+        except Exception as error:
+            await ctx.send('Bot is not playing music.')
+            print(error)
+
+    @commands.command(name='restart')
+    async def restart(self, ctx):
+        """!restart || return to beginning of current track"""
+        try:
+            player = self.bot.music.player_manager.get(ctx.guild.id)
+            await player.seek(player.position - player.position)
+            await ctx.send("**Now Playing**: " + player.current.title)
+        except Exception as error:
+            await ctx.send('Bot is not playing music.')
+            print(error)
 
     @commands.command(name='tempo')
     async def tempo(self, ctx):
-        """- Developed by Hexxzn"""
+        """!tempo || bot developed by hexxzn"""
         await ctx.send(':wave:')
 
     async def track_hook(self, event):
