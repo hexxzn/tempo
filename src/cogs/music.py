@@ -14,6 +14,7 @@ class Music(commands.Cog):
     @commands.command(name='play')
     async def play(self, ctx, *, query):
         """!play <song name, artist> || play a song or add to queue"""
+        print("!play")
         member = ctx.author.name
         try:
             vc = ctx.author.voice.channel
@@ -71,11 +72,13 @@ class Music(commands.Cog):
     @commands.command(name='clean')
     async def clean(self, ctx):
         """!clean || delete messages in text channel"""
+        print("!clean")
         await ctx.channel.purge()
 
     @commands.command(name='skip')
     async def skip(self, ctx):
         """!skip || skip to next song in queue"""
+        print("!skip")
         try:
             player = self.bot.music.player_manager.get(ctx.guild.id)
             await player.skip()
@@ -88,6 +91,7 @@ class Music(commands.Cog):
     @commands.command(name='pause')
     async def pause(self, ctx):
         """!pause || pause playback"""
+        print("!pause")
         try:
             player = self.bot.music.player_manager.get(ctx.guild.id)
             await player.set_pause(True)
@@ -98,6 +102,7 @@ class Music(commands.Cog):
     @commands.command(name='resume')
     async def resume(self, ctx):
         """!resume || resume playback"""
+        print("!resume")
         player = self.bot.music.player_manager.get(ctx.guild.id)
         await player.set_pause(False)
         await ctx.send('**Resumed**: ' + player.current.title)
@@ -105,6 +110,7 @@ class Music(commands.Cog):
     @commands.command(name='stop')
     async def stop(self, ctx):
         """!stop || stop playback and clear queue"""
+        print("!stop")
         try:
             player = self.bot.music.player_manager.get(ctx.guild.id)
             await player.queue.clear()
@@ -124,6 +130,7 @@ class Music(commands.Cog):
     @commands.command(name='rw')
     async def rw(self, ctx, seconds):
         """!rw <seconds> || rewind given number of seconds"""
+        print("!rw")
         try:
             player = self.bot.music.player_manager.get(ctx.guild.id)
             await player.seek(player.position - int(seconds) * 1000)
@@ -135,6 +142,7 @@ class Music(commands.Cog):
     @commands.command(name='ff')
     async def ff(self, ctx, seconds):
         """!ff <seconds> || fast forward given number of seconds"""
+        print("!ff")
         try:
             player = self.bot.music.player_manager.get(ctx.guild.id)
             await player.seek(player.position + int(seconds) * 1000)
@@ -146,6 +154,7 @@ class Music(commands.Cog):
     @commands.command(name='restart')
     async def restart(self, ctx):
         """!restart || return to beginning of current track"""
+        print("!restart")
         try:
             player = self.bot.music.player_manager.get(ctx.guild.id)
             await player.seek(player.position - player.position)
@@ -157,6 +166,7 @@ class Music(commands.Cog):
     @commands.command(name='qq')
     async def qq(self, ctx):
         """!qq || check length of queue"""
+        print("!qq")
         player = self.bot.music.player_manager.get(ctx.guild.id)
         if player == None:
             await ctx.send("**Queue**: 0")
@@ -165,6 +175,7 @@ class Music(commands.Cog):
 
     @commands.command(name='help')
     async def help(self, ctx):
+        print("!help")
         help_menu = Embed()
         help_menu.title = "__Tempo Commands__"
         help_menu.description = ("**!play <song name, artist>** \n" +
@@ -192,14 +203,16 @@ class Music(commands.Cog):
 
     async def track_hook(self, event):
         if isinstance(event, lavalink.events.QueueEndEvent):
+            # guild_id = int(event.player.guild_id)
+            # player = self.bot.music.player_manager.get(guild_id)
+            # print("queue empty. disconnect in 180 seconds.")
+            # await asyncio.sleep(180)
+            # if not player.is_playing:
+            #     print("queue empty for 180 seconds. disconnecting.")
+            #     await player.stop()
+            #     await self.connect_to(guild_id, None)
             guild_id = int(event.player.guild_id)
-            player = self.bot.music.player_manager.get(guild_id)
-            print("queue empty. disconnect in 180 seconds.")
-            await asyncio.sleep(180)
-            if not player.is_playing:
-                print("queue empty for 180 seconds. disconnecting.")
-                await player.stop()
-                await self.connect_to(guild_id, None)
+            await self.connect_to(guild_id, None)
 
     async def connect_to(self, guild_id: int, channel_id: str):
         ws = self.bot._connection._get_websocket(guild_id)
