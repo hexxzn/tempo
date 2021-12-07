@@ -11,63 +11,69 @@ class Music(commands.Cog):
         self.bot.add_listener(self.bot.music.voice_update_handler, 'on_socket_response')
         self.bot.music.add_event_hook(self.track_hook)
 
-    @commands.command(name='play')
+    @commands.command(name='play')   # play a song or add to queue (needs cleanup)
     async def play(self, ctx, *, query):
-        """!play <song name, artist> || play a song or add to queue"""
-        print("!play")
-        member = ctx.author.name
+        print("!play")   # console print for debugging
         try:
-            vc = ctx.author.voice.channel
-        except:
-            vc = None
-            await ctx.send("Unable to locate user voice channel.")
-        if member is not None and vc is not None:
-            player = self.bot.music.player_manager.create(ctx.guild.id, endpoint=str(ctx.guild.region))
-            if not player.is_connected:
-                player.store('channel', ctx.channel.id)
-                await self.connect_to(ctx.guild.id, ctx.author.voice.channel.id)
-
-        try:
-            player = self.bot.music.player_manager.get(ctx.guild.id)
-            query = f'ytsearch:{query}'
-            results = await player.node.get_tracks(query)
-            tracks = results['tracks'][0:5]
-            query_result = ''
-            i = 0
-
-            for track in tracks:
-                i = i + 1
-                query_result = query_result + f'**{i}.** {track["info"]["title"]}\n'
-                # track_list = Embed(color=discord.Color.from_rgb(0, 198, 236))
-                track_list = Embed()
-                track_list.title = "__Enter Desired Track Number__"
-                track_list.description = query_result
-            embed_message = await ctx.channel.send(embed=track_list)
-
-            def check(m):
-                return m.author.id == ctx.author.id
-
-            response = await self.bot.wait_for('message', check=check)
-            track = tracks[int(response.content)-1]
-            player.add(requester=ctx.author.id, track=track)
-            if not player.is_playing:
-                try:
-                    await embed_message.delete()
-                    await response.delete()
-                except:
-                    await ctx.send("**Warning**: Bot needs __Manage Messages__ permission to remove track selection messages.")
-                await ctx.send('**Now Playing**: ' + track["info"]["title"])
-                await player.play()
-                await player.set_volume(15)
-            else:
-                try:
-                    await embed_message.delete()
-                    await response.delete()
-                except:
-                    await ctx.send("**Warning**: Bot needs __Manage Messages__ permission to remove track selection messages.")
-                await ctx.send('**Queued**: ' + track["info"]["title"])
-        except Exception as error:
+            member = ctx.author.name   # get name of user giving command
+            channel = ctx.author.voice.channel   # get voice channel of user giving command
+            player = self.bot.music.player_manager.create(ctx.guild.id, endpoint=str(ctx.guild.region))   # connect player to node
+        except AttributeError:   # if user is not in accessible voice channel ('User' object has no attribute 'voice')
+            return await ctx.send('Unable to locate user/voice channel.')
+        except Exception as error:   # except doesn't recognize NodeException?
             print(error)
+            return await ctx.send('No available nodes.')
+
+        if not player.is_connected:
+            player.store('channel', ctx.channel.id)
+            await self.connect_to(ctx.guild.id, ctx.author.voice.channel.id)   # connect to voice channel
+
+        player = self.bot.music.player_manager.get(ctx.guild.id)
+        query = f'ytsearch:{query}'
+        results = await player.node.get_tracks(query)
+        tracks = results['tracks'][0:5]
+        query_result = '__**0.** None__ \n'
+        i = 0
+
+        for track in tracks:
+            i = i + 1
+            query_result = query_result + f'**{i}.** {track["info"]["title"]}\n'
+            # track_list = Embed(color=discord.Color.from_rgb(0, 198, 236))
+            track_list = Embed()
+            track_list.title = "__Enter Track Number__"
+            track_list.description = query_result
+        embed_message = await ctx.channel.send(embed=track_list)
+
+        def check(m):
+            return m.author.id == ctx.author.id
+
+        response = await self.bot.wait_for('message', check=check)
+        if not response.content.isnumeric() or int(response.content) not in range(1, len(tracks) + 1):
+            try:
+                await embed_message.delete()
+                await response.delete()
+            except:
+                await ctx.send("**Warning**: Bot needs __Manage Messages__ permission to remove track selection messages.")
+            return
+
+        track = tracks[int(response.content)-1]
+        player.add(requester=ctx.author.id, track=track)
+        if not player.is_playing:
+            try:
+                await embed_message.delete()
+                await response.delete()
+            except:
+                await ctx.send("**Warning**: Bot needs __Manage Messages__ permission to remove track selection messages.")
+            await ctx.send('**Now Playing**: ' + track["info"]["title"])
+            await player.play()
+            await player.set_volume(15)
+        else:
+            try:
+                await embed_message.delete()
+                await response.delete()
+            except:
+                await ctx.send("**Warning**: Bot needs __Manage Messages__ permission to remove track selection messages.")
+            await ctx.send('**Queued**: ' + track["info"]["title"])
     
     @commands.command(name='clean')
     async def clean(self, ctx):
