@@ -207,20 +207,32 @@ class Music(commands.Cog):
                                 "__**Developed by Hexxzn**__")
         await ctx.channel.send(embed=help_menu)
 
-    async def track_hook(self, event):   # executes when queue ends
+    async def track_hook(self, event):
         if isinstance(event, lavalink.events.QueueEndEvent):
-            player = event.player
+            # guild_id = int(event.player.guild_id)
+            # player = self.bot.music.player_manager.get(guild_id)
+            # print("queue empty. disconnect in 180 seconds.")
+            # await asyncio.sleep(180)
+            # if not player.is_playing:
+            #     print("queue empty for 180 seconds. disconnecting.")
+            #     await player.stop()
+            #     await self.connect_to(guild_id, None)
             guild_id = int(event.player.guild_id)
-            print("queue empty. disconnect in 180 seconds.")
-            await asyncio.sleep(180)
-            if not player.is_playing:
-                print("queue empty for 180 seconds. disconnecting.")
-                await player.stop()
-                await self.connect_to(guild_id, None)
+            await self.connect_to(guild_id, None)
 
     async def connect_to(self, guild_id: int, channel_id: str):
         ws = self.bot._connection._get_websocket(guild_id)
         await ws.voice_state(str(guild_id), channel_id)
+    
+    # @commands.command(name='tempo')
+    # async def tempo(self, ctx):
+    #     """!tempo || bot developed by hexxzn"""
+    #     await ctx.send(':wave:')
+
+    # @commands.command(name='test')
+    # async def tempot(self, ctx):
+    #     player = self.bot.music.player_manager.get(ctx.guild.id)
+    #     await player.queue.clear()
 
 def setup(bot):
     bot.add_cog(Music(bot))
