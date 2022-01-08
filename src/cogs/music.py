@@ -75,11 +75,14 @@ class Music(commands.Cog):
                 await ctx.send("**Warning**: Bot needs __Manage Messages__ permission to remove track selection messages.")
             await ctx.send('**Queued**: ' + track["info"]["title"])
     
-    @commands.command(name='clean')
-    async def clean(self, ctx):
-        """!clean || delete messages in text channel"""
-        print("!clean")
-        await ctx.channel.purge()
+    # @commands.command(name='clean')
+    # async def clean(self, ctx):
+    #     """!clean || delete messages in text channel"""
+    #     try:
+    #         print("!clean")
+    #         await ctx.channel.purge()
+    #     except Exception as error:
+    #         print(error)
 
     @commands.command(name='skip')
     async def skip(self, ctx):
