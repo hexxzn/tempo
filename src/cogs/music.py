@@ -197,8 +197,6 @@ class Music(commands.Cog):
                                 "— rewind given number of seconds \n" +
                                 "**!qq** \n" +
                                 "— check length of queue \n" +
-                                "**!clean** \n" +
-                                "— delete messages in text channel \n\n" +
                                 "__**Developed by Hexxzn**__")
         await ctx.channel.send(embed=help_menu)
 
