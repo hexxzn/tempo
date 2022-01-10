@@ -1,7 +1,6 @@
 from discord.ext import commands
 from discord import Embed
 import lavalink
-import asyncio
 
 class Music(commands.Cog):
     def __init__(self, bot):
@@ -74,15 +73,6 @@ class Music(commands.Cog):
             except:
                 await ctx.send("**Warning**: Bot needs __Manage Messages__ permission to remove track selection messages.")
             await ctx.send('**Queued**: ' + track["info"]["title"])
-    
-    # @commands.command(name='clean')
-    # async def clean(self, ctx):
-    #     """!clean || delete messages in text channel"""
-    #     try:
-    #         print("!clean")
-    #         await ctx.channel.purge()
-    #     except Exception as error:
-    #         print(error)
 
     @commands.command(name='skip')
     async def skip(self, ctx):
@@ -191,8 +181,10 @@ class Music(commands.Cog):
                                 "— play a song or add to queue \n" +
                                 "**!stop** \n" +
                                 "— stop playback and clear queue \n" +
+                                "**!song** \n" +
+                                "— show name of current track \n" +
                                 "**!skip** \n" +
-                                "— skip to next song in queue \n" +
+                                "— skip to next track in queue \n" +
                                 "**!pause** \n" +
                                 "— pause playback \n" +
                                 "**!resume** \n" +
@@ -209,6 +201,17 @@ class Music(commands.Cog):
                                 "— delete messages in text channel \n\n" +
                                 "__**Developed by Hexxzn**__")
         await ctx.channel.send(embed=help_menu)
+
+    @commands.command(name='song')
+    async def song(self, ctx):
+        try:
+            player = self.bot.music.player_manager.get(ctx.guild.id)
+            if player != None and player.current != None:
+                await ctx.send('**Now Playing**: ' + player.current.title)
+            else:
+                await ctx.send('Bot is not playing music.')
+        except Exception as error:
+            print(error)
 
     async def track_hook(self, event):
         if isinstance(event, lavalink.events.QueueEndEvent):
@@ -227,6 +230,15 @@ class Music(commands.Cog):
         ws = self.bot._connection._get_websocket(guild_id)
         await ws.voice_state(str(guild_id), channel_id)
     
+    # @commands.command(name='clean')
+    # async def clean(self, ctx):
+    #     """!clean || delete messages in text channel"""
+    #     try:
+    #         print("!clean")
+    #         await ctx.channel.purge()
+    #     except Exception as error:
+    #         print(error)
+
     # @commands.command(name='tempo')
     # async def tempo(self, ctx):
     #     """!tempo || bot developed by hexxzn"""
