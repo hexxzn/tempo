@@ -61,7 +61,6 @@ class Text(commands.Cog):
     async def help(self, ctx):
         """ Show command list in text channel. """
         help_menu = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
-        help_menu.title = 'Tempo Commands'
         help_menu.description = (
             '**[!p] !play <song name, artist>** \n' +
             '— play a song or add to queue \n' +
@@ -88,13 +87,6 @@ class Text(commands.Cog):
             '\n __**Developed by Hexxzn**__'
         )
         await ctx.channel.send(embed=help_menu)
-
-    @commands.command()
-    async def test(self, ctx, message = None):
-        if message == None:
-            await ctx.send('no message')
-        else:
-            await ctx.send(message)
 
 
 class Music(commands.Cog):
@@ -197,17 +189,16 @@ class Music(commands.Cog):
                 # Add all tracks from playlist to queue.
                 player.add(requester=ctx.author.id, track=track)
 
-            embed.title = 'Playlist Queued'
             embed.description = f'{results["playlistInfo"]["name"]} - {len(tracks)} tracks'
         else:
             track = results['tracks'][0]
 
             if player.is_playing:
-                embed.title = 'Queue Position: ' + str(len(player.queue) + 1)
+                embed.description = 'Queued: '
             else:
-                embed.title = 'Now Playing'
+                embed.description ='Now Playing: '
 
-            embed.description = f'[{track["info"]["title"]}]({track["info"]["uri"]})'
+            embed.description += f'[{track["info"]["title"]}]({track["info"]["uri"]})'
 
             track = lavalink.models.AudioTrack(track, ctx.author.id, recommended=True)
             player.add(requester=ctx.author.id, track=track)
@@ -234,7 +225,7 @@ class Music(commands.Cog):
         await player.stop()
         # Disconnect from voice channel.
         await ctx.voice_client.disconnect(force=True)
-        await ctx.send('Disconnected. Queue cleared.')
+        await ctx.send('Queue has been cleared.')
 
     @commands.command(aliases=['SKIP', 'SK', 'sk'])
     async def skip(self, ctx):
@@ -270,7 +261,6 @@ class Music(commands.Cog):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
 
         embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
-        embed.title = 'Current Queue'
         embed.description = 'Queue Empty'
         if len(player.queue) > 0:
             embed.description = 'Next: '
