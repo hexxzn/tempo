@@ -1,0 +1,583 @@
+2022-02-08 01:33:21.462  INFO 20772 --- [main] lavalink.server.Launcher                 : 
+
+[32m       .  [31m _                  _ _       _    [32m__ _ _
+[32m      /\\ [31m| | __ ___   ____ _| (_)_ __ | | __[32m\ \ \ \
+[32m     ( ( )[31m| |/ _` \ \ / / _` | | | '_ \| |/ /[32m \ \ \ \
+[32m      \\/ [31m| | (_| |\ V / (_| | | | | | |   < [32m  ) ) ) )
+[32m       '  [31m|_|\__,_| \_/ \__,_|_|_|_| |_|_|\_\[32m / / / /
+[0m    =========================================[32m/_/_/_/[0m
+
+	Version:        3.3.2.5
+	Build:          1222
+	Build time:     11.04.2021 08:07:27 UTC
+	Branch          master
+	Commit:         7b914f2
+	Commit time:    09.04.2021 17:14:27 UTC
+	JVM:            13.0.2
+	Lavaplayer      1.3.76
+
+2022-02-08 01:33:21.489  INFO 20772 --- [main] o.s.boot.SpringApplication               : 
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::        (v2.1.8.RELEASE)
+
+
+2022-02-08 01:33:21.553  INFO 20772 --- [main] lavalink.server.Launcher                 : Starting Launcher on DESKTOP-GEORGE with PID 20772 (P:\Programming\Tempo\Lavalink.jar started by George in P:\Programming\Tempo)
+2022-02-08 01:33:21.553  INFO 20772 --- [main] lavalink.server.Launcher                 : No active profile set, falling back to default profiles: default
+2022-02-08 01:33:21.588  WARN 20772 --- [background-preinit] o.s.h.c.j.Jackson2ObjectMapperBuilder    : For Jackson Kotlin classes support please add "com.fasterxml.jackson.module:jackson-module-kotlin" to the classpath
+2022-02-08 01:33:22.425  WARN 20772 --- [main] io.undertow.websockets.jsr               : UT026010: Buffer pool was not set on WebSocketDeploymentInfo, the default pool will be used
+2022-02-08 01:33:22.440  INFO 20772 --- [main] io.undertow.servlet                      : Initializing Spring embedded WebApplicationContext
+2022-02-08 01:33:22.440  INFO 20772 --- [main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 859 ms
+2022-02-08 01:33:22.641  WARN 20772 --- [main] l.server.config.SentryConfiguration      : Turning off sentry
+2022-02-08 01:33:22.788  INFO 20772 --- [main] c.s.d.l.tools.GarbageCollectionMonitor   : GC monitoring enabled, reporting results every 2 minutes.
+2022-02-08 01:33:23.075  INFO 20772 --- [main] lavalink.server.config.KoeConfiguration  : OS: Windows 10, Arch: amd64
+2022-02-08 01:33:23.075  WARN 20772 --- [main] lavalink.server.config.KoeConfiguration  : This system and architecture appears to not support native audio sending! GC pauses may cause your bot to stutter during playback.
+2022-02-08 01:33:23.216  INFO 20772 --- [main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2022-02-08 01:33:23.397  INFO 20772 --- [main] org.xnio                                 : XNIO version 3.3.8.Final
+2022-02-08 01:33:23.409  INFO 20772 --- [main] org.xnio.nio                             : XNIO NIO Implementation Version 3.3.8.Final
+2022-02-08 01:33:23.459  INFO 20772 --- [main] o.s.b.w.e.u.UndertowServletWebServer     : Undertow started on port(s) 7000 (http) with context path ''
+2022-02-08 01:33:23.463  INFO 20772 --- [main] lavalink.server.Launcher                 : Started Launcher in 2.293 seconds (JVM running for 2.565)
+2022-02-08 01:33:23.465  INFO 20772 --- [main] lavalink.server.Launcher                 : You can safely ignore the big red warning about illegal reflection. See https://github.com/Frederikam/Lavalink/issues/295
+2022-02-08 01:33:33.167  INFO 20772 --- [XNIO-1 task-1] io.undertow.servlet                      : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2022-02-08 01:33:33.168  INFO 20772 --- [XNIO-1 task-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2022-02-08 01:33:33.195  INFO 20772 --- [XNIO-1 task-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 26 ms
+2022-02-08 01:33:33.236  INFO 20772 --- [XNIO-1 task-1] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:52436
+2022-02-08 01:33:33.333  INFO 20772 --- [XNIO-1 task-1] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:52436
+2022-02-08 01:33:33.359  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 01:34:09.357  INFO 20772 --- [XNIO-1 task-2] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:torn speh"
+2022-02-08 01:34:09.456  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "a0e554f2a261f0f821edc849646c76d1", "event": {"token": "c787099e5ffc5f5b", "guild_id": "897862146422104065", "endpoint": "us-east9995.discord.media:443"}}
+2022-02-08 01:34:10.353  INFO 20772 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: torn speh
+2022-02-08 01:34:10.596  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : {"op": "play", "guildId": "897862146422104065", "track": "QAAAYgIABFRvcm4ABFNwZWgAAAAAAARNkAALVG9xNmk5WEJXc0kAAQAraHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1Ub3E2aTlYQldzSQAHeW91dHViZQAAAAAAAAAA", "startTime": 0, "endTime": 0, "noReplace": false}
+2022-02-08 01:34:18.423  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : {"op": "stop", "guildId": "897862146422104065"}
+2022-02-08 01:39:10.791  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:52436 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 01:39:15.118  INFO 20772 --- [XNIO-1 task-4] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:52593
+2022-02-08 01:39:15.121  INFO 20772 --- [XNIO-1 task-4] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:52593
+2022-02-08 01:39:15.123  INFO 20772 --- [XNIO-1 I/O-12] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 01:39:19.141  INFO 20772 --- [XNIO-1 task-5] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:torn speh"
+2022-02-08 01:39:19.284  INFO 20772 --- [XNIO-1 I/O-12] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "709b081db343bf7c3966eace1547557f", "event": {"token": "bebb116758f6501d", "guild_id": "897862146422104065", "endpoint": "us-east9995.discord.media:443"}}
+2022-02-08 01:39:19.831  INFO 20772 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: torn speh
+2022-02-08 01:39:20.013  INFO 20772 --- [XNIO-1 I/O-12] lavalink.server.io.SocketServer          : {"op": "play", "guildId": "897862146422104065", "track": "QAAAYgIABFRvcm4ABFNwZWgAAAAAAARNkAALVG9xNmk5WEJXc0kAAQAraHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1Ub3E2aTlYQldzSQAHeW91dHViZQAAAAAAAAAA", "startTime": 0, "endTime": 0, "noReplace": false}
+2022-02-08 01:39:22.941  INFO 20772 --- [XNIO-1 I/O-12] lavalink.server.io.SocketServer          : {"op": "stop", "guildId": "897862146422104065"}
+2022-02-08 01:40:10.796  INFO 20772 --- [pool-2-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 01:41:07.645  INFO 20772 --- [XNIO-1 I/O-12] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:52593 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 01:41:11.823  INFO 20772 --- [XNIO-1 task-7] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:52736
+2022-02-08 01:41:11.826  INFO 20772 --- [XNIO-1 task-7] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:52736
+2022-02-08 01:41:11.827  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 01:41:16.368  INFO 20772 --- [XNIO-1 task-8] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:torn speh"
+2022-02-08 01:41:16.503  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "4ccafd322f98f57259bbc4e1674da136", "event": {"token": "11dafc1d50419035", "guild_id": "897862146422104065", "endpoint": "us-east9995.discord.media:443"}}
+2022-02-08 01:41:16.956  INFO 20772 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: torn speh
+2022-02-08 01:41:17.071  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : {"op": "play", "guildId": "897862146422104065", "track": "QAAAYgIABFRvcm4ABFNwZWgAAAAAAARNkAALVG9xNmk5WEJXc0kAAQAraHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1Ub3E2aTlYQldzSQAHeW91dHViZQAAAAAAAAAA", "startTime": 0, "endTime": 0, "noReplace": false}
+2022-02-08 01:41:20.140  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : {"op": "stop", "guildId": "897862146422104065"}
+2022-02-08 01:42:07.656  INFO 20772 --- [pool-3-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 01:44:17.114  INFO 20772 --- [XNIO-1 task-10] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "https://www.youtube.com/watch?v=gIRY7qT1CdU"
+2022-02-08 01:44:17.171  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "4ccafd322f98f57259bbc4e1674da136", "event": {"token": "11dafc1d50419035", "guild_id": "897862146422104065", "endpoint": "us-east9995.discord.media:443"}}
+2022-02-08 01:44:17.244  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "4ccafd322f98f57259bbc4e1674da136", "event": {"token": "ceade62c282c2cb9", "guild_id": "897862146422104065", "endpoint": "us-east9995.discord.media:443"}}
+2022-02-08 01:44:17.517  INFO 20772 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded track Emergency Alarm Broadcast Sound Effects
+2022-02-08 01:44:17.712  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : {"op": "play", "guildId": "897862146422104065", "track": "QAAAmQIAJ0VtZXJnZW5jeSBBbGFybSBCcm9hZGNhc3QgU291bmQgRWZmZWN0cwAY4paT4paSVVRPT0JBU0FVUlVT4paS4paTAAAAAAAAMsgAC2dJUlk3cVQxQ2RVAAEAK2h0dHBzOi8vd3d3LnlvdXR1YmUuY29tL3dhdGNoP3Y9Z0lSWTdxVDFDZFUAB3lvdXR1YmUAAAAAAAAAAA==", "startTime": 0, "endTime": 0, "noReplace": false}
+2022-02-08 01:44:23.051  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : {"op": "stop", "guildId": "897862146422104065"}
+2022-02-08 01:46:08.410  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:52736 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 01:46:13.524  INFO 20772 --- [XNIO-1 task-12] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:64120
+2022-02-08 01:46:13.527  INFO 20772 --- [XNIO-1 task-12] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:64120
+2022-02-08 01:46:13.528  INFO 20772 --- [XNIO-1 I/O-13] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 01:46:19.852  INFO 20772 --- [XNIO-1 I/O-13] lavalink.server.io.SocketServer          : {"op": "volume", "guildId": "897862146422104065", "volume": 15}
+2022-02-08 01:46:19.855  INFO 20772 --- [XNIO-1 task-13] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:torn speh"
+2022-02-08 01:46:20.001  INFO 20772 --- [XNIO-1 I/O-13] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "790b59cd20ac0cc9253b8ff296830bfa", "event": {"token": "af6d0b64fa375b24", "guild_id": "897862146422104065", "endpoint": "us-east9995.discord.media:443"}}
+2022-02-08 01:46:20.508  INFO 20772 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: torn speh
+2022-02-08 01:46:20.645  INFO 20772 --- [XNIO-1 I/O-13] lavalink.server.io.SocketServer          : {"op": "play", "guildId": "897862146422104065", "track": "QAAAYgIABFRvcm4ABFNwZWgAAAAAAARNkAALVG9xNmk5WEJXc0kAAQAraHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1Ub3E2aTlYQldzSQAHeW91dHViZQAAAAAAAAAA", "startTime": 0, "endTime": 0, "noReplace": false}
+2022-02-08 01:46:21.100  INFO 20772 --- [XNIO-1 I/O-13] lavalink.server.io.SocketServer          : {"op": "stop", "guildId": "897862146422104065"}
+2022-02-08 01:46:21.127 ERROR 20772 --- [lava-daemon-pool-playback-1-thread-1] c.s.d.l.t.p.LocalAudioTrackExecutor      : Error in playback of Toq6i9XBWsI
+
+com.sedmelluq.discord.lavaplayer.tools.FriendlyException: Something broke when playing the track.
+	at com.sedmelluq.discord.lavaplayer.tools.ExceptionTools.wrapUnfriendlyExceptions(ExceptionTools.java:44) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.track.playback.LocalAudioTrackExecutor.execute(LocalAudioTrackExecutor.java:116) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager.lambda$executeTrack$1(DefaultAudioPlayerManager.java:348) ~[lavaplayer-1.3.76.jar!/:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:830) ~[na:na]
+	Suppressed: com.sedmelluq.discord.lavaplayer.tools.exception.EnvironmentInformation: 
+  lavaplayer.version: 1.3.76
+  os.arch: amd64
+  os.name: Windows 10
+  os.version: 10.0
+  java.vendor: Oracle Corporation
+  java.version: 13.0.2
+  java.runtime.version: 13.0.2+8
+  java.vm.version: 13.0.2+8
+Caused by: java.lang.RuntimeException: Not success status code: 403
+	at com.sedmelluq.discord.lavaplayer.tools.io.PersistentHttpStream.validateStatusCode(PersistentHttpStream.java:87) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.tools.io.PersistentHttpStream.attemptConnect(PersistentHttpStream.java:116) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.tools.io.PersistentHttpStream.connect(PersistentHttpStream.java:105) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.tools.io.PersistentHttpStream.internalRead(PersistentHttpStream.java:150) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.tools.io.PersistentHttpStream.read(PersistentHttpStream.java:166) ~[lavaplayer-1.3.76.jar!/:na]
+	at java.base/java.io.DataInputStream.readByte(DataInputStream.java:270) ~[na:na]
+	at com.sedmelluq.discord.lavaplayer.container.matroska.format.MatroskaEbmlReader.readEbmlInteger(MatroskaEbmlReader.java:39) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.container.matroska.format.MatroskaFileReader.readNextElement(MatroskaFileReader.java:45) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.container.matroska.MatroskaStreamingFile.readFile(MatroskaStreamingFile.java:78) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.container.matroska.MatroskaAudioTrack.loadMatroskaFile(MatroskaAudioTrack.java:51) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.container.matroska.MatroskaAudioTrack.process(MatroskaAudioTrack.java:34) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.track.DelegatedAudioTrack.processDelegate(DelegatedAudioTrack.java:25) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack.processStatic(YoutubeAudioTrack.java:57) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack.process(YoutubeAudioTrack.java:49) ~[lavaplayer-1.3.76.jar!/:na]
+	at com.sedmelluq.discord.lavaplayer.track.playback.LocalAudioTrackExecutor.execute(LocalAudioTrackExecutor.java:104) ~[lavaplayer-1.3.76.jar!/:na]
+	... 4 common frames omitted
+
+2022-02-08 01:46:21.129  INFO 20772 --- [XNIO-1 I/O-13] lavalink.server.io.SocketServer          : {"op": "stop", "guildId": "897862146422104065"}
+2022-02-08 01:46:46.119  WARN 20772 --- [XNIO-1 I/O-13] lavalink.server.io.SocketServer          : Shutdown resumable session with key default-node because it has the same key as a newly disconnected resumable session.
+2022-02-08 01:46:46.119  INFO 20772 --- [XNIO-1 I/O-13] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 01:46:46.121  INFO 20772 --- [XNIO-1 I/O-13] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:64120 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 01:46:50.320  INFO 20772 --- [XNIO-1 task-15] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:64136
+2022-02-08 01:46:50.324  INFO 20772 --- [XNIO-1 task-15] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:64136
+2022-02-08 01:46:50.325  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 01:46:51.919  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : {"op": "volume", "guildId": "897862146422104065", "volume": 15}
+2022-02-08 01:46:51.921  INFO 20772 --- [XNIO-1 task-16] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:torn speh"
+2022-02-08 01:46:51.996  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "13c3237818d0eaaec34e6e553203c3d2", "event": {"token": "1899187728a16b61", "guild_id": "897862146422104065", "endpoint": "us-east9995.discord.media:443"}}
+2022-02-08 01:46:52.638  INFO 20772 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: torn speh
+2022-02-08 01:46:52.750  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : {"op": "play", "guildId": "897862146422104065", "track": "QAAAYgIABFRvcm4ABFNwZWgAAAAAAARNkAALVG9xNmk5WEJXc0kAAQAraHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1Ub3E2aTlYQldzSQAHeW91dHViZQAAAAAAAAAA", "startTime": 0, "endTime": 0, "noReplace": false}
+2022-02-08 01:46:53.521  INFO 20772 --- [lava-daemon-pool-playback-1-thread-1] c.s.l.c.natives.NativeLibraryLoader      : Native library libmpg123-0: loading with filter com.sedmelluq.discord.lavaplayer.natives.ConnectorNativeLibLoader$$Lambda$574/0x0000000801261840@19ea8470
+2022-02-08 01:46:53.533  INFO 20772 --- [lava-daemon-pool-playback-1-thread-1] c.s.l.c.natives.NativeLibraryLoader      : Native library libmpg123-0: successfully loaded.
+2022-02-08 01:46:53.534  INFO 20772 --- [lava-daemon-pool-playback-1-thread-1] c.s.l.c.natives.NativeLibraryLoader      : Native library connector: loading with filter null
+2022-02-08 01:46:53.585  INFO 20772 --- [lava-daemon-pool-playback-1-thread-1] c.s.l.c.natives.NativeLibraryLoader      : Native library connector: successfully loaded.
+2022-02-08 01:47:08.421  INFO 20772 --- [pool-4-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 01:47:46.127  INFO 20772 --- [pool-5-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 01:49:37.185  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : {"op": "volume", "guildId": "897862146422104065", "volume": 15}
+2022-02-08 01:49:37.189  INFO 20772 --- [XNIO-1 task-18] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:torn speh"
+2022-02-08 01:49:37.729  INFO 20772 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: torn speh
+2022-02-08 01:51:34.780  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : {"op": "play", "guildId": "897862146422104065", "track": "QAAAYgIABFRvcm4ABFNwZWgAAAAAAARNkAALVG9xNmk5WEJXc0kAAQAraHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1Ub3E2aTlYQldzSQAHeW91dHViZQAAAAAAAAAA", "startTime": 0, "endTime": 0, "noReplace": false}
+2022-02-08 01:51:48.288  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : {"op": "stop", "guildId": "897862146422104065"}
+2022-02-08 01:56:20.597  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:64136 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 01:56:24.789  INFO 20772 --- [XNIO-1 task-20] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:58434
+2022-02-08 01:56:24.795  INFO 20772 --- [XNIO-1 task-20] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:58434
+2022-02-08 01:56:24.796  INFO 20772 --- [XNIO-1 I/O-15] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 01:57:20.609  INFO 20772 --- [pool-6-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:00:20.540  INFO 20772 --- [XNIO-1 I/O-15] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:58434 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 02:00:24.954  INFO 20772 --- [XNIO-1 task-21] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:58461
+2022-02-08 02:00:24.958  INFO 20772 --- [XNIO-1 task-21] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:58461
+2022-02-08 02:00:24.959  INFO 20772 --- [XNIO-1 I/O-16] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 02:00:25.880  INFO 20772 --- [XNIO-1 I/O-16] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "96185d3296133ae50e5f3cb7f4d60b63", "event": {"token": "d3de2f569a0b0218", "guild_id": "897862146422104065", "endpoint": "us-east9995.discord.media:443"}}
+2022-02-08 02:00:45.557  WARN 20772 --- [XNIO-1 I/O-16] lavalink.server.io.SocketServer          : Shutdown resumable session with key default-node because it has the same key as a newly disconnected resumable session.
+2022-02-08 02:00:45.558  INFO 20772 --- [XNIO-1 I/O-16] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:00:45.559  INFO 20772 --- [XNIO-1 I/O-16] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:58461 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 02:00:49.771  INFO 20772 --- [XNIO-1 task-22] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:58476
+2022-02-08 02:00:49.774  INFO 20772 --- [XNIO-1 task-22] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:58476
+2022-02-08 02:00:49.775  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 02:01:20.540  INFO 20772 --- [pool-7-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:01:45.565  INFO 20772 --- [pool-8-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:03:21.638  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:58476 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 02:03:25.748  INFO 20772 --- [XNIO-1 task-23] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:58498
+2022-02-08 02:03:25.753  INFO 20772 --- [XNIO-1 task-23] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:58498
+2022-02-08 02:03:25.753  INFO 20772 --- [XNIO-1 I/O-7] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 02:04:09.794  WARN 20772 --- [XNIO-1 I/O-7] lavalink.server.io.SocketServer          : Shutdown resumable session with key default-node because it has the same key as a newly disconnected resumable session.
+2022-02-08 02:04:09.794  INFO 20772 --- [XNIO-1 I/O-7] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:04:09.795  INFO 20772 --- [XNIO-1 I/O-7] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:58498 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 02:04:13.896  INFO 20772 --- [XNIO-1 task-24] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:58524
+2022-02-08 02:04:13.898  INFO 20772 --- [XNIO-1 task-24] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:58524
+2022-02-08 02:04:13.900  INFO 20772 --- [XNIO-1 I/O-5] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 02:04:15.892  INFO 20772 --- [XNIO-1 I/O-5] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "4944789470bbc0b3dc311e2cfe72921e", "event": {"token": "1c3362b49f92afad", "guild_id": "897862146422104065", "endpoint": "us-east9995.discord.media:443"}}
+2022-02-08 02:04:21.644  INFO 20772 --- [pool-9-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:04:27.951  INFO 20772 --- [XNIO-1 I/O-5] lavalink.server.io.SocketServer          : {"op": "stop", "guildId": "897862146422104065"}
+2022-02-08 02:05:09.806  INFO 20772 --- [pool-10-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:08:03.203  INFO 20772 --- [XNIO-1 I/O-5] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:58524 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 02:08:07.393  INFO 20772 --- [XNIO-1 task-25] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:52235
+2022-02-08 02:08:07.396  INFO 20772 --- [XNIO-1 task-25] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:52235
+2022-02-08 02:08:07.398  INFO 20772 --- [XNIO-1 I/O-18] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 02:09:03.207  INFO 20772 --- [pool-11-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:10:02.234  INFO 20772 --- [XNIO-1 I/O-18] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:52235 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 02:10:06.479  INFO 20772 --- [XNIO-1 task-26] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:52268
+2022-02-08 02:10:06.484  INFO 20772 --- [XNIO-1 task-26] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:52268
+2022-02-08 02:10:06.486  INFO 20772 --- [XNIO-1 I/O-17] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 02:10:17.095  WARN 20772 --- [XNIO-1 I/O-17] lavalink.server.io.SocketServer          : Shutdown resumable session with key default-node because it has the same key as a newly disconnected resumable session.
+2022-02-08 02:10:17.095  INFO 20772 --- [XNIO-1 I/O-17] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:10:17.096  INFO 20772 --- [XNIO-1 I/O-17] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:52268 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 02:10:21.264  INFO 20772 --- [XNIO-1 task-27] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:52279
+2022-02-08 02:10:21.266  INFO 20772 --- [XNIO-1 task-27] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:52279
+2022-02-08 02:10:21.268  INFO 20772 --- [XNIO-1 I/O-10] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 02:11:02.240  INFO 20772 --- [pool-12-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:11:17.111  INFO 20772 --- [pool-13-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:15:13.558  INFO 20772 --- [XNIO-1 I/O-10] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:52279 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 02:15:17.713  INFO 20772 --- [XNIO-1 task-28] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:62961
+2022-02-08 02:15:17.718  INFO 20772 --- [XNIO-1 task-28] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:62961
+2022-02-08 02:15:17.719  INFO 20772 --- [XNIO-1 I/O-16] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 02:15:20.194  INFO 20772 --- [XNIO-1 I/O-16] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "17c9e1d68666c3586c8ac59e0cd72503", "event": {"token": "dc29ef83b9b72d9d", "guild_id": "897862146422104065", "endpoint": "us-east9995.discord.media:443"}}
+2022-02-08 02:16:02.126  INFO 20772 --- [XNIO-1 I/O-16] lavalink.server.io.SocketServer          : {"op": "stop", "guildId": "897862146422104065"}
+2022-02-08 02:16:05.301  WARN 20772 --- [XNIO-1 I/O-16] lavalink.server.io.SocketServer          : Shutdown resumable session with key default-node because it has the same key as a newly disconnected resumable session.
+2022-02-08 02:16:05.302  INFO 20772 --- [XNIO-1 I/O-16] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:16:05.302  INFO 20772 --- [XNIO-1 I/O-16] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:62961 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 02:16:09.360  INFO 20772 --- [XNIO-1 task-29] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:62980
+2022-02-08 02:16:09.362  INFO 20772 --- [XNIO-1 task-29] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:62980
+2022-02-08 02:16:09.363  INFO 20772 --- [XNIO-1 I/O-13] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 02:16:13.573  INFO 20772 --- [pool-14-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:17:05.309  INFO 20772 --- [pool-15-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:18:54.174  INFO 20772 --- [XNIO-1 I/O-13] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:62980 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 02:18:58.364  INFO 20772 --- [XNIO-1 task-30] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:63002
+2022-02-08 02:18:58.369  INFO 20772 --- [XNIO-1 task-30] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:63002
+2022-02-08 02:18:58.370  INFO 20772 --- [XNIO-1 I/O-19] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 02:19:40.949  WARN 20772 --- [XNIO-1 I/O-19] lavalink.server.io.SocketServer          : Shutdown resumable session with key default-node because it has the same key as a newly disconnected resumable session.
+2022-02-08 02:19:40.950  INFO 20772 --- [XNIO-1 I/O-19] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:19:40.952  INFO 20772 --- [XNIO-1 I/O-19] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:63002 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 02:19:45.066  INFO 20772 --- [XNIO-1 task-31] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:63016
+2022-02-08 02:19:45.069  INFO 20772 --- [XNIO-1 task-31] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:63016
+2022-02-08 02:19:45.071  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 02:19:54.186  INFO 20772 --- [pool-16-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:20:40.957  INFO 20772 --- [pool-17-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:23:10.379  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : {"op": "volume", "guildId": "897862146422104065", "volume": 15}
+2022-02-08 02:23:10.383  INFO 20772 --- [XNIO-1 task-32] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:fyze skypath"
+2022-02-08 02:23:10.554  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "303fd5942767bbe3f86c2a85ecc41173", "event": {"token": "6f88c3b2b00a26bc", "guild_id": "897862146422104065", "endpoint": "us-east9995.discord.media:443"}}
+2022-02-08 02:23:11.109  INFO 20772 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: fyze skypath
+2022-02-08 02:23:11.311  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : {"op": "play", "guildId": "897862146422104065", "track": "QAAAdAIADkZ5emUgLSBTa3lwYXRoAAxTaGluenUgTXVzaWMAAAAAAAPE2AALaGRKVTZfZVNFbmcAAQAraHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1oZEpVNl9lU0VuZwAHeW91dHViZQAAAAAAAAAA", "startTime": 0, "endTime": 0, "noReplace": false}
+2022-02-08 02:23:15.542  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "303fd5942767bbe3f86c2a85ecc41173", "event": {"token": "6f88c3b2b00a26bc", "guild_id": "897862146422104065", "endpoint": "us-east9995.discord.media:443"}}
+2022-02-08 02:23:15.566  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "303fd5942767bbe3f86c2a85ecc41173", "event": {"token": "6f88c3b2b00a26bc", "guild_id": "897862146422104065", "endpoint": "us-east263.discord.media:443"}}
+2022-02-08 02:23:25.357  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "303fd5942767bbe3f86c2a85ecc41173", "event": {"token": "6f88c3b2b00a26bc", "guild_id": "897862146422104065", "endpoint": "us-east263.discord.media:443"}}
+2022-02-08 02:23:25.372  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "303fd5942767bbe3f86c2a85ecc41173", "event": {"token": "6f88c3b2b00a26bc", "guild_id": "897862146422104065", "endpoint": "us-east9995.discord.media:443"}}
+2022-02-08 02:23:28.181  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : {"op": "stop", "guildId": "897862146422104065"}
+2022-02-08 02:25:13.313  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:63016 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 02:25:17.650  INFO 20772 --- [XNIO-1 task-34] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:59341
+2022-02-08 02:25:17.654  INFO 20772 --- [XNIO-1 task-34] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:59341
+2022-02-08 02:25:17.655  INFO 20772 --- [XNIO-1 I/O-16] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 02:26:13.327  INFO 20772 --- [pool-18-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:28:55.569  INFO 20772 --- [XNIO-1 I/O-16] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:59341 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 02:28:59.836  INFO 20772 --- [XNIO-1 task-35] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:61334
+2022-02-08 02:28:59.842  INFO 20772 --- [XNIO-1 task-35] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:61334
+2022-02-08 02:28:59.843  INFO 20772 --- [XNIO-1 I/O-15] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 02:29:45.600  WARN 20772 --- [XNIO-1 I/O-15] lavalink.server.io.SocketServer          : Shutdown resumable session with key default-node because it has the same key as a newly disconnected resumable session.
+2022-02-08 02:29:45.600  INFO 20772 --- [XNIO-1 I/O-15] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:29:45.601  INFO 20772 --- [XNIO-1 I/O-15] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:61334 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 02:29:49.755  INFO 20772 --- [XNIO-1 task-36] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:61361
+2022-02-08 02:29:49.757  INFO 20772 --- [XNIO-1 task-36] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:61361
+2022-02-08 02:29:49.761  INFO 20772 --- [XNIO-1 I/O-16] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 02:29:55.583  INFO 20772 --- [pool-19-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:30:45.604  INFO 20772 --- [pool-20-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:35:49.982  INFO 20772 --- [XNIO-1 I/O-16] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:61361 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 02:35:54.235  INFO 20772 --- [XNIO-1 task-37] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:61421
+2022-02-08 02:35:54.240  INFO 20772 --- [XNIO-1 task-37] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:61421
+2022-02-08 02:35:54.241  INFO 20772 --- [XNIO-1 I/O-16] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 02:36:11.997  WARN 20772 --- [XNIO-1 I/O-16] lavalink.server.io.SocketServer          : Shutdown resumable session with key default-node because it has the same key as a newly disconnected resumable session.
+2022-02-08 02:36:11.998  INFO 20772 --- [XNIO-1 I/O-16] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:36:11.999  INFO 20772 --- [XNIO-1 I/O-16] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:61421 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 02:36:16.082  INFO 20772 --- [XNIO-1 task-38] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:61434
+2022-02-08 02:36:16.083  INFO 20772 --- [XNIO-1 task-38] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:61434
+2022-02-08 02:36:16.084  INFO 20772 --- [XNIO-1 I/O-15] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 02:36:28.031  WARN 20772 --- [XNIO-1 I/O-15] lavalink.server.io.SocketServer          : Shutdown resumable session with key default-node because it has the same key as a newly disconnected resumable session.
+2022-02-08 02:36:28.031  INFO 20772 --- [XNIO-1 I/O-15] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:36:28.032  INFO 20772 --- [XNIO-1 I/O-15] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:61434 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 02:36:32.114  INFO 20772 --- [XNIO-1 task-39] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:61447
+2022-02-08 02:36:32.117  INFO 20772 --- [XNIO-1 task-39] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:61447
+2022-02-08 02:36:32.118  INFO 20772 --- [XNIO-1 I/O-14] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 02:36:49.995  INFO 20772 --- [pool-21-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:37:10.518  INFO 20772 --- [XNIO-1 I/O-14] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:61447 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 02:37:12.004  INFO 20772 --- [pool-22-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:37:14.613  INFO 20772 --- [XNIO-1 task-40] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:61460
+2022-02-08 02:37:14.618  INFO 20772 --- [XNIO-1 task-40] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:61460
+2022-02-08 02:37:14.619  INFO 20772 --- [XNIO-1 I/O-13] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 02:37:23.237  INFO 20772 --- [XNIO-1 I/O-13] lavalink.server.io.SocketServer          : {"op": "volume", "guildId": "897862146422104065", "volume": 15}
+2022-02-08 02:37:23.240  INFO 20772 --- [XNIO-1 task-41] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:torn speh"
+2022-02-08 02:37:23.374  INFO 20772 --- [XNIO-1 I/O-13] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "c8b7833d4301005c344d08525df6d338", "event": {"token": "88077196dcdadab3", "guild_id": "897862146422104065", "endpoint": "us-east9995.discord.media:443"}}
+2022-02-08 02:37:23.941  INFO 20772 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: torn speh
+2022-02-08 02:37:24.050  INFO 20772 --- [XNIO-1 I/O-13] lavalink.server.io.SocketServer          : {"op": "play", "guildId": "897862146422104065", "track": "QAAAYgIABFRvcm4ABFNwZWgAAAAAAARNkAALVG9xNmk5WEJXc0kAAQAraHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1Ub3E2aTlYQldzSQAHeW91dHViZQAAAAAAAAAA", "startTime": 0, "endTime": 0, "noReplace": false}
+2022-02-08 02:37:26.131  INFO 20772 --- [XNIO-1 I/O-13] lavalink.server.io.SocketServer          : {"op": "volume", "guildId": "897862146422104065", "volume": 15}
+2022-02-08 02:37:26.133  INFO 20772 --- [XNIO-1 task-43] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:torn speh"
+2022-02-08 02:37:26.600  INFO 20772 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: torn speh
+2022-02-08 02:37:28.035  INFO 20772 --- [pool-23-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:37:34.446  INFO 20772 --- [XNIO-1 I/O-13] lavalink.server.io.SocketServer          : {"op": "play", "guildId": "897862146422104065", "track": "QAAAYgIABFRvcm4ABFNwZWgAAAAAAARNkAALVG9xNmk5WEJXc0kAAQAraHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1Ub3E2aTlYQldzSQAHeW91dHViZQAAAAAAAAAA", "startTime": 0, "endTime": 0, "noReplace": false}
+2022-02-08 02:37:45.271  INFO 20772 --- [XNIO-1 I/O-13] lavalink.server.io.SocketServer          : {"op": "stop", "guildId": "897862146422104065"}
+2022-02-08 02:38:10.522  INFO 20772 --- [pool-24-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:38:24.703  INFO 20772 --- [XNIO-1 I/O-13] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:61460 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 02:38:28.899  INFO 20772 --- [XNIO-1 task-45] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:61479
+2022-02-08 02:38:28.902  INFO 20772 --- [XNIO-1 task-45] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:61479
+2022-02-08 02:38:28.903  INFO 20772 --- [XNIO-1 I/O-10] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 02:39:24.710  INFO 20772 --- [pool-25-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:41:07.395  INFO 20772 --- [XNIO-1 I/O-10] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:61479 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 02:41:11.619  INFO 20772 --- [XNIO-1 task-46] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:61512
+2022-02-08 02:41:11.626  INFO 20772 --- [XNIO-1 task-46] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:61512
+2022-02-08 02:41:11.626  INFO 20772 --- [XNIO-1 I/O-9] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 02:42:07.399  INFO 20772 --- [pool-26-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:46:41.734  INFO 20772 --- [XNIO-1 I/O-9] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:61512 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 02:46:45.848  INFO 20772 --- [XNIO-1 task-47] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:56444
+2022-02-08 02:46:45.852  INFO 20772 --- [XNIO-1 task-47] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:56444
+2022-02-08 02:46:45.853  INFO 20772 --- [XNIO-1 I/O-5] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 02:46:55.732  INFO 20772 --- [XNIO-1 I/O-5] lavalink.server.io.SocketServer          : {"op": "volume", "guildId": "897862146422104065", "volume": 15}
+2022-02-08 02:46:55.734  INFO 20772 --- [XNIO-1 task-48] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:torn speh"
+2022-02-08 02:46:55.877  INFO 20772 --- [XNIO-1 I/O-5] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "bfb96e1c059de78494ac15774d3fa35a", "event": {"token": "4cc8afd351857072", "guild_id": "897862146422104065", "endpoint": "us-east9995.discord.media:443"}}
+2022-02-08 02:46:56.353  INFO 20772 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: torn speh
+2022-02-08 02:46:56.489  INFO 20772 --- [XNIO-1 I/O-5] lavalink.server.io.SocketServer          : {"op": "play", "guildId": "897862146422104065", "track": "QAAAYgIABFRvcm4ABFNwZWgAAAAAAARNkAALVG9xNmk5WEJXc0kAAQAraHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1Ub3E2aTlYQldzSQAHeW91dHViZQAAAAAAAAAA", "startTime": 0, "endTime": 0, "noReplace": false}
+2022-02-08 02:47:02.630  INFO 20772 --- [XNIO-1 I/O-5] lavalink.server.io.SocketServer          : {"op": "seek", "guildId": "897862146422104065", "position": 95287.03344726562}
+2022-02-08 02:47:08.845  INFO 20772 --- [XNIO-1 I/O-5] lavalink.server.io.SocketServer          : {"op": "seek", "guildId": "897862146422104065", "position": 55211.21484375}
+2022-02-08 02:47:14.684  INFO 20772 --- [XNIO-1 I/O-5] lavalink.server.io.SocketServer          : {"op": "seek", "guildId": "897862146422104065", "position": 149733.05224609375}
+2022-02-08 02:47:18.911  INFO 20772 --- [XNIO-1 I/O-5] lavalink.server.io.SocketServer          : {"op": "seek", "guildId": "897862146422104065", "position": 0.0}
+2022-02-08 02:47:33.328  INFO 20772 --- [XNIO-1 I/O-5] lavalink.server.io.SocketServer          : {"op": "stop", "guildId": "897862146422104065"}
+2022-02-08 02:47:41.741  INFO 20772 --- [pool-27-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:47:55.969  INFO 20772 --- [XNIO-1 I/O-5] lavalink.server.io.SocketServer          : {"op": "volume", "guildId": "897862146422104065", "volume": 15}
+2022-02-08 02:47:55.972  INFO 20772 --- [XNIO-1 task-50] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:torn speh"
+2022-02-08 02:47:56.026  INFO 20772 --- [XNIO-1 I/O-5] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "bfb96e1c059de78494ac15774d3fa35a", "event": {"token": "4cc8afd351857072", "guild_id": "897862146422104065", "endpoint": "us-east9995.discord.media:443"}}
+2022-02-08 02:47:56.042  INFO 20772 --- [XNIO-1 I/O-5] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "bfb96e1c059de78494ac15774d3fa35a", "event": {"token": "251a642e869b9011", "guild_id": "897862146422104065", "endpoint": "us-east9995.discord.media:443"}}
+2022-02-08 02:47:56.553  INFO 20772 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: torn speh
+2022-02-08 02:47:56.777  INFO 20772 --- [XNIO-1 I/O-5] lavalink.server.io.SocketServer          : {"op": "play", "guildId": "897862146422104065", "track": "QAAAcAIAC1NwZWggLSBUb3JuAAtub3RoaW5nbmVzcwAAAAAABE2QAAtHRjNUSFpralMtNAABACtodHRwczovL3d3dy55b3V0dWJlLmNvbS93YXRjaD92PUdGM1RIWmtqUy00AAd5b3V0dWJlAAAAAAAAAAA=", "startTime": 0, "endTime": 0, "noReplace": false}
+2022-02-08 02:48:11.248  INFO 20772 --- [XNIO-1 I/O-5] lavalink.server.io.SocketServer          : {"op": "seek", "guildId": "897862146422104065", "position": 14436.4716796875}
+2022-02-08 02:48:17.069  INFO 20772 --- [XNIO-1 I/O-5] lavalink.server.io.SocketServer          : {"op": "seek", "guildId": "897862146422104065", "position": 109030.2509765625}
+2022-02-08 02:48:23.917  INFO 20772 --- [XNIO-1 I/O-5] lavalink.server.io.SocketServer          : {"op": "stop", "guildId": "897862146422104065"}
+2022-02-08 02:50:00.977  INFO 20772 --- [XNIO-1 I/O-5] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:56444 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 02:50:05.158  INFO 20772 --- [XNIO-1 task-52] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:56632
+2022-02-08 02:50:05.162  INFO 20772 --- [XNIO-1 task-52] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:56632
+2022-02-08 02:50:05.164  INFO 20772 --- [XNIO-1 I/O-9] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 02:50:55.808  WARN 20772 --- [XNIO-1 I/O-9] lavalink.server.io.SocketServer          : Shutdown resumable session with key default-node because it has the same key as a newly disconnected resumable session.
+2022-02-08 02:50:55.808  INFO 20772 --- [XNIO-1 I/O-9] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:50:55.810  INFO 20772 --- [XNIO-1 I/O-9] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:56632 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 02:50:59.958  INFO 20772 --- [XNIO-1 task-53] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:56658
+2022-02-08 02:50:59.960  INFO 20772 --- [XNIO-1 task-53] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:56658
+2022-02-08 02:50:59.962  INFO 20772 --- [XNIO-1 I/O-7] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 02:51:00.979  INFO 20772 --- [pool-28-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:51:35.855  INFO 20772 --- [XNIO-1 I/O-7] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:56658 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 02:51:39.999  INFO 20772 --- [XNIO-1 task-54] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:56683
+2022-02-08 02:51:40.001  INFO 20772 --- [XNIO-1 task-54] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:56683
+2022-02-08 02:51:40.002  INFO 20772 --- [XNIO-1 I/O-2] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 02:51:52.353  WARN 20772 --- [XNIO-1 I/O-2] lavalink.server.io.SocketServer          : Shutdown resumable session with key default-node because it has the same key as a newly disconnected resumable session.
+2022-02-08 02:51:52.353  INFO 20772 --- [XNIO-1 I/O-2] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:51:52.354  INFO 20772 --- [XNIO-1 I/O-2] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:56683 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 02:51:55.813  INFO 20772 --- [pool-29-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:51:56.488  INFO 20772 --- [XNIO-1 task-55] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:56695
+2022-02-08 02:51:56.491  INFO 20772 --- [XNIO-1 task-55] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:56695
+2022-02-08 02:51:56.492  INFO 20772 --- [XNIO-1 I/O-18] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 02:52:09.507  INFO 20772 --- [XNIO-1 I/O-18] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:56695 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 02:52:13.718  INFO 20772 --- [XNIO-1 task-56] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:56707
+2022-02-08 02:52:13.721  INFO 20772 --- [XNIO-1 task-56] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:56707
+2022-02-08 02:52:13.722  INFO 20772 --- [XNIO-1 I/O-14] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 02:52:35.860  INFO 20772 --- [pool-30-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:52:52.363  INFO 20772 --- [pool-31-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:53:09.514  INFO 20772 --- [pool-32-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:53:25.639  INFO 20772 --- [XNIO-1 I/O-14] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:56707 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 02:53:29.905  INFO 20772 --- [XNIO-1 task-57] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:56729
+2022-02-08 02:53:29.908  INFO 20772 --- [XNIO-1 task-57] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:56729
+2022-02-08 02:53:29.910  INFO 20772 --- [XNIO-1 I/O-20] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 02:53:45.862  WARN 20772 --- [XNIO-1 I/O-20] lavalink.server.io.SocketServer          : Shutdown resumable session with key default-node because it has the same key as a newly disconnected resumable session.
+2022-02-08 02:53:45.863  INFO 20772 --- [XNIO-1 I/O-20] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:53:45.865  INFO 20772 --- [XNIO-1 I/O-20] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:56729 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 02:53:50.211  INFO 20772 --- [XNIO-1 task-58] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:56742
+2022-02-08 02:53:50.214  INFO 20772 --- [XNIO-1 task-58] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:56742
+2022-02-08 02:53:50.215  INFO 20772 --- [XNIO-1 I/O-19] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 02:54:18.589  WARN 20772 --- [XNIO-1 I/O-19] lavalink.server.io.SocketServer          : Shutdown resumable session with key default-node because it has the same key as a newly disconnected resumable session.
+2022-02-08 02:54:18.590  INFO 20772 --- [XNIO-1 I/O-19] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:54:18.591  INFO 20772 --- [XNIO-1 I/O-19] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:56742 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 02:54:22.805  INFO 20772 --- [XNIO-1 task-59] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:56756
+2022-02-08 02:54:22.809  INFO 20772 --- [XNIO-1 task-59] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:56756
+2022-02-08 02:54:22.810  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 02:54:25.650  INFO 20772 --- [pool-33-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:54:38.441  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:56756 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 02:54:42.610  INFO 20772 --- [XNIO-1 task-60] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:56779
+2022-02-08 02:54:42.612  INFO 20772 --- [XNIO-1 task-60] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:56779
+2022-02-08 02:54:42.613  INFO 20772 --- [XNIO-1 I/O-10] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 02:54:45.876  INFO 20772 --- [pool-34-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:55:18.597  INFO 20772 --- [pool-35-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:55:38.453  INFO 20772 --- [pool-36-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:56:12.672  INFO 20772 --- [XNIO-1 I/O-10] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:56779 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 02:56:16.993  INFO 20772 --- [XNIO-1 task-61] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:56797
+2022-02-08 02:56:16.995  INFO 20772 --- [XNIO-1 task-61] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:56797
+2022-02-08 02:56:16.997  INFO 20772 --- [XNIO-1 I/O-4] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 02:57:12.677  INFO 20772 --- [pool-37-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:58:21.415  INFO 20772 --- [XNIO-1 I/O-4] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:56797 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 02:58:25.752  INFO 20772 --- [XNIO-1 task-62] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:56828
+2022-02-08 02:58:25.754  INFO 20772 --- [XNIO-1 task-62] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:56828
+2022-02-08 02:58:25.755  INFO 20772 --- [XNIO-1 I/O-17] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 02:59:10.467  WARN 20772 --- [XNIO-1 I/O-17] lavalink.server.io.SocketServer          : Shutdown resumable session with key default-node because it has the same key as a newly disconnected resumable session.
+2022-02-08 02:59:10.467  INFO 20772 --- [XNIO-1 I/O-17] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 02:59:10.469  INFO 20772 --- [XNIO-1 I/O-17] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:56828 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 02:59:14.604  INFO 20772 --- [XNIO-1 task-63] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:56842
+2022-02-08 02:59:14.609  INFO 20772 --- [XNIO-1 task-63] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:56842
+2022-02-08 02:59:14.615  INFO 20772 --- [XNIO-1 I/O-19] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 02:59:21.426  INFO 20772 --- [pool-38-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 03:00:02.647  INFO 20772 --- [XNIO-1 I/O-19] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:56842 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 03:00:07.195  INFO 20772 --- [XNIO-1 task-64] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:56871
+2022-02-08 03:00:07.198  INFO 20772 --- [XNIO-1 task-64] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:56871
+2022-02-08 03:00:07.200  INFO 20772 --- [XNIO-1 I/O-6] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 03:00:10.478  INFO 20772 --- [pool-39-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 03:00:40.467  INFO 20772 --- [XNIO-1 I/O-6] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:56871 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 03:00:44.552  INFO 20772 --- [XNIO-1 task-65] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:56885
+2022-02-08 03:00:44.554  INFO 20772 --- [XNIO-1 task-65] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:56885
+2022-02-08 03:00:44.555  INFO 20772 --- [XNIO-1 I/O-8] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 03:01:02.651  INFO 20772 --- [pool-40-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 03:01:20.543  INFO 20772 --- [XNIO-1 I/O-8] lavalink.server.io.SocketServer          : {"op": "volume", "guildId": "897862146422104065", "volume": 15}
+2022-02-08 03:01:20.549  INFO 20772 --- [XNIO-1 task-66] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:torn speh"
+2022-02-08 03:01:20.632  INFO 20772 --- [XNIO-1 I/O-8] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "a67939ee94bb4316f0b1b51ec80f6f3c", "event": {"token": "c3480c7c152d2351", "guild_id": "897862146422104065", "endpoint": "us-east9995.discord.media:443"}}
+2022-02-08 03:01:21.221  INFO 20772 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: torn speh
+2022-02-08 03:01:21.387  INFO 20772 --- [XNIO-1 I/O-8] lavalink.server.io.SocketServer          : {"op": "play", "guildId": "897862146422104065", "track": "QAAAYgIABFRvcm4ABFNwZWgAAAAAAARNkAALVG9xNmk5WEJXc0kAAQAraHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1Ub3E2aTlYQldzSQAHeW91dHViZQAAAAAAAAAA", "startTime": 0, "endTime": 0, "noReplace": false}
+2022-02-08 03:01:38.289  INFO 20772 --- [XNIO-1 I/O-8] lavalink.server.io.SocketServer          : {"op": "volume", "guildId": "897862146422104065", "volume": 15}
+2022-02-08 03:01:38.292  INFO 20772 --- [XNIO-1 task-68] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:torn speh"
+2022-02-08 03:01:38.792  INFO 20772 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: torn speh
+2022-02-08 03:01:40.473  INFO 20772 --- [pool-41-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 03:02:00.921  INFO 20772 --- [XNIO-1 I/O-8] lavalink.server.io.SocketServer          : {"op": "stop", "guildId": "897862146422104065"}
+2022-02-08 03:02:04.120  INFO 20772 --- [XNIO-1 I/O-8] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:56885 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 03:02:08.377  INFO 20772 --- [XNIO-1 task-70] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:56911
+2022-02-08 03:02:08.379  INFO 20772 --- [XNIO-1 task-70] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:56911
+2022-02-08 03:02:08.380  INFO 20772 --- [XNIO-1 I/O-6] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 03:02:35.378  WARN 20772 --- [XNIO-1 I/O-6] lavalink.server.io.SocketServer          : Shutdown resumable session with key default-node because it has the same key as a newly disconnected resumable session.
+2022-02-08 03:02:35.378  INFO 20772 --- [XNIO-1 I/O-6] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 03:02:35.380  INFO 20772 --- [XNIO-1 I/O-6] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:56911 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 03:02:39.654  INFO 20772 --- [XNIO-1 task-71] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:56938
+2022-02-08 03:02:39.657  INFO 20772 --- [XNIO-1 task-71] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:56938
+2022-02-08 03:02:39.658  INFO 20772 --- [XNIO-1 I/O-7] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 03:02:44.634  INFO 20772 --- [XNIO-1 I/O-7] lavalink.server.io.SocketServer          : {"op": "volume", "guildId": "897862146422104065", "volume": 15}
+2022-02-08 03:02:44.637  INFO 20772 --- [XNIO-1 task-72] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:torn speh"
+2022-02-08 03:02:44.710  INFO 20772 --- [XNIO-1 I/O-7] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "f809e88df16eda7d9e27fef5ee19e829", "event": {"token": "e01e3ddf0970a0f4", "guild_id": "897862146422104065", "endpoint": "us-east9995.discord.media:443"}}
+2022-02-08 03:02:45.146  INFO 20772 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: torn speh
+2022-02-08 03:02:45.292  INFO 20772 --- [XNIO-1 I/O-7] lavalink.server.io.SocketServer          : {"op": "play", "guildId": "897862146422104065", "track": "QAAAYgIABFRvcm4ABFNwZWgAAAAAAARNkAALVG9xNmk5WEJXc0kAAQAraHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1Ub3E2aTlYQldzSQAHeW91dHViZQAAAAAAAAAA", "startTime": 0, "endTime": 0, "noReplace": false}
+2022-02-08 03:02:49.382  INFO 20772 --- [XNIO-1 I/O-7] lavalink.server.io.SocketServer          : {"op": "volume", "guildId": "897862146422104065", "volume": 15}
+2022-02-08 03:02:49.385  INFO 20772 --- [XNIO-1 task-74] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:torn speh"
+2022-02-08 03:02:49.906  INFO 20772 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: torn speh
+2022-02-08 03:03:04.126  INFO 20772 --- [pool-42-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 03:03:13.006  INFO 20772 --- [XNIO-1 I/O-7] lavalink.server.io.SocketServer          : {"op": "stop", "guildId": "897862146422104065"}
+2022-02-08 03:03:17.098  INFO 20772 --- [XNIO-1 I/O-7] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:56938 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 03:03:21.421  INFO 20772 --- [XNIO-1 task-76] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:56955
+2022-02-08 03:03:21.423  INFO 20772 --- [XNIO-1 task-76] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:56955
+2022-02-08 03:03:21.425  INFO 20772 --- [XNIO-1 I/O-18] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 03:03:25.458  INFO 20772 --- [XNIO-1 I/O-18] lavalink.server.io.SocketServer          : {"op": "volume", "guildId": "897862146422104065", "volume": 15}
+2022-02-08 03:03:25.463  INFO 20772 --- [XNIO-1 task-77] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:torn speh"
+2022-02-08 03:03:25.531  INFO 20772 --- [XNIO-1 I/O-18] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "f119492c781f78e950fe42723b1a32ab", "event": {"token": "d4ce517299b5b487", "guild_id": "897862146422104065", "endpoint": "us-east9995.discord.media:443"}}
+2022-02-08 03:03:25.931  INFO 20772 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: torn speh
+2022-02-08 03:03:26.054  INFO 20772 --- [XNIO-1 I/O-18] lavalink.server.io.SocketServer          : {"op": "play", "guildId": "897862146422104065", "track": "QAAAYgIABFRvcm4ABFNwZWgAAAAAAARNkAALVG9xNmk5WEJXc0kAAQAraHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1Ub3E2aTlYQldzSQAHeW91dHViZQAAAAAAAAAA", "startTime": 0, "endTime": 0, "noReplace": false}
+2022-02-08 03:03:28.468  INFO 20772 --- [XNIO-1 I/O-18] lavalink.server.io.SocketServer          : {"op": "stop", "guildId": "897862146422104065"}
+2022-02-08 03:03:35.392  INFO 20772 --- [pool-43-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 03:04:17.102  INFO 20772 --- [pool-44-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 03:06:08.595  INFO 20772 --- [XNIO-1 I/O-18] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:56955 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 03:06:12.895  INFO 20772 --- [XNIO-1 task-79] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:59115
+2022-02-08 03:06:12.904  INFO 20772 --- [XNIO-1 task-79] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:59115
+2022-02-08 03:06:12.905  INFO 20772 --- [XNIO-1 I/O-18] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 03:06:16.073  INFO 20772 --- [XNIO-1 I/O-18] lavalink.server.io.SocketServer          : {"op": "volume", "guildId": "897862146422104065", "volume": 15}
+2022-02-08 03:06:16.077  INFO 20772 --- [XNIO-1 task-80] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:TORN SPEH"
+2022-02-08 03:06:16.222  INFO 20772 --- [XNIO-1 I/O-18] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "77557165d03e5ac99475da22ed1c8ed8", "event": {"token": "f69bef0e1eae9072", "guild_id": "897862146422104065", "endpoint": "us-east9995.discord.media:443"}}
+2022-02-08 03:06:16.638  INFO 20772 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: TORN SPEH
+2022-02-08 03:06:16.814  INFO 20772 --- [XNIO-1 I/O-18] lavalink.server.io.SocketServer          : {"op": "play", "guildId": "897862146422104065", "track": "QAAAYgIABFRvcm4ABFNwZWgAAAAAAARNkAALVG9xNmk5WEJXc0kAAQAraHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1Ub3E2aTlYQldzSQAHeW91dHViZQAAAAAAAAAA", "startTime": 0, "endTime": 0, "noReplace": false}
+2022-02-08 03:06:33.535  INFO 20772 --- [XNIO-1 I/O-18] lavalink.server.io.SocketServer          : {"op": "volume", "guildId": "897862146422104065", "volume": 15}
+2022-02-08 03:06:33.538  INFO 20772 --- [XNIO-1 task-82] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:COSMICA SUBLAB"
+2022-02-08 03:06:34.144  INFO 20772 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: COSMICA SUBLAB
+2022-02-08 03:07:08.605  INFO 20772 --- [pool-45-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 03:10:58.593  INFO 20772 --- [XNIO-1 I/O-18] lavalink.server.io.SocketServer          : {"op": "play", "guildId": "897862146422104065", "track": "QAAAeQIAGVN1YmxhYiAmIEF6YWxlaCAtIENvc21pY2EABlN1YmxhYgAAAAAABPWIAAtVbjdnS2lNcXNKbwABACtodHRwczovL3d3dy55b3V0dWJlLmNvbS93YXRjaD92PVVuN2dLaU1xc0pvAAd5b3V0dWJlAAAAAAAAAAA=", "startTime": 0, "endTime": 0, "noReplace": false}
+2022-02-08 03:16:23.826  INFO 20772 --- [XNIO-1 I/O-18] lavalink.server.io.SocketServer          : {"op": "stop", "guildId": "897862146422104065"}
+2022-02-08 03:21:16.945  INFO 20772 --- [XNIO-1 I/O-18] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:59115 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 03:21:21.411  INFO 20772 --- [XNIO-1 task-84] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:53096
+2022-02-08 03:21:21.423  INFO 20772 --- [XNIO-1 task-84] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:53096
+2022-02-08 03:21:21.424  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 03:22:09.561  WARN 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : Shutdown resumable session with key default-node because it has the same key as a newly disconnected resumable session.
+2022-02-08 03:22:09.562  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 03:22:09.567  INFO 20772 --- [XNIO-1 I/O-1] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:53096 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 03:22:13.960  INFO 20772 --- [XNIO-1 task-85] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:53108
+2022-02-08 03:22:13.963  INFO 20772 --- [XNIO-1 task-85] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:53108
+2022-02-08 03:22:13.964  INFO 20772 --- [XNIO-1 I/O-17] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 03:22:16.952  INFO 20772 --- [pool-46-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 03:22:25.122  INFO 20772 --- [XNIO-1 I/O-17] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:53108 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 03:22:29.739  INFO 20772 --- [XNIO-1 task-86] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:53120
+2022-02-08 03:22:29.742  INFO 20772 --- [XNIO-1 task-86] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:53120
+2022-02-08 03:22:29.743  INFO 20772 --- [XNIO-1 I/O-13] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 03:23:09.574  INFO 20772 --- [pool-47-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 03:23:25.134  INFO 20772 --- [pool-48-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 03:25:22.066  INFO 20772 --- [XNIO-1 I/O-13] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:53120 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 03:25:26.522  INFO 20772 --- [XNIO-1 task-87] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:53141
+2022-02-08 03:25:26.527  INFO 20772 --- [XNIO-1 task-87] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:53141
+2022-02-08 03:25:26.528  INFO 20772 --- [XNIO-1 I/O-16] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 03:25:32.115  INFO 20772 --- [XNIO-1 I/O-16] lavalink.server.io.SocketServer          : {"op": "volume", "guildId": "897862146422104065", "volume": 15}
+2022-02-08 03:25:32.123  INFO 20772 --- [XNIO-1 task-88] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:torn speh"
+2022-02-08 03:25:32.265  INFO 20772 --- [XNIO-1 I/O-16] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "d365bacae554c576fd965c6914b70ac8", "event": {"token": "c402ae92dd80a2ae", "guild_id": "897862146422104065", "endpoint": "us-east9995.discord.media:443"}}
+2022-02-08 03:25:32.857  INFO 20772 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: torn speh
+2022-02-08 03:25:33.017  INFO 20772 --- [XNIO-1 I/O-16] lavalink.server.io.SocketServer          : {"op": "play", "guildId": "897862146422104065", "track": "QAAAYgIABFRvcm4ABFNwZWgAAAAAAARNkAALVG9xNmk5WEJXc0kAAQAraHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1Ub3E2aTlYQldzSQAHeW91dHViZQAAAAAAAAAA", "startTime": 0, "endTime": 0, "noReplace": false}
+2022-02-08 03:26:12.272  WARN 20772 --- [XNIO-1 I/O-16] lavalink.server.io.SocketServer          : Shutdown resumable session with key default-node because it has the same key as a newly disconnected resumable session.
+2022-02-08 03:26:12.272  INFO 20772 --- [XNIO-1 I/O-16] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 03:26:12.273  INFO 20772 --- [XNIO-1 I/O-16] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:53141 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 03:26:16.594  INFO 20772 --- [XNIO-1 task-90] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:53173
+2022-02-08 03:26:16.597  INFO 20772 --- [XNIO-1 task-90] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:53173
+2022-02-08 03:26:16.599  INFO 20772 --- [XNIO-1 I/O-12] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 03:26:22.079  INFO 20772 --- [pool-49-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 03:26:24.821  INFO 20772 --- [XNIO-1 I/O-12] lavalink.server.io.SocketServer          : {"op": "volume", "guildId": "897862146422104065", "volume": 15}
+2022-02-08 03:26:24.825  INFO 20772 --- [XNIO-1 task-91] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:torn speh"
+2022-02-08 03:26:24.884  INFO 20772 --- [XNIO-1 I/O-12] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "2be9691048d89549e2e443e103fb6262", "event": {"token": "c25c25ef3421d18c", "guild_id": "897862146422104065", "endpoint": "us-east9995.discord.media:443"}}
+2022-02-08 03:26:25.374  INFO 20772 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: torn speh
+2022-02-08 03:26:25.528  INFO 20772 --- [XNIO-1 I/O-12] lavalink.server.io.SocketServer          : {"op": "play", "guildId": "897862146422104065", "track": "QAAAYgIABFRvcm4ABFNwZWgAAAAAAARNkAALVG9xNmk5WEJXc0kAAQAraHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1Ub3E2aTlYQldzSQAHeW91dHViZQAAAAAAAAAA", "startTime": 0, "endTime": 0, "noReplace": false}
+2022-02-08 03:27:12.285  INFO 20772 --- [pool-50-thread-1] lavalink.server.io.SocketContext         : Shutting down 1 playing players.
+2022-02-08 03:28:27.668  INFO 20772 --- [XNIO-1 I/O-12] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:53173 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 03:28:32.007  INFO 20772 --- [XNIO-1 task-93] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:53194
+2022-02-08 03:28:32.013  INFO 20772 --- [XNIO-1 task-93] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:53194
+2022-02-08 03:28:32.014  INFO 20772 --- [XNIO-1 I/O-15] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 03:28:32.579  INFO 20772 --- [XNIO-1 I/O-15] lavalink.server.io.SocketServer          : {"op": "volume", "guildId": "897862146422104065", "volume": 15}
+2022-02-08 03:28:32.581  INFO 20772 --- [XNIO-1 task-94] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:torn speh"
+2022-02-08 03:28:32.651  INFO 20772 --- [XNIO-1 I/O-15] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "bec156d3806c6481c7b4bcb39c4ed7ba", "event": {"token": "32fb56fb57b76e68", "guild_id": "897862146422104065", "endpoint": "us-east9995.discord.media:443"}}
+2022-02-08 03:28:33.130  INFO 20772 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: torn speh
+2022-02-08 03:28:33.269  INFO 20772 --- [XNIO-1 I/O-15] lavalink.server.io.SocketServer          : {"op": "play", "guildId": "897862146422104065", "track": "QAAAYgIABFRvcm4ABFNwZWgAAAAAAARNkAALVG9xNmk5WEJXc0kAAQAraHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1Ub3E2aTlYQldzSQAHeW91dHViZQAAAAAAAAAA", "startTime": 0, "endTime": 0, "noReplace": false}
+2022-02-08 03:29:10.633  WARN 20772 --- [XNIO-1 I/O-15] lavalink.server.io.SocketServer          : Shutdown resumable session with key default-node because it has the same key as a newly disconnected resumable session.
+2022-02-08 03:29:10.634  INFO 20772 --- [XNIO-1 I/O-15] lavalink.server.io.SocketContext         : Shutting down 1 playing players.
+2022-02-08 03:29:10.636  INFO 20772 --- [XNIO-1 I/O-15] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:53194 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 03:29:14.794  INFO 20772 --- [XNIO-1 task-96] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:53213
+2022-02-08 03:29:14.799  INFO 20772 --- [XNIO-1 task-96] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:53213
+2022-02-08 03:29:14.799  INFO 20772 --- [XNIO-1 I/O-12] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 03:29:16.882  INFO 20772 --- [XNIO-1 I/O-12] lavalink.server.io.SocketServer          : {"op": "volume", "guildId": "897862146422104065", "volume": 15}
+2022-02-08 03:29:16.885  INFO 20772 --- [XNIO-1 task-97] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:torn speh"
+2022-02-08 03:29:16.945  INFO 20772 --- [XNIO-1 I/O-12] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "5c998d3475795e8ca710fb9674b59936", "event": {"token": "33a0d116f611b7bd", "guild_id": "897862146422104065", "endpoint": "us-east9995.discord.media:443"}}
+2022-02-08 03:29:17.496  INFO 20772 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: torn speh
+2022-02-08 03:29:17.644  INFO 20772 --- [XNIO-1 I/O-12] lavalink.server.io.SocketServer          : {"op": "play", "guildId": "897862146422104065", "track": "QAAAYgIABFRvcm4ABFNwZWgAAAAAAARNkAALVG9xNmk5WEJXc0kAAQAraHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1Ub3E2aTlYQldzSQAHeW91dHViZQAAAAAAAAAA", "startTime": 0, "endTime": 0, "noReplace": false}
+2022-02-08 03:29:27.672  INFO 20772 --- [pool-51-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 03:29:50.803  INFO 20772 --- [XNIO-1 I/O-12] lavalink.server.io.SocketServer          : {"op": "stop", "guildId": "897862146422104065"}
+2022-02-08 03:29:54.740  INFO 20772 --- [XNIO-1 I/O-12] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:53213 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 03:29:59.029  INFO 20772 --- [XNIO-1 task-99] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:53230
+2022-02-08 03:29:59.035  INFO 20772 --- [XNIO-1 task-99] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:53230
+2022-02-08 03:29:59.037  INFO 20772 --- [XNIO-1 I/O-3] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 03:29:59.512  INFO 20772 --- [XNIO-1 I/O-3] lavalink.server.io.SocketServer          : {"op": "volume", "guildId": "897862146422104065", "volume": 15}
+2022-02-08 03:29:59.515  INFO 20772 --- [XNIO-1 task-100] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:torn speh"
+2022-02-08 03:29:59.584  INFO 20772 --- [XNIO-1 I/O-3] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "37d2e142bc034bea998d5959c90b07d9", "event": {"token": "fe4f40015171b7e0", "guild_id": "897862146422104065", "endpoint": "us-east9995.discord.media:443"}}
+2022-02-08 03:30:00.028  INFO 20772 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: torn speh
+2022-02-08 03:30:00.160  INFO 20772 --- [XNIO-1 I/O-3] lavalink.server.io.SocketServer          : {"op": "play", "guildId": "897862146422104065", "track": "QAAAYgIABFRvcm4ABFNwZWgAAAAAAARNkAALVG9xNmk5WEJXc0kAAQAraHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1Ub3E2aTlYQldzSQAHeW91dHViZQAAAAAAAAAA", "startTime": 0, "endTime": 0, "noReplace": false}
+2022-02-08 03:30:10.649  INFO 20772 --- [pool-52-thread-1] lavalink.server.io.SocketContext         : Shutting down 1 playing players.
+2022-02-08 03:30:54.751  INFO 20772 --- [pool-53-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 03:34:41.992  INFO 20772 --- [XNIO-1 I/O-3] lavalink.server.io.SocketServer          : {"op": "stop", "guildId": "897862146422104065"}
+2022-02-08 03:37:22.135  INFO 20772 --- [XNIO-1 I/O-3] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:53230 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 03:37:26.452  INFO 20772 --- [XNIO-1 task-102] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:53827
+2022-02-08 03:37:26.456  INFO 20772 --- [XNIO-1 task-102] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:53827
+2022-02-08 03:37:26.458  INFO 20772 --- [XNIO-1 I/O-14] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 03:38:02.161  INFO 20772 --- [XNIO-1 I/O-14] lavalink.server.io.SocketServer          : {"op": "volume", "guildId": "897862146422104065", "volume": 15}
+2022-02-08 03:38:02.164  INFO 20772 --- [XNIO-1 task-103] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:torn speh"
+2022-02-08 03:38:02.299  INFO 20772 --- [XNIO-1 I/O-14] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "b841e4af4d0f40074a4aeb3470fd6dd0", "event": {"token": "83180196e7afa476", "guild_id": "897862146422104065", "endpoint": "us-east9995.discord.media:443"}}
+2022-02-08 03:38:02.910  INFO 20772 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: torn speh
+2022-02-08 03:38:03.070  INFO 20772 --- [XNIO-1 I/O-14] lavalink.server.io.SocketServer          : {"op": "play", "guildId": "897862146422104065", "track": "QAAAYgIABFRvcm4ABFNwZWgAAAAAAARNkAALVG9xNmk5WEJXc0kAAQAraHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1Ub3E2aTlYQldzSQAHeW91dHViZQAAAAAAAAAA", "startTime": 0, "endTime": 0, "noReplace": false}
+2022-02-08 03:38:22.145  INFO 20772 --- [pool-54-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 03:38:34.526  INFO 20772 --- [XNIO-1 I/O-14] lavalink.server.io.SocketServer          : {"op": "stop", "guildId": "897862146422104065"}
+2022-02-08 03:38:36.848  INFO 20772 --- [XNIO-1 I/O-14] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:53827 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 03:38:41.227  INFO 20772 --- [XNIO-1 task-105] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:53849
+2022-02-08 03:38:41.229  INFO 20772 --- [XNIO-1 task-105] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:53849
+2022-02-08 03:38:41.231  INFO 20772 --- [XNIO-1 I/O-20] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 03:38:42.539  INFO 20772 --- [XNIO-1 I/O-20] lavalink.server.io.SocketServer          : {"op": "volume", "guildId": "897862146422104065", "volume": 15}
+2022-02-08 03:38:42.544  INFO 20772 --- [XNIO-1 task-106] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:torn speh"
+2022-02-08 03:38:42.614  INFO 20772 --- [XNIO-1 I/O-20] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "6f293ec3af357e3272ad31ff8a67cccb", "event": {"token": "5c4cc5068a7f02de", "guild_id": "897862146422104065", "endpoint": "us-east9995.discord.media:443"}}
+2022-02-08 03:38:43.044  INFO 20772 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: torn speh
+2022-02-08 03:38:43.201  INFO 20772 --- [XNIO-1 I/O-20] lavalink.server.io.SocketServer          : {"op": "play", "guildId": "897862146422104065", "track": "QAAAYgIABFRvcm4ABFNwZWgAAAAAAARNkAALVG9xNmk5WEJXc0kAAQAraHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1Ub3E2aTlYQldzSQAHeW91dHViZQAAAAAAAAAA", "startTime": 0, "endTime": 0, "noReplace": false}
+2022-02-08 03:39:36.863  INFO 20772 --- [pool-55-thread-1] lavalink.server.io.SocketContext         : Shutting down 0 playing players.
+2022-02-08 03:40:47.074  INFO 20772 --- [XNIO-1 I/O-20] lavalink.server.io.SocketServer          : Connection closed from /0:0:0:0:0:0:0:1:53849 with status CloseStatus[code=1006, reason=] -- Session can be resumed within the next 60 seconds with key default-node
+2022-02-08 03:40:51.474  INFO 20772 --- [XNIO-1 task-108] l.server.io.HandshakeInterceptorImpl     : Incoming connection from /0:0:0:0:0:0:0:1:53877
+2022-02-08 03:40:51.481  INFO 20772 --- [XNIO-1 task-108] lavalink.server.io.SocketServer          : Connection successfully established from /0:0:0:0:0:0:0:1:53877
+2022-02-08 03:40:51.482  INFO 20772 --- [XNIO-1 I/O-4] lavalink.server.io.SocketServer          : {"op": "configureResuming", "key": "default-node", "timeout": 60}
+2022-02-08 03:40:54.788  INFO 20772 --- [XNIO-1 I/O-4] lavalink.server.io.SocketServer          : {"op": "volume", "guildId": "897862146422104065", "volume": 15}
+2022-02-08 03:40:54.791  INFO 20772 --- [XNIO-1 task-109] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:torn speh"
+2022-02-08 03:40:54.860  INFO 20772 --- [XNIO-1 I/O-4] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "d814f3942346d4f09650278bfce64399", "event": {"token": "8fc2de542dec0dd5", "guild_id": "897862146422104065", "endpoint": "us-east9995.discord.media:443"}}
+2022-02-08 03:40:55.278  INFO 20772 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: torn speh
+2022-02-08 03:40:55.404  INFO 20772 --- [XNIO-1 I/O-4] lavalink.server.io.SocketServer          : {"op": "play", "guildId": "897862146422104065", "track": "QAAAYgIABFRvcm4ABFNwZWgAAAAAAARNkAALVG9xNmk5WEJXc0kAAQAraHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1Ub3E2aTlYQldzSQAHeW91dHViZQAAAAAAAAAA", "startTime": 0, "endTime": 0, "noReplace": false}
+2022-02-08 03:41:26.765  INFO 20772 --- [XNIO-1 I/O-4] lavalink.server.io.SocketServer          : {"op": "seek", "guildId": "897862146422104065", "position": 45771.876953125}
+2022-02-08 03:41:47.078  INFO 20772 --- [pool-56-thread-1] lavalink.server.io.SocketContext         : Shutting down 1 playing players.
+2022-02-08 03:42:10.877  INFO 20772 --- [XNIO-1 I/O-4] lavalink.server.io.SocketServer          : {"op": "seek", "guildId": "897862146422104065", "position": 74859.95971679688}
+2022-02-08 03:43:38.411  INFO 20772 --- [XNIO-1 I/O-4] lavalink.server.io.SocketServer          : {"op": "seek", "guildId": "897862146422104065", "position": 0.0}
+2022-02-08 03:48:18.812  INFO 20772 --- [XNIO-1 I/O-4] lavalink.server.io.SocketServer          : {"op": "seek", "guildId": "897862146422104065", "position": 0.0}
+2022-02-08 03:48:19.768  INFO 20772 --- [XNIO-1 I/O-4] lavalink.server.io.SocketServer          : {"op": "stop", "guildId": "897862146422104065"}
+2022-02-08 03:48:24.606  INFO 20772 --- [XNIO-1 I/O-4] lavalink.server.io.SocketServer          : {"op": "volume", "guildId": "897862146422104065", "volume": 15}
+2022-02-08 03:48:24.611  INFO 20772 --- [XNIO-1 task-111] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:torn speh"
+2022-02-08 03:48:24.664  INFO 20772 --- [XNIO-1 I/O-4] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "d814f3942346d4f09650278bfce64399", "event": {"token": "8fc2de542dec0dd5", "guild_id": "897862146422104065", "endpoint": "us-east9995.discord.media:443"}}
+2022-02-08 03:48:24.680  INFO 20772 --- [XNIO-1 I/O-4] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "d814f3942346d4f09650278bfce64399", "event": {"token": "dadda6a911cb03c7", "guild_id": "897862146422104065", "endpoint": "us-east9995.discord.media:443"}}
+2022-02-08 03:48:25.207  INFO 20772 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: torn speh
+2022-02-08 03:48:25.441  INFO 20772 --- [XNIO-1 I/O-4] lavalink.server.io.SocketServer          : {"op": "play", "guildId": "897862146422104065", "track": "QAAAYgIABFRvcm4ABFNwZWgAAAAAAARNkAALVG9xNmk5WEJXc0kAAQAraHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1Ub3E2aTlYQldzSQAHeW91dHViZQAAAAAAAAAA", "startTime": 0, "endTime": 0, "noReplace": false}
+2022-02-08 03:51:25.389  INFO 20772 --- [XNIO-1 I/O-4] lavalink.server.io.SocketServer          : {"op": "seek", "guildId": "897862146422104065", "position": 0.0}
+2022-02-08 03:51:29.156  INFO 20772 --- [XNIO-1 I/O-4] lavalink.server.io.SocketServer          : {"op": "seek", "guildId": "897862146422104065", "position": 197829.65014648438}
+2022-02-08 03:52:51.639  INFO 20772 --- [XNIO-1 I/O-4] lavalink.server.io.SocketServer          : {"op": "seek", "guildId": "897862146422104065", "position": 0.0}
+2022-02-08 03:52:54.434  INFO 20772 --- [XNIO-1 I/O-4] lavalink.server.io.SocketServer          : {"op": "stop", "guildId": "897862146422104065"}
+2022-02-08 03:53:00.235  INFO 20772 --- [XNIO-1 I/O-4] lavalink.server.io.SocketServer          : {"op": "volume", "guildId": "897862146422104065", "volume": 15}
+2022-02-08 03:53:00.245  INFO 20772 --- [XNIO-1 task-113] l.server.player.AudioLoaderRestHandler   : Got request to load for identifier "ytsearch:torn speh"
+2022-02-08 03:53:00.302  INFO 20772 --- [XNIO-1 I/O-4] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "d814f3942346d4f09650278bfce64399", "event": {"token": "dadda6a911cb03c7", "guild_id": "897862146422104065", "endpoint": "us-east9995.discord.media:443"}}
+2022-02-08 03:53:00.318  INFO 20772 --- [XNIO-1 I/O-4] lavalink.server.io.SocketServer          : {"op": "voiceUpdate", "guildId": "897862146422104065", "sessionId": "d814f3942346d4f09650278bfce64399", "event": {"token": "ee0dfdd6d6d84630", "guild_id": "897862146422104065", "endpoint": "us-east9995.discord.media:443"}}
+2022-02-08 03:53:00.868  INFO 20772 --- [lava-daemon-pool-info-loader-2-thread-1] lavalink.server.player.AudioLoader       : Loaded playlist Search results for: torn speh
+2022-02-08 03:53:01.065  INFO 20772 --- [XNIO-1 I/O-4] lavalink.server.io.SocketServer          : {"op": "play", "guildId": "897862146422104065", "track": "QAAAYgIABFRvcm4ABFNwZWgAAAAAAARNkAALVG9xNmk5WEJXc0kAAQAraHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1Ub3E2aTlYQldzSQAHeW91dHViZQAAAAAAAAAA", "startTime": 0, "endTime": 0, "noReplace": false}
+2022-02-08 03:53:06.395  INFO 20772 --- [XNIO-1 I/O-4] lavalink.server.io.SocketServer          : {"op": "seek", "guildId": "897862146422104065", "position": 9685.072509765625}
+2022-02-08 03:57:40.045  INFO 20772 --- [XNIO-1 I/O-4] lavalink.server.io.SocketServer          : {"op": "stop", "guildId": "897862146422104065"}
