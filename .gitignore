@@ -1,3 +1,4 @@
+application.yml
 /logs
 src/apikeys.py
 src/__pycache__/apikeys.cpython-310.pyc
