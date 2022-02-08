@@ -57,32 +57,33 @@ class Text(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(aliases=['HELP'])
+    @commands.command(aliases=['HELP', 'H', 'h'])
     async def help(self, ctx):
         """ Show command list in text channel. """
         help_menu = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
         help_menu.description = (
-            '**[!p] !play <song name, artist>** \n' +
+            'If Tempo joins your voice channel, but doesn\'t play audio use the !stop command and try again.\n \n' +
+            '**[!p] [!play] <song name and artist>** \n' +
             '— play song or add to queue \n' +
             # '**!next <song name, artist>** \n' +
             # '— play after current song (first in queue) \n' +
-            '**[!sn] !song** \n' +
+            '**[!sn] [!song]** \n' +
             '— show current track in text channel \n' +
-            '**[!sk] !skip** \n' +
+            '**[!sk] [!skip]** \n' +
             '— skip to next track in queue \n' +
-            '**[!st] !stop** \n' +
+            '**[!st] [!stop]** \n' +
             '— stop playback and clear queue \n' +
             # '**!pause** \n' +
             # '— pause playback \n' +
             # '**!resume** \n' +
             # '— unpause playback \n' +
-            '**[!fw] !forward <seconds>** \n' +
+            '**[!fw] [!forward] <seconds>** \n' +
             '— skip forward given number of seconds \n' +
-            '**[!bw] !backward <seconds>** \n' +
+            '**[!bw] [!backward] <seconds>** \n' +
             '— skip backward given number of seconds \n' +
-            '**[!rs] !restart** \n' +
+            '**[!rs] [!restart]** \n' +
             '— return to beginning of current track \n' +
-            '**[!q] !queue** \n' +
+            '**[!q] [!queue]** \n' +
             '— show active queue in text channel \n' +
             '\n __**Tempo v2.2.1**__' + 
             '\n __**Developed by Hexxzn**__'
@@ -138,7 +139,7 @@ class Music(commands.Cog):
             permissions = ctx.author.voice.channel.permissions_for(ctx.me)
 
             if not permissions.connect or not permissions.speak:  # Check user limit too?
-                raise commands.CommandInvokeError('Bot needs `CONNECT` and `SPEAK` permissions.')
+                raise commands.CommandInvokeError('Tempo needs `CONNECT` and `SPEAK` permissions.')
 
             player.store('channel', ctx.channel.id)
             await ctx.author.voice.channel.connect(cls=LavalinkVoiceClient)
@@ -190,14 +191,17 @@ class Music(commands.Cog):
                 # Add all tracks from playlist to queue.
                 player.add(requester=ctx.author.id, track=track)
 
-            embed.description = f'{results["playlistInfo"]["name"]} - {len(tracks)} tracks'
+            if not player.is_playing:
+                embed.description = 'Now Playing: ' + f'{results["playlistInfo"]["name"]} ({len(tracks)} tracks)'
+            else:
+                embed.description = 'Queued: ' + f'{results["playlistInfo"]["name"]} ({len(tracks)} tracks)'
         else:
             track = results['tracks'][0]
 
-            if player.is_playing:
-                embed.description = 'Queued: '
+            if not player.is_playing:
+                embed.description = 'Now Playing: '
             else:
-                embed.description ='Now Playing: '
+                embed.description ='Queued: '
 
             embed.description += f'[{track["info"]["title"]}]({track["info"]["uri"]})'
 
@@ -238,7 +242,7 @@ class Music(commands.Cog):
     async def forward(self, ctx, seconds = None):
         """ Fast forwards given number of seconds. """
         if seconds == None:
-            return await ctx.send('How far? Try __**!forward 15**__ or __**!fw 15**__ to skip forward 15 seconds.')
+            return await ctx.send('How far? Try `!forward 15` or `!fw 15` to skip forward 15 seconds.')
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         await player.seek(player.position + int(seconds) * 1000)
 
@@ -246,7 +250,7 @@ class Music(commands.Cog):
     async def backward(self, ctx, seconds = None):
         """ Rewinds given number of seconds. """
         if seconds == None:
-            return await ctx.send('How far? Try __**!backward 15**__ or __**!bw 15**__ to skip backward 15 seconds.')
+            return await ctx.send('How far? Try `!backward 15` or `!bw 15` to skip backward 15 seconds.')
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         await player.seek(player.position - int(seconds) * 1000)
 
