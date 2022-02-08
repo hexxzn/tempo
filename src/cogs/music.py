@@ -83,7 +83,7 @@ class Text(commands.Cog):
             '**[!rs] !restart** \n' +
             '— return to beginning of current track \n' +
             '**[!q] !queue** \n' +
-            '— Show current queue in text channel. \n' +
+            '— show active queue in text channel. \n' +
             '\n __**Tempo v2.1.1**__' + 
             '\n __**Developed by Hexxzn**__'
         )
