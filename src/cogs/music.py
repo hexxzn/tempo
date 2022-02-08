@@ -1,14 +1,13 @@
-from nextcord import Interaction
-from nextcord.ext import commands
-import nextcord
+from discord.ext import commands
+import discord
 import lavalink
 import re
 
 url_rx = re.compile(r'https?://(?:www\.)?.+')
 
 
-class LavalinkVoiceClient(nextcord.VoiceClient):
-    def __init__(self, client: nextcord.Client, channel: nextcord.abc.Connectable):
+class LavalinkVoiceClient(discord.VoiceClient):
+    def __init__(self, client: discord.Client, channel: discord.abc.Connectable):
         self.client = client
         self.channel = channel
         if hasattr(self.client, 'lavalink'):
@@ -61,7 +60,7 @@ class Text(commands.Cog):
     @commands.command(aliases=['HELP'])
     async def help(self, ctx):
         """ Show command list in text channel. """
-        help_menu = nextcord.Embed(color=nextcord.Color.from_rgb(134, 194, 50))
+        help_menu = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
         help_menu.title = 'Tempo Commands'
         help_menu.description = (
             '**[!p] !play <song name, artist>** \n' +
@@ -183,7 +182,7 @@ class Music(commands.Cog):
         if not results or not results['tracks']:
             return await ctx.send('No results.')
 
-        embed = nextcord.Embed(color=nextcord.Color.from_rgb(134, 194, 50))
+        embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
 
         # Valid loadTypes:
         #   TRACK_LOADED    - single video/direct URL
