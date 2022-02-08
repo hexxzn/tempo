@@ -15,4 +15,4 @@ async def on_ready():
 # async def main_test(interaction: nextcord.Interaction, message):
 #     await interaction.response.send_message(message)
 
-bot.run(beta_token)
+bot.run(tempo_token)
