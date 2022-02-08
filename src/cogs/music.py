@@ -83,8 +83,8 @@ class Text(commands.Cog):
             '— skip backward given number of seconds \n' +
             '**[!rs] !restart** \n' +
             '— return to beginning of current track \n' +
-            # '**!qq** \n' +
-            # '— show length of queue \n' +
+            '**[!q] !queue** \n' +
+            '— Show current queue in text channel. \n' +
             '\n __**Developed by Hexxzn**__'
         )
         await ctx.channel.send(embed=help_menu)
@@ -201,7 +201,12 @@ class Music(commands.Cog):
             embed.description = f'{results["playlistInfo"]["name"]} - {len(tracks)} tracks'
         else:
             track = results['tracks'][0]
-            embed.title = 'Track Queued'
+
+            if player.is_playing:
+                embed.title = 'Queue Position: ' + str(len(player.queue) + 1)
+            else:
+                embed.title = 'Now Playing'
+
             embed.description = f'[{track["info"]["title"]}]({track["info"]["uri"]})'
 
             track = lavalink.models.AudioTrack(track, ctx.author.id, recommended=True)
@@ -258,6 +263,21 @@ class Music(commands.Cog):
         """ Returns to beginning of current track. """
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         await player.seek(player.position - player.position)
+
+    @commands.command(aliases=['QUEUE', 'Q', 'q'])
+    async def queue(self, ctx):
+        """ Show current queue in text channel. """
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+
+        embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
+        embed.title = 'Current Queue'
+        embed.description = 'Queue Empty'
+        if len(player.queue) > 0:
+            embed.description = 'Next: '
+            for track in player.queue:
+                embed.description += f'[{track["title"]}]({track["uri"]}) \n'
+
+        await ctx.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(Text(bot))

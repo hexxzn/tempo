@@ -11,8 +11,4 @@ async def on_ready():
     print(f'{bot.user} is online.')
     print('--------------------')
 
-# @client.slash_command(guild_ids=[897862146422104065])
-# async def main_test(interaction: discord.Interaction, message):
-#     await interaction.response.send_message(message)
-
 bot.run(beta_token)
