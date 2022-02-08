@@ -63,11 +63,11 @@ class Text(commands.Cog):
         help_menu = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
         help_menu.description = (
             '**[!p] !play <song name, artist>** \n' +
-            '— play a song or add to queue \n' +
+            '— play song or add to queue \n' +
             # '**!next <song name, artist>** \n' +
             # '— play after current song (first in queue) \n' +
-            # '**!song** \n' +
-            # '— show current track info \n' +
+            '**[!sn] !song** \n' +
+            '— show current track in text channel \n' +
             '**[!sk] !skip** \n' +
             '— skip to next track in queue \n' +
             '**[!st] !stop** \n' +
@@ -83,8 +83,8 @@ class Text(commands.Cog):
             '**[!rs] !restart** \n' +
             '— return to beginning of current track \n' +
             '**[!q] !queue** \n' +
-            '— show active queue in text channel. \n' +
-            '\n __**Tempo v2.1.1**__' + 
+            '— show active queue in text channel \n' +
+            '\n __**Tempo v2.2.1**__' + 
             '\n __**Developed by Hexxzn**__'
         )
         await ctx.channel.send(embed=help_menu)
@@ -267,6 +267,18 @@ class Music(commands.Cog):
             embed.description = 'Next: '
             for track in player.queue:
                 embed.description += f'[{track["title"]}]({track["uri"]}) \n'
+
+        await ctx.send(embed=embed)
+
+    @commands.command(aliases=['SONG', 'SN', 'sn'])
+    async def song(self, ctx):
+        """ Show current song in text channel. """
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+
+        embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
+        if player.is_playing:
+            track = player.current
+            embed.description = 'Now Playing: ' + f'[{track["title"]}]({track["uri"]})'
 
         await ctx.send(embed=embed)
 
