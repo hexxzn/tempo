@@ -89,7 +89,7 @@ class Text(commands.Cog):
             '— return to beginning of current track \n' +
             '**[!q] [!queue]** \n' +
             '— show active queue in text channel \n' +
-            '\n __**Tempo v2.3.0**__' + 
+            '\n __**Tempo v2.3.1**__' + 
             '\n __**Developed by Hexxzn**__'
         )
         await ctx.channel.send(embed=help_menu)
