@@ -1,2 +1,0 @@
-tempo_token = 'ODk3ODY0ODg2MDk1MzQzNjg3.YWb31g.ZVRi9SPArDgFWoccFwi7491LDRg'
-beta_token = 'OTEyMjU2MTQwNDYzNzA2MTIy.YZtSvA.wBoFtA5CbLkuVVyiTiNV2m-ZNoE'
