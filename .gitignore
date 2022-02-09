@@ -1,5 +1,5 @@
 /txt
 /logs
-src/tokens.py
-src/__pycache__
-src/cogs/__pycache__
+/src/tokens.py
+/src/__pycache__
+/src/cogs/__pycache__
