@@ -1,5 +1,5 @@
 from discord.ext import commands
-from apikeys import *
+from tokens import *
 import discord
 
 bot = commands.Bot(command_prefix = '!', help_command = None)

@@ -62,7 +62,11 @@ class Text(commands.Cog):
         """ Show command list in text channel. """
         help_menu = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
         help_menu.description = (
-            'If Tempo joins your voice channel, but doesn\'t play audio use the !stop command and try again.\n \n' +
+            '__**Fixes**__ \n' +
+            'If you\'re having issues with audio playback use the **!stop** command to reset the player. \n \n' +
+            '__**Updates**__ \n' +
+            'Tempo can now play YouTube playlists. \n \n'
+            '__**Commands**__ \n' +
             '**[!p] [!play] <song name and artist>** \n' +
             '— play song or add to queue \n' +
             # '**!next <song name, artist>** \n' +
@@ -85,7 +89,7 @@ class Text(commands.Cog):
             '— return to beginning of current track \n' +
             '**[!q] [!queue]** \n' +
             '— show active queue in text channel \n' +
-            '\n __**Tempo v2.2.1**__' + 
+            '\n __**Tempo v2.3.0**__' + 
             '\n __**Developed by Hexxzn**__'
         )
         await ctx.channel.send(embed=help_menu)
