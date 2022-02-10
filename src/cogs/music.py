@@ -65,8 +65,9 @@ class Text(commands.Cog):
             '__**Tips**__ \n'
             'For audio playback issues use the **!stop** command to reset the player. \n \n'
             '__**Updates**__ \n'
-            'Tempo can now play YouTube playlists. \n'
-            'Added pause and resume commands. \n \n'
+            '2.4.1 - Tempo will now try to ignore music videos. \n'
+            '2.4.0 - Added pause and resume commands. \n'
+            '2.3.0 - Tempo can now play YouTube playlists. \n \n'
             '__**Commands**__ \n'
             '**[!p] [!play] <song name and artist>** \n' +
             '— play song or add to queue \n'
@@ -90,7 +91,7 @@ class Text(commands.Cog):
             '— return to beginning of current track \n'
             '**[!q] [!queue]** \n'
             '— show active queue in text channel \n'
-            '\n __**Tempo v2.4.0**__'
+            '\n __**Tempo v2.4.1**__'
             '\n __**Developed by Hexxzn**__'
         )
         await ctx.channel.send(embed=help_menu)
@@ -165,7 +166,7 @@ class Music(commands.Cog):
         # Get player for guild from cache.
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         # Set player volume.
-        await player.set_volume(20)
+        await player.set_volume(5)
         # Remove leading and trailing <>. <> suppress embedding links.
         query = query.strip('<>')
 
@@ -201,7 +202,21 @@ class Music(commands.Cog):
             else:
                 embed.description = 'Queued: ' + f'{results["playlistInfo"]["name"]} ({len(tracks)} tracks)'
         else:
-            track = results['tracks'][0]
+            index = 0
+            # To avoid music videos with extended intros, skits etc.
+            exclude = ['music video', 'official video']
+            if not url_rx.match(query):
+                while index <= 5:
+                    for string in exclude:
+                        if string in results['tracks'][index]['info']['title']:
+                            index += 1
+                            break
+                    else:
+                        break
+                else:
+                    index = 0
+
+            track = results['tracks'][index]
 
             if not player.is_playing:
                 embed.description = 'Now Playing: '
