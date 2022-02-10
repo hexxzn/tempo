@@ -34,12 +34,12 @@ class LavalinkVoiceClient(discord.VoiceClient):
         await self.lavalink.voice_update_handler(lavalink_data)
 
     async def connect(self, *, timeout: float, reconnect: bool) -> None:
-        """ Connect to voice channel and create a player_manager. """
+        """ connect to voice channel and create a player_manager """
         self.lavalink.player_manager.create(guild_id=self.channel.guild.id)
         await self.channel.guild.change_voice_state(channel=self.channel)
 
     async def disconnect(self, *, force: bool) -> None:
-        """ Disconnect, clean up running player and leave voice client. """
+        """ disconnect, clean up running player and leave voice client """
         player = self.lavalink.player_manager.get(self.channel.guild.id)
 
         if not force and not player.is_connected:
@@ -59,7 +59,7 @@ class Text(commands.Cog):
 
     @commands.command(aliases=['HELP', 'H', 'h'])
     async def help(self, ctx):
-        """ Show command list in text channel. """
+        """ show command list in text channel """
         help_menu = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
         help_menu.description = (
             '__**Tips**__ \n'
@@ -69,7 +69,7 @@ class Text(commands.Cog):
             '2.4.0 - Added pause and resume commands. \n'
             '2.3.0 - Tempo can now play YouTube playlists. \n \n'
             '__**Commands**__ \n'
-            '**[!p] [!play] <song name and artist>** \n' +
+            '**[!p] [!play] <song title and artist>** \n' +
             '— play song or add to queue \n'
             # '**!next <song name, artist>** \n'
             # '— play after current song (first in queue) \n'
@@ -79,9 +79,9 @@ class Text(commands.Cog):
             '— skip to next track in queue \n'
             '**[!st] [!stop]** \n'
             '— stop playback and clear queue \n'
-            '**[!ps] !pause** \n'
+            '**[!ps] [!pause]** \n'
             '— pause playback \n'
-            '**[!rs] !resume** \n'
+            '**[!rs] [!resume]** \n'
             '— unpause playback \n'
             '**[!fw] [!forward] <seconds>** \n'
             '— skip forward given number of seconds \n'
@@ -91,7 +91,7 @@ class Text(commands.Cog):
             '— return to beginning of current track \n'
             '**[!q] [!queue]** \n'
             '— show active queue in text channel \n'
-            '\n __**Tempo v2.4.1**__'
+            '\n __**Tempo v2.4.2**__'
             '\n __**Developed by Hexxzn**__'
         )
         await ctx.channel.send(embed=help_menu)
@@ -108,11 +108,11 @@ class Music(commands.Cog):
         lavalink.add_event_hook(self.track_hook)
 
     def cog_unload(self):
-        """ Remove registered event hooks. """
+        """ remove registered event hooks """
         self.bot.lavalink._event_hooks.clear()
 
     async def cog_before_invoke(self, ctx):
-        """ Command before-invoke handler. """
+        """ command before-invoke handler """
         guild_check = ctx.guild is not None
 
         if guild_check:
@@ -127,7 +127,7 @@ class Music(commands.Cog):
             # Log cog errors
 
     async def ensure_voice(self, ctx):
-        """ Ensure bot and user are in same voice channel. """
+        """ ensure bot and user are in same voice channel """
         # Returns player if one exists, otherwise creates. Ensures that a player always exists for guild.
         player = self.bot.lavalink.player_manager.create(ctx.guild.id, endpoint=str(ctx.guild.region))
         
@@ -162,7 +162,7 @@ class Music(commands.Cog):
 
     @commands.command(aliases=['PLAY', 'P', 'p'])
     async def play(self, ctx, *, query: str):
-        """ Searches and plays a song from a given query. """
+        """ play song or add to queue """
         # Get player for guild from cache.
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         # Set player volume.
@@ -208,7 +208,7 @@ class Music(commands.Cog):
             if not url_rx.match(query):
                 while index <= 5:
                     for string in exclude:
-                        if string in results['tracks'][index]['info']['title']:
+                        if string in results['tracks'][index]['info']['title'].lower():
                             index += 1
                             break
                     else:
@@ -235,7 +235,7 @@ class Music(commands.Cog):
 
     @commands.command(aliases=['STOP', 'ST', 'st'])
     async def stop(self, ctx):
-        """ Disconnects player from voice channel and clears queue. """
+        """ stop playback and clear queue """
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
 
         if not player.is_connected:
@@ -254,25 +254,25 @@ class Music(commands.Cog):
 
     @commands.command(aliases=['PAUSE', 'PS', 'ps'])
     async def pause(self, ctx):
-        """ Pauses playback. """
+        """ pause playback """
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         await player.set_pause(True)
 
     @commands.command(aliases=['RESUME', 'RS', 'rs'])
     async def resume(self, ctx):
-        """ Resumes playback. """
+        """ unpause playback """
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         await player.set_pause(False)
 
     @commands.command(aliases=['SKIP', 'SK', 'sk'])
     async def skip(self, ctx):
-        """ Skips to next track in queue. """
+        """ skip to next track in queue """
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         await player.skip()
 
     @commands.command(aliases=['FORWARD', 'FW', 'fw'])
     async def forward(self, ctx, seconds = None):
-        """ Fast forwards given number of seconds. """
+        """ skip forward given number of seconds """
         if seconds == None:
             return await ctx.send('How far? Try `!forward 15` or `!fw 15` to skip forward 15 seconds.')
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
@@ -280,7 +280,7 @@ class Music(commands.Cog):
 
     @commands.command(aliases=['BACKWARD', 'BW', 'bw'])
     async def backward(self, ctx, seconds = None):
-        """ Rewinds given number of seconds. """
+        """ skip backward given number of seconds """
         if seconds == None:
             return await ctx.send('How far? Try `!backward 15` or `!bw 15` to skip backward 15 seconds.')
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
@@ -288,13 +288,13 @@ class Music(commands.Cog):
 
     @commands.command(aliases=['RESTART', 'RE', 're'])
     async def restart(self, ctx):
-        """ Returns to beginning of current track. """
+        """ returns to beginning of current track """
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         await player.seek(player.position - player.position)
 
     @commands.command(aliases=['QUEUE', 'Q', 'q'])
     async def queue(self, ctx):
-        """ Show current queue in text channel. """
+        """ show active queue in text channel """
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
 
         embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
@@ -308,7 +308,7 @@ class Music(commands.Cog):
 
     @commands.command(aliases=['SONG', 'SN', 'sn'])
     async def song(self, ctx):
-        """ Show current song in text channel. """
+        """ show current track in text channel """
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
 
         embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
