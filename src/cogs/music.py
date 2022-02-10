@@ -62,34 +62,35 @@ class Text(commands.Cog):
         """ Show command list in text channel. """
         help_menu = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
         help_menu.description = (
-            '__**Fixes**__ \n' +
-            'If you\'re having issues with audio playback use the **!stop** command to reset the player. \n \n' +
-            '__**Updates**__ \n' +
-            'Tempo can now play YouTube playlists. \n \n'
-            '__**Commands**__ \n' +
+            '__**Tips**__ \n'
+            'For audio playback issues use the **!stop** command to reset the player. \n \n'
+            '__**Updates**__ \n'
+            'Tempo can now play YouTube playlists. \n'
+            'Added pause and resume commands. \n \n'
+            '__**Commands**__ \n'
             '**[!p] [!play] <song name and artist>** \n' +
-            '— play song or add to queue \n' +
-            # '**!next <song name, artist>** \n' +
-            # '— play after current song (first in queue) \n' +
-            '**[!sn] [!song]** \n' +
-            '— show current track in text channel \n' +
-            '**[!sk] [!skip]** \n' +
-            '— skip to next track in queue \n' +
-            '**[!st] [!stop]** \n' +
-            '— stop playback and clear queue \n' +
-            # '**!pause** \n' +
-            # '— pause playback \n' +
-            # '**!resume** \n' +
-            # '— unpause playback \n' +
-            '**[!fw] [!forward] <seconds>** \n' +
-            '— skip forward given number of seconds \n' +
-            '**[!bw] [!backward] <seconds>** \n' +
-            '— skip backward given number of seconds \n' +
-            '**[!rs] [!restart]** \n' +
-            '— return to beginning of current track \n' +
-            '**[!q] [!queue]** \n' +
-            '— show active queue in text channel \n' +
-            '\n __**Tempo v2.3.1**__' + 
+            '— play song or add to queue \n'
+            # '**!next <song name, artist>** \n'
+            # '— play after current song (first in queue) \n'
+            '**[!sn] [!song]** \n'
+            '— show current track in text channel \n'
+            '**[!sk] [!skip]** \n'
+            '— skip to next track in queue \n'
+            '**[!st] [!stop]** \n'
+            '— stop playback and clear queue \n'
+            '**[!ps] !pause** \n'
+            '— pause playback \n'
+            '**[!rs] !resume** \n'
+            '— unpause playback \n'
+            '**[!fw] [!forward] <seconds>** \n'
+            '— skip forward given number of seconds \n'
+            '**[!bw] [!backward] <seconds>** \n'
+            '— skip backward given number of seconds \n'
+            '**[!re] [!restart]** \n'
+            '— return to beginning of current track \n'
+            '**[!q] [!queue]** \n'
+            '— show active queue in text channel \n'
+            '\n __**Tempo v2.4.0**__'
             '\n __**Developed by Hexxzn**__'
         )
         await ctx.channel.send(embed=help_menu)
@@ -164,7 +165,7 @@ class Music(commands.Cog):
         # Get player for guild from cache.
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         # Set player volume.
-        await player.set_volume(15)
+        await player.set_volume(20)
         # Remove leading and trailing <>. <> suppress embedding links.
         query = query.strip('<>')
 
@@ -236,6 +237,18 @@ class Music(commands.Cog):
         await ctx.voice_client.disconnect(force=True)
         await ctx.send('Queue has been cleared.')
 
+    @commands.command(aliases=['PAUSE', 'PS', 'ps'])
+    async def pause(self, ctx):
+        """ Pauses playback. """
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+        await player.set_pause(True)
+
+    @commands.command(aliases=['RESUME', 'RS', 'rs'])
+    async def resume(self, ctx):
+        """ Resumes playback. """
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+        await player.set_pause(False)
+
     @commands.command(aliases=['SKIP', 'SK', 'sk'])
     async def skip(self, ctx):
         """ Skips to next track in queue. """
@@ -258,7 +271,7 @@ class Music(commands.Cog):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         await player.seek(player.position - int(seconds) * 1000)
 
-    @commands.command(aliases=['RESTART', 'RS', 'rs'])
+    @commands.command(aliases=['RESTART', 'RE', 're'])
     async def restart(self, ctx):
         """ Returns to beginning of current track. """
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
