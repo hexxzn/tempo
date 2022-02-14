@@ -56,6 +56,21 @@ class LavalinkVoiceClient(discord.VoiceClient):
 class Text(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+    
+    @commands.command(aliases=['BROADCAST', 'BC', 'bc'])
+    async def broadcast(self, ctx, message):
+        """ send message to all guilds """
+        if ctx.author.id == 488812651514691586:
+            for guild in self.bot.guilds:
+                for channel in guild.text_channels:
+                    try:
+                        await channel.send(message)
+                    except:
+                        continue
+                    else:
+                        break
+        else:
+            await ctx.send('You are not authorized to use this command.')
 
     @commands.command(aliases=['HELP', 'H', 'h'])
     async def help(self, ctx):
@@ -63,11 +78,14 @@ class Text(commands.Cog):
         help_menu = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
         help_menu.description = (
             '__**Tips**__ \n'
-            'For audio playback issues use the **!stop** command to reset the player. \n \n'
+            'For audio playback issues use the **!stop** command to reset the player. \n'
+            'Paste a link after the **!play** command to play YouTube playlists and livestreams. \n'
+            '\n'
             '__**Updates**__ \n'
-            '2.4.1 - Tempo will now try to ignore music videos. \n'
-            '2.4.0 - Added pause and resume commands. \n'
-            '2.3.0 - Tempo can now play YouTube playlists. \n \n'
+            '**2.5.0** - Tempo can now play YouTube livestreams. \n'
+            '**2.4.0** - Added pause and resume commands. \n'
+            '**2.3.0** - Tempo can now play YouTube playlists. \n'
+            '\n'
             '__**Commands**__ \n'
             '**[!p] [!play] <song title and artist>** \n' +
             '— play song or add to queue \n'
@@ -91,8 +109,9 @@ class Text(commands.Cog):
             '— return to beginning of current track \n'
             '**[!q] [!queue]** \n'
             '— show active queue in text channel \n'
-            '\n __**Tempo v2.4.2**__'
-            '\n __**Developed by Hexxzn**__'
+            '\n'
+            '__**Tempo v2.5.0**__ \n'
+            '__**Developed by Hexxzn**__'
         )
         await ctx.channel.send(embed=help_menu)
 
@@ -166,7 +185,7 @@ class Music(commands.Cog):
         # Get player for guild from cache.
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         # Set player volume.
-        await player.set_volume(5)
+        await player.set_volume(15)
         # Remove leading and trailing <>. <> suppress embedding links.
         query = query.strip('<>')
 
@@ -316,7 +335,6 @@ class Music(commands.Cog):
             track = player.current
             embed.description = 'Now Playing: ' + f'[{track["title"]}]({track["uri"]})'
 
-        await ctx.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(Text(bot))
