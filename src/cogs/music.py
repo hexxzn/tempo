@@ -79,7 +79,7 @@ class Text(commands.Cog):
         help_menu.description = (
             '__**Tips**__ \n'
             'For audio playback issues use the **!stop** command to reset the player. \n'
-            'Paste a link after the **!play** command to play YouTube playlists and livestreams. \n'
+            'To play a YouTube livestream or playlist, paste its link after the **!play** command. \n'
             '\n'
             '__**Updates**__ \n'
             '**2.5.1** - Commands are no longer case sensitive. \n'
@@ -110,7 +110,7 @@ class Text(commands.Cog):
             # '**[!r] [!radio]** \n'
             # '— show tempo radio stations in text channel \n'
             '\n'
-            '__**Tempo v2.5.1**__ \n'
+            '__**Tempo v2.5.2**__ \n'
             '__**Developed by Hexxzn**__'
         )
         await ctx.channel.send(embed=help_menu)
@@ -351,22 +351,26 @@ class Music(commands.Cog):
     # async def lofi(self, ctx):
     #     """ play lofi radio """
     #     player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+    #     await player.set_volume(15)
 
     #     station = 'https://www.youtube.com/watch?v=5yx6BWlEVcY'
     #     station = station.strip('<>')
 
     #     results = await player.node.get_tracks(station)
-    #     track = results['tracks'][0]
-    #     track = lavalink.models.AudioTrack(track, ctx.author.id, recommended=True)
-    #     player.add(requester=ctx.author.id, track=track)
+    #     try:
+    #         track = results['tracks'][0]
+    #         track = lavalink.models.AudioTrack(track, ctx.author.id, recommended=True)
+    #         player.add(requester=ctx.author.id, track=track)
 
-    #     embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
-    #     embed.description = 'Now Playing: LoFi Radio (Live)'
-        
-    #     await ctx.send(embed=embed)
+    #         embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
+    #         embed.description = 'Now Playing: LoFi Radio (Live)'
+            
+    #         await ctx.send(embed=embed)
 
-    #     if not player.is_playing:
-    #         await player.play()
+    #         if not player.is_playing:
+    #             await player.play()
+    #     except Exception as error:
+    #         await ctx.send('Feature is in beta. Error: ' + error)
 
 
 def setup(bot):
