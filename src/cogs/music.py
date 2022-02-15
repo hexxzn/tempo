@@ -57,7 +57,7 @@ class Text(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
-    @commands.command(aliases=['BROADCAST', 'BC', 'bc'])
+    @commands.command(aliases=['bc'])
     async def broadcast(self, ctx, message):
         """ send message to all guilds """
         if ctx.author.id == 488812651514691586:
@@ -72,7 +72,7 @@ class Text(commands.Cog):
         else:
             await ctx.send('You are not authorized to use this command.')
 
-    @commands.command(aliases=['HELP', 'H', 'h'])
+    @commands.command(aliases=['h'])
     async def help(self, ctx):
         """ show command list in text channel """
         help_menu = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
@@ -82,15 +82,13 @@ class Text(commands.Cog):
             'Paste a link after the **!play** command to play YouTube playlists and livestreams. \n'
             '\n'
             '__**Updates**__ \n'
+            '**2.5.1** - Commands are no longer case sensitive. \n'
             '**2.5.0** - Tempo can now play YouTube livestreams. \n'
             '**2.4.0** - Added pause and resume commands. \n'
-            '**2.3.0** - Tempo can now play YouTube playlists. \n'
             '\n'
             '__**Commands**__ \n'
             '**[!p] [!play] <song title and artist>** \n' +
             '— play song or add to queue \n'
-            # '**!next <song name, artist>** \n'
-            # '— play after current song (first in queue) \n'
             '**[!sn] [!song]** \n'
             '— show current track in text channel \n'
             '**[!sk] [!skip]** \n'
@@ -109,11 +107,25 @@ class Text(commands.Cog):
             '— return to beginning of current track \n'
             '**[!q] [!queue]** \n'
             '— show active queue in text channel \n'
+            # '**[!r] [!radio]** \n'
+            # '— show tempo radio stations in text channel \n'
             '\n'
-            '__**Tempo v2.5.0**__ \n'
+            '__**Tempo v2.5.1**__ \n'
             '__**Developed by Hexxzn**__'
         )
         await ctx.channel.send(embed=help_menu)
+
+    # @commands.command(aliases=['r'])
+    # async def radio(self, ctx):
+    #     """ show radio station list in text channel """
+    #     radio_menu = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
+    #     radio_menu.description = (
+    #         '__**Stations**__ \n'
+    #         '**[!lf] [!lofi]** \n'
+    #         '— Jazzy lofi hip hop beats \n'
+    #     )
+
+    #     await ctx.channel.send(embed=radio_menu)
 
 
 class Music(commands.Cog):
@@ -151,7 +163,7 @@ class Music(commands.Cog):
         player = self.bot.lavalink.player_manager.create(ctx.guild.id, endpoint=str(ctx.guild.region))
         
         # Commands that require the bot to join a voicechannel (i.e. initiating playback).
-        should_connect = ctx.command.name in ('play')
+        should_connect = ctx.command.name in ('play', 'lofi')
 
         if not ctx.author.voice or not ctx.author.voice.channel:
             # cog_command_error handler catches this and sends it to the voicechannel.
@@ -179,7 +191,7 @@ class Music(commands.Cog):
             guild = self.bot.get_guild(guild_id)
             await guild.voice_client.disconnect(force=True)
 
-    @commands.command(aliases=['PLAY', 'P', 'p'])
+    @commands.command(aliases=['p'])
     async def play(self, ctx, *, query: str):
         """ play song or add to queue """
         # Get player for guild from cache.
@@ -252,7 +264,7 @@ class Music(commands.Cog):
         if not player.is_playing:
             await player.play()
 
-    @commands.command(aliases=['STOP', 'ST', 'st'])
+    @commands.command(aliases=['st'])
     async def stop(self, ctx):
         """ stop playback and clear queue """
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
@@ -271,25 +283,25 @@ class Music(commands.Cog):
         await ctx.voice_client.disconnect(force=True)
         await ctx.send('Queue has been cleared.')
 
-    @commands.command(aliases=['PAUSE', 'PS', 'ps'])
+    @commands.command(aliases=['ps'])
     async def pause(self, ctx):
         """ pause playback """
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         await player.set_pause(True)
 
-    @commands.command(aliases=['RESUME', 'RS', 'rs'])
+    @commands.command(aliases=['rs'])
     async def resume(self, ctx):
         """ unpause playback """
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         await player.set_pause(False)
 
-    @commands.command(aliases=['SKIP', 'SK', 'sk'])
+    @commands.command(aliases=['sk'])
     async def skip(self, ctx):
         """ skip to next track in queue """
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         await player.skip()
 
-    @commands.command(aliases=['FORWARD', 'FW', 'fw'])
+    @commands.command(aliases=['fw'])
     async def forward(self, ctx, seconds = None):
         """ skip forward given number of seconds """
         if seconds == None:
@@ -297,7 +309,7 @@ class Music(commands.Cog):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         await player.seek(player.position + int(seconds) * 1000)
 
-    @commands.command(aliases=['BACKWARD', 'BW', 'bw'])
+    @commands.command(aliases=['bw'])
     async def backward(self, ctx, seconds = None):
         """ skip backward given number of seconds """
         if seconds == None:
@@ -305,13 +317,13 @@ class Music(commands.Cog):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         await player.seek(player.position - int(seconds) * 1000)
 
-    @commands.command(aliases=['RESTART', 'RE', 're'])
+    @commands.command(aliases=['re'])
     async def restart(self, ctx):
         """ returns to beginning of current track """
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         await player.seek(player.position - player.position)
 
-    @commands.command(aliases=['QUEUE', 'Q', 'q'])
+    @commands.command(aliases=['q'])
     async def queue(self, ctx):
         """ show active queue in text channel """
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
@@ -325,7 +337,7 @@ class Music(commands.Cog):
 
         await ctx.send(embed=embed)
 
-    @commands.command(aliases=['SONG', 'SN', 'sn'])
+    @commands.command(aliases=['sn'])
     async def song(self, ctx):
         """ show current track in text channel """
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
@@ -334,6 +346,27 @@ class Music(commands.Cog):
         if player.is_playing:
             track = player.current
             embed.description = 'Now Playing: ' + f'[{track["title"]}]({track["uri"]})'
+
+    # @commands.command(aliases=['lf'])
+    # async def lofi(self, ctx):
+    #     """ play lofi radio """
+    #     player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+
+    #     station = 'https://www.youtube.com/watch?v=5yx6BWlEVcY'
+    #     station = station.strip('<>')
+
+    #     results = await player.node.get_tracks(station)
+    #     track = results['tracks'][0]
+    #     track = lavalink.models.AudioTrack(track, ctx.author.id, recommended=True)
+    #     player.add(requester=ctx.author.id, track=track)
+
+    #     embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
+    #     embed.description = 'Now Playing: LoFi Radio (Live)'
+        
+    #     await ctx.send(embed=embed)
+
+    #     if not player.is_playing:
+    #         await player.play()
 
 
 def setup(bot):

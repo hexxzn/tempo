@@ -2,7 +2,7 @@ from discord.ext import commands
 from tokens import *
 import discord
 
-bot = commands.Bot(command_prefix = '!', help_command = None)
+bot = commands.Bot(command_prefix = '!', case_insensitive=True, help_command = None)
 
 @bot.event
 async def on_ready():
