@@ -137,6 +137,7 @@ class Music(commands.Cog):
             bot.lavalink.add_node('localhost', 7000, 'sourceflow', 'na', 'default-node')  # Host, Port, Password, Region, Name
 
         lavalink.add_event_hook(self.track_hook)
+        # lavalink.add_event_hook(self.find_error)
 
     def cog_unload(self):
         """ remove registered event hooks """
@@ -190,6 +191,18 @@ class Music(commands.Cog):
             guild_id = int(event.player.guild_id)
             guild = self.bot.get_guild(guild_id)
             await guild.voice_client.disconnect(force=True)
+
+    # async def find_error(self, event):
+    #     if isinstance(event, lavalink.TrackStartEvent):
+    #         print('track start')
+    #     if isinstance(event, lavalink.events.NodeChangedEvent):
+    #         print('node changed')
+    #     if isinstance(event, lavalink.events.NodeConnectedEvent):
+    #         print('node connected')
+    #     if isinstance(event, lavalink.events.NodeDisconnectedEvent):
+    #         print('node disconnected')
+    #     if isinstance(event, lavalink.events.WebSocketClosedEvent):
+    #         print('websocket closed')
 
     @commands.command(aliases=['p'])
     async def play(self, ctx, *, query: str):
