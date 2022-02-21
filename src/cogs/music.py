@@ -86,10 +86,11 @@ class Text(commands.Cog):
             'To play a YouTube livestream or playlist, paste its link after the **!play** command. \n'
             '\n'
             '__**Updates**__ \n'
+            # '**2.6.0** - Added lyrics command. \n'
             '**2.5.3** - Tempo will now wait ninety seconds after queue end before disconnecting. \n'
             '**2.5.1** - Commands are no longer case sensitive. \n'
             '**2.5.0** - Tempo can now play YouTube livestreams. \n'
-            'For a full list of updates visit: __*sourceflow.io/tempo*__ \n'
+            'For a full list of updates visit: [sourceflow.io/tempo](https://sourceflow.io/tempo) \n'
             '\n'
             '__**Commands**__ \n'
             '**[!p] [!play] <song title and artist>** \n' +
@@ -112,6 +113,8 @@ class Text(commands.Cog):
             '— return to beginning of current track \n'
             '**[!q] [!queue]** \n'
             '— show active queue in text channel \n'
+            # '**[!l] [!lyrics] <song title and artist>** \n'
+            # '— show song lyrics in text channel \n'
             '\n'
             '__**Tempo v2.5.3**__ \n'
             '__**Developed by Hexxzn**__'
@@ -120,20 +123,21 @@ class Text(commands.Cog):
 
     # @commands.command(aliases=['l'])
     # async def lyrics(self, ctx, *, query: str = ''):
-    #     if query == '' and ctx.guild.voice_client:
-    #         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
-    #         if player.is_playing:
-    #             track = player.current
-    #             query = track['title']
-    #             print(query)
+    #     # if query == '' and ctx.guild.voice_client:
+    #     #     player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+    #     #     if player.is_playing:
+    #     #         track = player.current
+    #     #         query = track['title']
+    #     #         print(query)
 
     #     if query != '':
     #         embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
     #         song = genius.search_song(query, '')
+
     #         if song == None:
-    #             embed.description = ('__**' + query + '**__ \n \n' + 'No lyrics found. Youtube titles with special characters confuse the bot. Working on it. Try a manual search for now. \n \n' +
-    #                                  '**!lyrics <song name and artist>**')
+    #             embed.description = 'No lyrics found.'
     #             return await ctx.send(embed = embed)
+
     #         song.lyrics = song.lyrics[len(song.title)+7:-5]
     #         for char in song.lyrics[len(song.lyrics)-7:]:
     #             if char.isnumeric():
