@@ -107,26 +107,11 @@ class Text(commands.Cog):
             '— return to beginning of current track \n'
             '**[!q] [!queue]** \n'
             '— show active queue in text channel \n'
-            # '**[!r] [!radio]** \n'
-            # '— show tempo radio stations in text channel \n'
             '\n'
             '__**Tempo v2.5.2**__ \n'
             '__**Developed by Hexxzn**__'
         )
         await ctx.channel.send(embed=help_menu)
-
-    # @commands.command(aliases=['r'])
-    # async def radio(self, ctx):
-    #     """ show radio station list in text channel """
-    #     radio_menu = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
-    #     radio_menu.description = (
-    #         '__**Stations**__ \n'
-    #         '**[!lf] [!lofi]** \n'
-    #         '— Jazzy lofi hip hop beats \n'
-    #     )
-
-    #     await ctx.channel.send(embed=radio_menu)
-
 
 class Music(commands.Cog):
     def __init__(self, bot):
@@ -191,18 +176,6 @@ class Music(commands.Cog):
             guild_id = int(event.player.guild_id)
             guild = self.bot.get_guild(guild_id)
             await guild.voice_client.disconnect(force=True)
-
-    # async def find_error(self, event):
-    #     if isinstance(event, lavalink.TrackStartEvent):
-    #         print('track start')
-    #     if isinstance(event, lavalink.events.NodeChangedEvent):
-    #         print('node changed')
-    #     if isinstance(event, lavalink.events.NodeConnectedEvent):
-    #         print('node connected')
-    #     if isinstance(event, lavalink.events.NodeDisconnectedEvent):
-    #         print('node disconnected')
-    #     if isinstance(event, lavalink.events.WebSocketClosedEvent):
-    #         print('websocket closed')
 
     @commands.command(aliases=['p'])
     async def play(self, ctx, *, query: str):
