@@ -83,7 +83,7 @@ class Text(commands.Cog):
             'To play a YouTube livestream or playlist, paste its link after the **!play** command. \n'
             '\n'
             '__**Updates**__ \n'
-            '**2.5.3** - Tempo will now wait three minutes after queue end before disconnecting. \n'
+            '**2.5.3** - Tempo will now wait ninety seconds after queue end before disconnecting. \n'
             '**2.5.1** - Commands are no longer case sensitive. \n'
             '**2.5.0** - Tempo can now play YouTube livestreams. \n'
             'For a full list of updates visit: __*sourceflow.io/tempo*__ \n'
@@ -188,7 +188,7 @@ class Music(commands.Cog):
                     break
                 if player.is_playing:
                     break
-                if time == 180:
+                if time == 90:
                     player.queue.clear()
                     await player.stop()
                     await guild.voice_client.disconnect(force=True)
@@ -365,7 +365,7 @@ class Music(commands.Cog):
                         break
                     if len(member.guild.voice_client.channel.members) != 1:
                         break
-                    if time == 180:
+                    if time == 90:
                         player = self.bot.lavalink.player_manager.get(member.guild.id)
                         player.queue.clear()
                         await player.stop()
