@@ -1,4 +1,5 @@
 from discord.ext import commands
+import asyncio
 import discord
 import lavalink
 import re
@@ -82,9 +83,10 @@ class Text(commands.Cog):
             'To play a YouTube livestream or playlist, paste its link after the **!play** command. \n'
             '\n'
             '__**Updates**__ \n'
+            '**2.5.3** - Tempo will now wait 3 minutes after queue end before disconnecting. \n'
             '**2.5.1** - Commands are no longer case sensitive. \n'
             '**2.5.0** - Tempo can now play YouTube livestreams. \n'
-            '**2.4.0** - Added pause and resume commands. \n'
+            'For a full list of updates visit: __*sourceflow.io/tempo*__ \n'
             '\n'
             '__**Commands**__ \n'
             '**[!p] [!play] <song title and artist>** \n' +
@@ -108,7 +110,7 @@ class Text(commands.Cog):
             '**[!q] [!queue]** \n'
             '— show active queue in text channel \n'
             '\n'
-            '__**Tempo v2.5.2**__ \n'
+            '__**Tempo v2.5.3**__ \n'
             '__**Developed by Hexxzn**__'
         )
         await ctx.channel.send(embed=help_menu)
@@ -175,7 +177,22 @@ class Music(commands.Cog):
             # When track_hook receives "QueueEndEvent" from lavalink.py
             guild_id = int(event.player.guild_id)
             guild = self.bot.get_guild(guild_id)
-            await guild.voice_client.disconnect(force=True)
+            player = event.player
+            time = 0
+
+            # Start disconnect timer.
+            while True:
+                await asyncio.sleep(1)
+                time += 1
+                if not guild.voice_client:
+                    break
+                if player.is_playing:
+                    break
+                if time == 180:
+                    player.queue.clear()
+                    await player.stop()
+                    await guild.voice_client.disconnect(force=True)
+                    break   
 
     @commands.command(aliases=['p'])
     async def play(self, ctx, *, query: str):
@@ -333,30 +350,27 @@ class Music(commands.Cog):
             track = player.current
             embed.description = 'Now Playing: ' + f'[{track["title"]}]({track["uri"]})'
 
-    # @commands.command(aliases=['lf'])
-    # async def lofi(self, ctx):
-    #     """ play lofi radio """
-    #     player = self.bot.lavalink.player_manager.get(ctx.guild.id)
-    #     await player.set_volume(15)
+    @commands.Cog.listener()
+    async def on_voice_state_update(self, member, before, after):
+        """ disconnect if left alone in voice channel """
+        if member.id != self.bot.user.id and member.guild.voice_client:
+            if before.channel == member.guild.voice_client.channel and len(member.guild.voice_client.channel.members) == 1:
+                time = 0
 
-    #     station = 'https://www.youtube.com/watch?v=5yx6BWlEVcY'
-    #     station = station.strip('<>')
-
-    #     results = await player.node.get_tracks(station)
-    #     try:
-    #         track = results['tracks'][0]
-    #         track = lavalink.models.AudioTrack(track, ctx.author.id, recommended=True)
-    #         player.add(requester=ctx.author.id, track=track)
-
-    #         embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
-    #         embed.description = 'Now Playing: LoFi Radio (Live)'
-            
-    #         await ctx.send(embed=embed)
-
-    #         if not player.is_playing:
-    #             await player.play()
-    #     except Exception as error:
-    #         await ctx.send('Feature is in beta. Error: ' + error)
+                # Start disconnect timer.
+                while True:
+                    await asyncio.sleep(1)
+                    time += 1
+                    if not member.guild.voice_client:
+                        break
+                    if len(member.guild.voice_client.channel.members) != 1:
+                        break
+                    if time == 180:
+                        player = self.bot.lavalink.player_manager.get(member.guild.id)
+                        player.queue.clear()
+                        await player.stop()
+                        await member.guild.voice_client.disconnect(force=True)
+                        break   
 
 
 def setup(bot):
