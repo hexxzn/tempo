@@ -1,9 +1,12 @@
+# from lyricsgenius import Genius
 from discord.ext import commands
-import asyncio
+# from tokens import *
 import discord
+import asyncio
 import lavalink
 import re
 
+# genius = Genius(genius_token)
 url_rx = re.compile(r'https?://(?:www\.)?.+')
 
 
@@ -114,6 +117,38 @@ class Text(commands.Cog):
             '__**Developed by Hexxzn**__'
         )
         await ctx.channel.send(embed=help_menu)
+
+    # @commands.command(aliases=['l'])
+    # async def lyrics(self, ctx, *, query: str = ''):
+    #     if query == '' and ctx.guild.voice_client:
+    #         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+    #         if player.is_playing:
+    #             track = player.current
+    #             query = track['title']
+    #             print(query)
+
+    #     if query != '':
+    #         embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
+    #         song = genius.search_song(query, '')
+    #         if song == None:
+    #             embed.description = ('__**' + query + '**__ \n \n' + 'No lyrics found. Youtube titles with special characters confuse the bot. Working on it. Try a manual search for now. \n \n' +
+    #                                  '**!lyrics <song name and artist>**')
+    #             return await ctx.send(embed = embed)
+    #         song.lyrics = song.lyrics[len(song.title)+7:-5]
+    #         for char in song.lyrics[len(song.lyrics)-7:]:
+    #             if char.isnumeric():
+    #                 song.lyrics = song.lyrics[:-1]
+    #         embed_title = '__**' + song.artist + ' - ' + song.title + '**__ \n \n'
+    #         char_limit_message = '... \n \n [Exceeds maximum size of 4096 characters.]'
+
+    #         if len(song.lyrics) < 4096:
+    #             embed.description = embed_title + song.lyrics
+    #         else:
+    #             embed.description = embed_title + song.lyrics[:4096 - (len(embed_title) + len(char_limit_message))] + char_limit_message
+    #             print(len(embed.description))
+
+    #         await ctx.send(embed = embed)     
+
 
 class Music(commands.Cog):
     def __init__(self, bot):
@@ -349,6 +384,7 @@ class Music(commands.Cog):
         if player.is_playing:
             track = player.current
             embed.description = 'Now Playing: ' + f'[{track["title"]}]({track["uri"]})'
+            await ctx.send(embed = embed)
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
