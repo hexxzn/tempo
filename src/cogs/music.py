@@ -83,7 +83,7 @@ class Text(commands.Cog):
             'To play a YouTube livestream or playlist, paste its link after the **!play** command. \n'
             '\n'
             '__**Updates**__ \n'
-            '**2.5.3** - Tempo will now wait 3 minutes after queue end before disconnecting. \n'
+            '**2.5.3** - Tempo will now wait three minutes after queue end before disconnecting. \n'
             '**2.5.1** - Commands are no longer case sensitive. \n'
             '**2.5.0** - Tempo can now play YouTube livestreams. \n'
             'For a full list of updates visit: __*sourceflow.io/tempo*__ \n'
