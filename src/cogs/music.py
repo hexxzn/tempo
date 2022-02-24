@@ -84,10 +84,11 @@ class Text(commands.Cog):
             '__**Tips**__ \n'
             'For audio playback issues use the **!stop** command to reset the player. \n'
             'To play a YouTube livestream or playlist, paste its link after the **!play** command. \n'
+            # 'If **!play** or **!lyrics** aren\'t returning the right song try being more specific with your query. \n'
             '\n'
             '__**Updates**__ \n'
             # '**2.6.0** - Added lyrics command. \n'
-            '**2.5.3** - Tempo will now wait ninety seconds after queue end before disconnecting. \n'
+            '**2.5.3** - Tempo will now wait 90 seconds after queue end before disconnecting. \n'
             '**2.5.1** - Commands are no longer case sensitive. \n'
             '**2.5.0** - Tempo can now play YouTube livestreams. \n'
             'For a full list of updates visit: [sourceflow.io/tempo](https://sourceflow.io/tempo) \n'
@@ -116,20 +117,18 @@ class Text(commands.Cog):
             # '**[!l] [!lyrics] <song title and artist>** \n'
             # '— show song lyrics in text channel \n'
             '\n'
-            '__**Tempo v2.5.3**__ \n'
+            '__**Tempo v2.5.4**__ \n'
             '__**Developed by Hexxzn**__'
         )
         await ctx.channel.send(embed=help_menu)
 
+    # @commands.command()
+    # async def purge(self, ctx):
+    #     """ mass delete messages in command channel """
+    #     await ctx.channel.purge(limit=100)
+
     # @commands.command(aliases=['l'])
     # async def lyrics(self, ctx, *, query: str = ''):
-    #     # if query == '' and ctx.guild.voice_client:
-    #     #     player = self.bot.lavalink.player_manager.get(ctx.guild.id)
-    #     #     if player.is_playing:
-    #     #         track = player.current
-    #     #         query = track['title']
-    #     #         print(query)
-
     #     if query != '':
     #         embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
     #         song = genius.search_song(query, '')
@@ -145,7 +144,7 @@ class Text(commands.Cog):
     #         embed_title = '__**' + song.artist + ' - ' + song.title + '**__ \n \n'
     #         char_limit_message = '... \n \n [Exceeds maximum size of 4096 characters.]'
 
-    #         if len(song.lyrics) < 4096:
+    #         if len(embed_title) + len(song.lyrics) < 4096:
     #             embed.description = embed_title + song.lyrics
     #         else:
     #             embed.description = embed_title + song.lyrics[:4096 - (len(embed_title) + len(char_limit_message))] + char_limit_message
@@ -239,7 +238,7 @@ class Music(commands.Cog):
         # Get player for guild from cache.
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         # Set player volume.
-        await player.set_volume(15)
+        await player.set_volume(20)
         # Remove leading and trailing <>. <> suppress embedding links.
         query = query.strip('<>')
 
@@ -305,6 +304,10 @@ class Music(commands.Cog):
 
         if not player.is_playing:
             await player.play()
+            # await asyncio.sleep(1)
+            # if not player.is_playing:
+            #     embed.description = '403 Error'
+            #     await ctx.send(embed = embed)
 
     @commands.command(aliases=['st'])
     async def stop(self, ctx):
