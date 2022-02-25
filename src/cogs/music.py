@@ -88,9 +88,9 @@ class Text(commands.Cog):
             '\n'
             '__**Updates**__ \n'
             # '**2.6.0** - Added lyrics command. \n'
+            '**2.5.5** - Tempo can now be moved between channels without interrupting playback. \n'
             '**2.5.3** - Tempo will now wait 90 seconds after queue end before disconnecting. \n'
             '**2.5.1** - Commands are no longer case sensitive. \n'
-            '**2.5.0** - Tempo can now play YouTube livestreams. \n'
             'For a full list of updates visit: [sourceflow.io/tempo](https://sourceflow.io/tempo) \n'
             '\n'
             '__**Commands**__ \n'
@@ -378,8 +378,9 @@ class Music(commands.Cog):
         if len(player.queue) > 0:
             embed.description = 'Next: '
             for track in player.queue:
+                if len(embed.description) + len(f'[{track["title"]}]({track["uri"]}) \n') > 4096:
+                    break
                 embed.description += f'[{track["title"]}]({track["uri"]}) \n'
-
         await ctx.send(embed=embed)
 
     @commands.command(aliases=['sn'])
