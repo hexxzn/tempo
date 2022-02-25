@@ -117,7 +117,7 @@ class Text(commands.Cog):
             # '**[!l] [!lyrics] <song title and artist>** \n'
             # '— show song lyrics in text channel \n'
             '\n'
-            '__**Tempo v2.5.4**__ \n'
+            '__**Tempo v2.5.5**__ \n'
             '__**Developed by Hexxzn**__'
         )
         await ctx.channel.send(embed=help_menu)
@@ -160,9 +160,6 @@ class Music(commands.Cog):
         if not hasattr(bot, 'lavalink'):
             bot.lavalink = lavalink.Client(bot.user.id)
             bot.lavalink.add_node('localhost', 7000, 'sourceflow', 'na', 'default-node')  # Host, Port, Password, Region, Name
-
-        lavalink.add_event_hook(self.track_hook)
-        # lavalink.add_event_hook(self.find_error)
 
     def cog_unload(self):
         """ remove registered event hooks """
