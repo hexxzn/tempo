@@ -117,7 +117,7 @@ class Text(commands.Cog):
             # '**[!l] [!lyrics] <song title and artist>** \n'
             # '— show song lyrics in text channel \n'
             '\n'
-            '__**Tempo v2.5.5**__ \n'
+            '__**Tempo v2.5.6**__ \n'
             '__**Developed by Hexxzn**__'
         )
         await ctx.channel.send(embed=help_menu)
@@ -235,7 +235,7 @@ class Music(commands.Cog):
         # Get player for guild from cache.
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         # Set player volume.
-        await player.set_volume(20)
+        await player.set_volume(17)
         # Remove leading and trailing <>. <> suppress embedding links.
         query = query.strip('<>')
 
@@ -301,10 +301,6 @@ class Music(commands.Cog):
 
         if not player.is_playing:
             await player.play()
-            # await asyncio.sleep(1)
-            # if not player.is_playing:
-            #     embed.description = '403 Error'
-            #     await ctx.send(embed = embed)
 
     @commands.command(aliases=['st'])
     async def stop(self, ctx):
