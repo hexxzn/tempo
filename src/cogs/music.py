@@ -83,14 +83,14 @@ class Text(commands.Cog):
         help_menu.description = (
             '__**Tips**__ \n'
             'For audio playback issues use the **!stop** command to reset the player. \n'
-            'To play a YouTube livestream or playlist, paste its link after the **!play** command. \n'
+            'You can use links with the **!play** command. \n'
             # 'If **!play** or **!lyrics** aren\'t returning the right song try being more specific with your query. \n'
             '\n'
             '__**Updates**__ \n'
-            # '**2.6.0** - Added lyrics command. \n'
+            # '**2.7.0** - Added lyrics command. \n'
+            '**2.6.0** - Tempo can now play audio from Twitch and SoundCloud. \n'
             '**2.5.5** - Tempo can now be moved between channels without interrupting playback. \n'
             '**2.5.3** - Tempo will now wait 90 seconds after queue end before disconnecting. \n'
-            '**2.5.1** - Commands are no longer case sensitive. \n'
             'For a full list of updates visit: [sourceflow.io/tempo](https://sourceflow.io/tempo) \n'
             '\n'
             '__**Commands**__ \n'
@@ -117,7 +117,7 @@ class Text(commands.Cog):
             # '**[!l] [!lyrics] <song title and artist>** \n'
             # '— show song lyrics in text channel \n'
             '\n'
-            '__**Tempo v2.5.7**__ \n'
+            '__**Tempo v2.6.1**__ \n'
             '__**Developed by Hexxzn**__'
         )
         await ctx.channel.send(embed=help_menu)
@@ -127,30 +127,35 @@ class Text(commands.Cog):
     #     """ mass delete messages in command channel """
     #     await ctx.channel.purge(limit=100)
 
-    # @commands.command(aliases=['l'])
-    # async def lyrics(self, ctx, *, query: str = ''):
-    #     if query != '':
-    #         embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
-    #         song = genius.search_song(query, '')
+    @commands.command(aliases=['l'])
+    async def lyrics(self, ctx, *, query: str = ''):
+        embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
+        embed.description = '**!lyrics** command coming soon.'
+        await ctx.send(embed = embed)
 
-    #         if song == None:
-    #             embed.description = 'No lyrics found.'
-    #             return await ctx.send(embed = embed)
 
-    #         song.lyrics = song.lyrics[len(song.title)+7:-5]
-    #         for char in song.lyrics[len(song.lyrics)-7:]:
-    #             if char.isnumeric():
-    #                 song.lyrics = song.lyrics[:-1]
-    #         embed_title = '__**' + song.artist + ' - ' + song.title + '**__ \n \n'
-    #         char_limit_message = '... \n \n [Exceeds maximum size of 4096 characters.]'
+        # if query != '':
+        #     embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
+        #     song = genius.search_song(query, '')
 
-    #         if len(embed_title) + len(song.lyrics) < 4096:
-    #             embed.description = embed_title + song.lyrics
-    #         else:
-    #             embed.description = embed_title + song.lyrics[:4096 - (len(embed_title) + len(char_limit_message))] + char_limit_message
-    #             print(len(embed.description))
+        #     if song == None:
+        #         embed.description = 'No lyrics found.'
+        #         return await ctx.send(embed = embed)
 
-    #         await ctx.send(embed = embed)     
+        #     song.lyrics = song.lyrics[len(song.title)+7:-5]
+        #     for char in song.lyrics[len(song.lyrics)-7:]:
+        #         if char.isnumeric():
+        #             song.lyrics = song.lyrics[:-1]
+        #     embed_title = '__**' + song.artist + ' - ' + song.title + '**__ \n \n'
+        #     char_limit_message = '... \n \n [Exceeds maximum size of 4096 characters.]'
+
+        #     if len(embed_title) + len(song.lyrics) < 4096:
+        #         embed.description = embed_title + song.lyrics
+        #     else:
+        #         embed.description = embed_title + song.lyrics[:4096 - (len(embed_title) + len(char_limit_message))] + char_limit_message
+        #         print(len(embed.description))
+
+        #     await ctx.send(embed = embed)     
 
 
 class Music(commands.Cog):
@@ -251,7 +256,9 @@ class Music(commands.Cog):
         # Results could be None if Lavalink returns invalid response (non-JSON/non-200 (OK)).
         # Results['tracks'] could be empty array if query yields no tracks.
         if not results or not results['tracks']:
-            return await ctx.send('No results.')
+            if not player.is_playing:
+                await ctx.voice_client.disconnect(force=True)
+            return await ctx.send('No tracks found.')
 
         embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
 
