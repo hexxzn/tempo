@@ -91,6 +91,7 @@ class Text(commands.Cog):
             '**2.6.0** - Tempo can now stream audio from Twitch and SoundCloud. \n'
             '**2.5.5** - Tempo can now be moved between channels without interrupting playback. \n'
             '**2.5.3** - Tempo will now wait 90 seconds after queue end before disconnecting. \n'
+            '\n'
             'For a full list of updates visit: [sourceflow.io/tempo](https://sourceflow.io/tempo) \n'
             '\n'
             '__**Commands**__ \n'
