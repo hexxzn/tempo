@@ -118,7 +118,7 @@ class Text(commands.Cog):
             # '**[!l] [!lyrics] <song title and artist>** \n'
             # '— show song lyrics in text channel \n'
             '\n'
-            '__**Tempo v2.6.1**__ \n'
+            '__**Tempo v2.6.2**__ \n'
             '__**Developed by Hexxzn**__'
         )
         await ctx.channel.send(embed=help_menu)
@@ -343,7 +343,7 @@ class Music(commands.Cog):
             time += 1
             if not ctx.guild.voice_client:
                 break
-            if len(ctx.guild.voice_client.channel.members) != 1:
+            if player.paused == False:
                 break
             if time == 600:
                 player = self.bot.lavalink.player_manager.get(ctx.guild.id)
