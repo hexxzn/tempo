@@ -118,8 +118,8 @@ class Text(commands.Cog):
             # '**[!l] [!lyrics] <song title and artist>** \n'
             # '— show song lyrics in text channel \n'
             '\n'
-            '__**Tempo v2.6.2**__ \n'
-            '__**Developed by Hexxzn**__'
+            '__**Tempo v2.6.4**__ \n'
+            '__**Developed by Hexxzn (Hexxzn#0001)**__'
         )
         await ctx.channel.send(embed=help_menu)
 
