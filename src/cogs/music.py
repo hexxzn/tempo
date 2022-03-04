@@ -65,10 +65,12 @@ class Text(commands.Cog):
     async def broadcast(self, ctx, *, message):
         """ send message to all guilds """
         if ctx.author.id == 488812651514691586:
+            embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
+            embed.description = message
             for guild in self.bot.guilds:
                 for channel in guild.text_channels:
                     try:
-                        await channel.send(message)
+                        await channel.send(embed = embed)
                     except:
                         continue
                     else:
