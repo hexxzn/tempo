@@ -76,6 +76,19 @@ class Text(commands.Cog):
         else:
             await ctx.send('You are not authorized to use this command.')
 
+    @commands.command(aliases=['g'])
+    async def guilds(self, ctx):
+        if ctx.author.id == 488812651514691586:
+            embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
+            embed.description = 'Tempo is currently active in ' + str(len(self.bot.guilds))
+            if len(self.bot.guilds) > 1:
+                embed.description += ' servers.'
+            else:
+                embed.description += ' server.'
+            await ctx.send(embed = embed)
+        else:
+            await ctx.send('You are not authorized to use this command.')
+
     @commands.command(aliases=['h'])
     async def help(self, ctx):
         """ show command list in text channel """
