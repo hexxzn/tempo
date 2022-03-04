@@ -134,7 +134,6 @@ class Text(commands.Cog):
         embed.description = '**!lyrics** command coming soon.'
         await ctx.send(embed = embed)
 
-
         # if query != '':
         #     embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
         #     song = genius.search_song(query, '')
@@ -221,9 +220,9 @@ class Music(commands.Cog):
             guild_id = int(event.player.guild_id)
             guild = self.bot.get_guild(guild_id)
             player = event.player
-            time = 0
 
             # Start disconnect timer.
+            time = 0
             while True:
                 await asyncio.sleep(1)
                 time += 1
@@ -337,6 +336,22 @@ class Music(commands.Cog):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         await player.set_pause(True)
 
+        # Start disconnect timer.
+        time = 0
+        while True:
+            await asyncio.sleep(1)
+            time += 1
+            if not ctx.guild.voice_client:
+                break
+            if len(ctx.guild.voice_client.channel.members) != 1:
+                break
+            if time == 600:
+                player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+                player.queue.clear()
+                await player.stop()
+                await ctx.guild.voice_client.disconnect(force=True)
+                break
+
     @commands.command(aliases=['rs'])
     async def resume(self, ctx):
         """ unpause playback """
@@ -402,9 +417,9 @@ class Music(commands.Cog):
         """ disconnect if left alone in voice channel """
         if member.id != self.bot.user.id and member.guild.voice_client:
             if before.channel == member.guild.voice_client.channel and len(member.guild.voice_client.channel.members) == 1:
-                time = 0
 
                 # Start disconnect timer.
+                time = 0
                 while True:
                     await asyncio.sleep(1)
                     time += 1
