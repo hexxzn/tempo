@@ -62,7 +62,7 @@ class Text(commands.Cog):
         self.bot = bot
     
     @commands.command(aliases=['bc'])
-    async def broadcast(self, ctx, message):
+    async def broadcast(self, ctx, *, message):
         """ send message to all guilds """
         if ctx.author.id == 488812651514691586:
             for guild in self.bot.guilds:
