@@ -97,17 +97,17 @@ class Text(commands.Cog):
         help_menu = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
         help_menu.description = (
             '__**Links**__ \n'
-            '**[More Info](https://sourceflow.io/tempo)** \n'
-            '**[Invite Tempo](https://discord.com/api/oauth2/authorize?client_id=897864886095343687&permissions=3156992&scope=bot%20applications.commands)** \n'
+            '**[More Info](https://sourceflow.io/tempo)** - More links, commands, updates and unreleased features. \n'
+            '**[Invite Tempo](https://discord.com/api/oauth2/authorize?client_id=897864886095343687&permissions=3156992&scope=bot%20applications.commands)** - Invite Tempo to your Discord server. \n'
             '\n'
             '__**Updates**__ \n'
             # '**2.7.0** - Added lyrics command. \n'
+            '**2.6.7** - Small update to help menu and queue command. \n'
             '**2.6.0** - Tempo can now stream audio from Twitch and SoundCloud. \n'
             '**2.5.0** - Tempo can now play YouTube livestreams. \n'
-            '**2.3.0** - Tempo can now play YouTube playlists. \n'
             '\n'
             '__**Commands**__ \n'
-            '**[!p] [!play] <song title and artist>** \n' +
+            '**[!p] [!play] <song title, artist> or <link>** \n' +
             '— play song or add to queue \n'
             '**[!sn] [!song]** \n'
             '— show current track in text channel \n'
@@ -208,7 +208,7 @@ class Music(commands.Cog):
         player = self.bot.lavalink.player_manager.create(ctx.guild.id, endpoint=str(ctx.guild.region))
         
         # Commands that require the bot to join a voicechannel (i.e. initiating playback).
-        should_connect = ctx.command.name in ('play', 'lofi')
+        should_connect = ctx.command.name in ('play', 'hexxzn')
 
         if not ctx.author.voice or not ctx.author.voice.channel:
             # cog_command_error handler catches this and sends it to the voicechannel.
@@ -326,6 +326,31 @@ class Music(commands.Cog):
         if not player.is_playing:
             await player.play()
 
+    # @commands.command(aliases=['hex'])
+    # async def hexxzn(self, ctx):
+    #     """ play curated playlist """
+    #     # Get player for guild from cache.
+    #     player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+    #     # Set player volume.
+    #     await player.set_volume(20)
+
+    #     results = await player.node.get_tracks('https://www.youtube.com/playlist?list=PLjpYE03BZU4RnbtRX3hMugxqE2-Kaf3wa')
+    #     tracks = results['tracks']
+    #     embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
+    #     for track in tracks:
+    #         # Add all tracks from playlist to queue.
+    #         player.add(requester=ctx.author.id, track=track)
+
+    #     if not player.is_playing:
+    #         embed.description = 'Now Playing: ' + f'{results["playlistInfo"]["name"]} ({len(tracks)} tracks)'
+    #     else:
+    #         embed.description = 'Queued: ' + f'{results["playlistInfo"]["name"]} ({len(tracks)} tracks)'
+
+    #     await ctx.send(embed=embed)
+
+    #     if not player.is_playing:
+    #         await player.play()
+
     @commands.command(aliases=['st'])
     async def stop(self, ctx):
         """ stop playback and clear queue """
@@ -409,7 +434,8 @@ class Music(commands.Cog):
         embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
         embed.description = 'Queue Empty'
         if len(player.queue) > 0:
-            embed.description = 'Next: '
+            track = player.current
+            embed.description = 'Now Playing: ' + f'[{track["title"]}]({track["uri"]}) \n' + 'Next: '
             for track in player.queue:
                 if len(embed.description) + len(f'[{track["title"]}]({track["uri"]}) \n') > 4096:
                     break
