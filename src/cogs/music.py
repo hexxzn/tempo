@@ -130,7 +130,7 @@ class Text(commands.Cog):
             # '**[!l] [!lyrics] <song title and artist>** \n'
             # '— show song lyrics in text channel \n'
             '\n'
-            '__**Tempo v2.6.6**__ \n'
+            '__**Tempo v2.6.7**__ \n'
             '__**Developed by Hexxzn (Hexxzn#0001)**__'
         )
         await ctx.channel.send(embed=help_menu)
@@ -196,7 +196,10 @@ class Music(commands.Cog):
 
     async def cog_command_error(self, ctx, error):
         if isinstance(error, commands.CommandInvokeError):
-            await ctx.send(error.original)
+            if ctx.guild == None:
+                await ctx.send('Unable to locate user/voice channel.')
+            else:
+                await ctx.send(error.original)
             # Log cog errors
 
     async def ensure_voice(self, ctx):
