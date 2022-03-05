@@ -29,9 +29,6 @@ metrics:
 
 sentry:
   dsn: ""
-#  tags:
-#    some_key: some_value
-#    another_key: another_value
 
 logging:
   file:

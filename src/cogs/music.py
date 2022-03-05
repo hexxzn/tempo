@@ -96,18 +96,15 @@ class Text(commands.Cog):
         """ show command list in text channel """
         help_menu = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
         help_menu.description = (
-            '__**Tips**__ \n'
-            'For audio playback issues use the **!stop** command to reset the player. \n'
-            'You can use links with the **!play** command. \n'
-            # 'If **!play** or **!lyrics** aren\'t returning the right song try being more specific with your query. \n'
+            '__**Links**__ \n'
+            '**[More Info](https://sourceflow.io/tempo)** \n'
+            '**[Invite Tempo](https://discord.com/api/oauth2/authorize?client_id=897864886095343687&permissions=3156992&scope=bot%20applications.commands)** \n'
             '\n'
             '__**Updates**__ \n'
             # '**2.7.0** - Added lyrics command. \n'
             '**2.6.0** - Tempo can now stream audio from Twitch and SoundCloud. \n'
-            '**2.5.5** - Tempo can now be moved between channels without interrupting playback. \n'
-            '**2.5.3** - Tempo will now wait 90 seconds after queue end before disconnecting. \n'
-            '\n'
-            'For a full list of updates visit: [sourceflow.io/tempo](https://sourceflow.io/tempo) \n'
+            '**2.5.0** - Tempo can now play YouTube livestreams. \n'
+            '**2.3.0** - Tempo can now play YouTube playlists. \n'
             '\n'
             '__**Commands**__ \n'
             '**[!p] [!play] <song title and artist>** \n' +
@@ -133,7 +130,7 @@ class Text(commands.Cog):
             # '**[!l] [!lyrics] <song title and artist>** \n'
             # '— show song lyrics in text channel \n'
             '\n'
-            '__**Tempo v2.6.4**__ \n'
+            '__**Tempo v2.6.6**__ \n'
             '__**Developed by Hexxzn (Hexxzn#0001)**__'
         )
         await ctx.channel.send(embed=help_menu)
