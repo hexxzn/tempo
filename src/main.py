@@ -2,6 +2,8 @@ from discord.ext import commands
 from tokens import *
 import discord
 
+# intents= discord.Intents.default()
+# intents.members = True
 bot = commands.Bot(command_prefix = '!', case_insensitive = True, help_command = None)
 
 @bot.event

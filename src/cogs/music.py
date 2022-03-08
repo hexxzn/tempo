@@ -79,12 +79,17 @@ class Text(commands.Cog):
             await ctx.send('You are not authorized to use this command.')
 
     @commands.command(aliases=['g'])
-    async def guilds(self, ctx):
+    async def guilds(self, ctx, info=''):
         if ctx.author.id == 488812651514691586:
             embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
+            # display guild count
             embed.description = f'Tempo is currently active in {len(self.bot.guilds)} servers'
-            for guild in self.bot.guilds:
-                print(guild)
+            # display guild names + owner names
+            if info == 'list':
+                embed.description += '\n \n'
+                for guild in self.bot.guilds:
+                    owner = await self.bot.fetch_user(guild.owner_id)
+                    embed.description += f'{guild} ({owner.name}#{owner.discriminator}) \n'
             await ctx.send(embed = embed)
         else:
             await ctx.send('You are not authorized to use this command.')
@@ -128,7 +133,7 @@ class Text(commands.Cog):
             # '**[!l] [!lyrics] <song title and artist>** \n'
             # '— show song lyrics in text channel \n'
             '\n'
-            '__**Tempo v2.6.8**__ \n'
+            '__**Tempo v2.6.9**__ \n'
             '__**Developed by Hexxzn (Hexxzn#0001)**__'
         )
         await ctx.channel.send(embed=help_menu)
