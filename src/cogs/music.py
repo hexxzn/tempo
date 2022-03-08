@@ -82,11 +82,9 @@ class Text(commands.Cog):
     async def guilds(self, ctx):
         if ctx.author.id == 488812651514691586:
             embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
-            embed.description = 'Tempo is currently active in ' + str(len(self.bot.guilds))
-            if len(self.bot.guilds) > 1:
-                embed.description += ' servers.'
-            else:
-                embed.description += ' server.'
+            embed.description = f'Tempo is currently active in {len(self.bot.guilds)} servers'
+            for guild in self.bot.guilds:
+                print(guild)
             await ctx.send(embed = embed)
         else:
             await ctx.send('You are not authorized to use this command.')
@@ -130,7 +128,7 @@ class Text(commands.Cog):
             # '**[!l] [!lyrics] <song title and artist>** \n'
             # '— show song lyrics in text channel \n'
             '\n'
-            '__**Tempo v2.6.7**__ \n'
+            '__**Tempo v2.6.8**__ \n'
             '__**Developed by Hexxzn (Hexxzn#0001)**__'
         )
         await ctx.channel.send(embed=help_menu)
@@ -158,7 +156,7 @@ class Text(commands.Cog):
         #     for char in song.lyrics[len(song.lyrics)-7:]:
         #         if char.isnumeric():
         #             song.lyrics = song.lyrics[:-1]
-        #     embed_title = '__**' + song.artist + ' - ' + song.title + '**__ \n \n'
+        #     embed_title = f'__**{song.artist} - {song.title}**__ \n \n'
         #     char_limit_message = '... \n \n [Exceeds maximum size of 4096 characters.]'
 
         #     if len(embed_title) + len(song.lyrics) < 4096:
@@ -167,7 +165,7 @@ class Text(commands.Cog):
         #         embed.description = embed_title + song.lyrics[:4096 - (len(embed_title) + len(char_limit_message))] + char_limit_message
         #         print(len(embed.description))
 
-        #     await ctx.send(embed = embed)     
+        #     await ctx.send(embed = embed)  
 
 
 class Music(commands.Cog):
@@ -435,7 +433,7 @@ class Music(commands.Cog):
         embed.description = 'Queue Empty'
         if len(player.queue) > 0:
             track = player.current
-            embed.description = 'Now Playing: ' + f'[{track["title"]}]({track["uri"]}) \n' + 'Next: '
+            embed.description = f'Now Playing: [{track["title"]}]({track["uri"]}) \n Next: '
             for track in player.queue:
                 if len(embed.description) + len(f'[{track["title"]}]({track["uri"]}) \n') > 4096:
                     break
@@ -450,7 +448,7 @@ class Music(commands.Cog):
         embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
         if player.is_playing:
             track = player.current
-            embed.description = 'Now Playing: ' + f'[{track["title"]}]({track["uri"]})'
+            embed.description = f'Now Playing: [{track["title"]}]({track["uri"]})'
             await ctx.send(embed = embed)
 
     @commands.Cog.listener()
