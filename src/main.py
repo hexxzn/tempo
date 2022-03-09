@@ -9,6 +9,7 @@ bot = commands.Bot(command_prefix = '!', case_insensitive = True, help_command =
 @bot.event
 async def on_ready():
     bot.load_extension('cogs.music')
+    bot.load_extension('cogs.chat')
     await bot.change_presence(activity=discord.Game(name="!help"))
     print(f'{bot.user} is online.')
     print('--------------------')
