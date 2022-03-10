@@ -52,6 +52,28 @@ class Chat(commands.Cog):
             await ctx.send('You are not authorized to use this command.')
 
     @commands.command()
+    async def stats(self, ctx, stat=''):
+        if ctx.author.id == 488812651514691586:
+            embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
+            if stat == '':
+                embed.description = '__**!stats <stat>**__ \n' + '**guilds**' + ' — server count \n' + '**players**' + ' — active player count'
+                return await ctx.send(embed = embed)
+            if stat.lower() == 'guilds':
+                # display guild count
+                embed.description = f'Tempo is currently a member of {len(self.bot.guilds)} servers.'
+                return await ctx.send(embed = embed)
+            if stat.lower() == 'players':
+                # display active player count
+                players = 0
+                for guild in self.bot.guilds:
+                    if guild.voice_client:
+                        players += 1
+                embed.description = f'Tempo is currently playing music in {players} servers.'
+                return await ctx.send(embed = embed)
+        else:
+            await ctx.send('You are not authorized to use this command.')
+
+    @commands.command()
     async def purge(self, ctx):
         """ mass delete messages in command channel """
         if ctx.author.id == 488812651514691586:
@@ -95,10 +117,10 @@ class Chat(commands.Cog):
             '— return to beginning of current track \n'
             '**[!q] [!queue]** \n'
             '— show active queue in text channel \n'
-            '**[!l] [!lyrics] <song title and artist>** \n'
+            '**[!l] [!lyrics] <song title, artist>** \n'
             '— show song lyrics in text channel \n'
             '\n'
-            '__**Tempo v2.6.11**__ \n'
+            '__**Tempo v2.6.12**__ \n'
             '__**Developed by Hexxzn (Hexxzn#0001)**__'
         )
         await ctx.channel.send(embed=help_menu)
