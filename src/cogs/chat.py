@@ -35,40 +35,33 @@ class Chat(commands.Cog):
         else:
             await ctx.send('You are not authorized to use this command.')
 
-    @commands.command(aliases=['g'])
-    async def guilds(self, ctx, info=''):
-        if ctx.author.id == 488812651514691586:
-            embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
-            # display guild count
-            embed.description = f'Tempo is currently active in {len(self.bot.guilds)} servers'
-            # display guild names + owner names
-            if info == 'list':
-                embed.description += '\n \n'
-                for guild in self.bot.guilds:
-                    owner = await self.bot.fetch_user(guild.owner_id)
-                    embed.description += f'{guild} ({owner.name}#{owner.discriminator}) \n'
-            await ctx.send(embed = embed)
-        else:
-            await ctx.send('You are not authorized to use this command.')
-
     @commands.command()
-    async def stats(self, ctx, stat=''):
+    async def stats(self, ctx, *, stat=''):
         if ctx.author.id == 488812651514691586:
             embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
             if stat == '':
                 embed.description = '__**!stats <stat>**__ \n' + '**guilds**' + ' — server count \n' + '**players**' + ' — active player count'
                 return await ctx.send(embed = embed)
-            if stat.lower() == 'guilds':
+            elif stat.lower() == 'guilds':
                 # display guild count
                 embed.description = f'Tempo is currently a member of {len(self.bot.guilds)} servers.'
                 return await ctx.send(embed = embed)
-            if stat.lower() == 'players':
+            elif stat.lower() == 'guild list':
+                embed.description = ''
+                for guild in self.bot.guilds:
+                    owner = await self.bot.fetch_user(guild.owner_id)
+                    embed.description += f'{guild} ({owner.name}#{owner.discriminator}) \n'
+                return await ctx.send(embed = embed)
+            elif stat.lower() == 'players':
                 # display active player count
                 players = 0
                 for guild in self.bot.guilds:
                     if guild.voice_client:
                         players += 1
                 embed.description = f'Tempo is currently playing music in {players} servers.'
+                return await ctx.send(embed = embed)
+            else:
+                embed.description = f'"{stat}" is not an available stat.'
                 return await ctx.send(embed = embed)
         else:
             await ctx.send('You are not authorized to use this command.')
