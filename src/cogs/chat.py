@@ -1,9 +1,9 @@
 from discord.ext import commands
-# from lyricsgenius import Genius
-# from tokens import *
+from lyricsgenius import Genius
+from tokens import *
 import discord
 
-# genius = Genius(genius_token)
+genius = Genius(genius_token)
 
 
 class Chat(commands.Cog):
@@ -40,7 +40,7 @@ class Chat(commands.Cog):
         if ctx.author.id == 488812651514691586:
             embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
             if stat == '':
-                embed.description = '__**!stats <stat>**__ \n' + '**guilds**' + ' — server count \n' + '**players**' + ' — active player count'
+                embed.description = '__**!stats <stat>**__ \n' + '**guilds**' + ' — server count \n' + '**guild list**' + ' — list servers \n' + '**players**' + ' — active player count \n'
                 return await ctx.send(embed = embed)
             elif stat.lower() == 'guilds':
                 # display guild count
@@ -84,8 +84,7 @@ class Chat(commands.Cog):
             '**[Invite Tempo](https://discord.com/api/oauth2/authorize?client_id=897864886095343687&permissions=3156992&scope=bot%20applications.commands)** - Invite Tempo to your Discord server. \n'
             '\n'
             '__**Updates**__ \n'
-            # '**2.7.0** - Added lyrics command. \n'
-            '**2.6.7** - Small update to help menu and queue command. \n'
+            '**2.7.0** - Added lyrics command. \n'
             '**2.6.0** - Tempo can now stream audio from Twitch and SoundCloud. \n'
             '**2.5.0** - Tempo can now play YouTube livestreams. \n'
             '\n'
@@ -113,39 +112,39 @@ class Chat(commands.Cog):
             '**[!l] [!lyrics] <song title, artist>** \n'
             '— show song lyrics in text channel \n'
             '\n'
-            '__**Tempo v2.6.12**__ \n'
+            '__**Tempo v2.7.0**__ \n'
             '__**Developed by Hexxzn (Hexxzn#0001)**__'
         )
         await ctx.channel.send(embed=help_menu)
 
     @commands.command(aliases=['l'])
     async def lyrics(self, ctx, *, query: str = ''):
-        embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
-        embed.description = 'lyrics command coming soon.'
-        await ctx.send(embed = embed)
+        # embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
+        # embed.description = 'lyrics command coming soon.'
+        # await ctx.send(embed = embed)
 
-        # if query != '':
-        #     embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
-        #     song = genius.search_song(query, '')
+        if query != '':
+            embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
+            song = genius.search_song(query, '')
 
-        #     if song == None:
-        #         embed.description = 'No lyrics found.'
-        #         return await ctx.send(embed = embed)
+            if song == None:
+                embed.description = 'No lyrics found.'
+                return await ctx.send(embed = embed)
 
-        #     song.lyrics = song.lyrics[len(song.title)+7:-5]
-        #     for char in song.lyrics[len(song.lyrics)-7:]:
-        #         if char.isnumeric():
-        #             song.lyrics = song.lyrics[:-1]
-        #     embed_title = f'__**{song.artist} - {song.title}**__ \n \n'
-        #     char_limit_message = '... \n \n [Exceeds maximum size of 4096 characters.]'
+            song.lyrics = song.lyrics[len(song.title)+7:-5]
+            for char in song.lyrics[len(song.lyrics)-7:]:
+                if char.isnumeric():
+                    song.lyrics = song.lyrics[:-1]
+            embed_title = f'__**{song.artist} - {song.title}**__ \n \n'
+            char_limit_message = '... \n \n [Exceeds maximum size of 4096 characters.]'
 
-        #     if len(embed_title) + len(song.lyrics) < 4096:
-        #         embed.description = embed_title + song.lyrics
-        #     else:
-        #         embed.description = embed_title + song.lyrics[:4096 - (len(embed_title) + len(char_limit_message))] + char_limit_message
-        #         print(len(embed.description))
+            if len(embed_title) + len(song.lyrics) < 4096:
+                embed.description = embed_title + song.lyrics
+            else:
+                embed.description = embed_title + song.lyrics[:4096 - (len(embed_title) + len(char_limit_message))] + char_limit_message
+                print(len(embed.description))
 
-        #     await ctx.send(embed = embed)
+            await ctx.send(embed = embed)
 
 def setup(bot):
     bot.add_cog(Chat(bot))
