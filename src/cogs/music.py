@@ -92,7 +92,7 @@ class Music(commands.Cog):
         player = self.bot.lavalink.player_manager.create(ctx.guild.id, endpoint=str(ctx.guild.region))
         
         # Commands that require the bot to join a voicechannel (i.e. initiating playback).
-        should_connect = ctx.command.name in ('play')
+        should_connect = ctx.command.name in ('play', 'search')
 
         if not ctx.author.voice or not ctx.author.voice.channel:
             # cog_command_error handler catches this and sends it to the voicechannel.
@@ -210,6 +210,44 @@ class Music(commands.Cog):
         if not player.is_playing:
             await player.play()
 
+    # @commands.command(aliases=['se'])
+    # async def search(self, ctx, *, query: str):
+    #     # Get player for guild from cache.
+    #     player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+    #     # Set player volume.
+    #     await player.set_volume(17)
+    #     # Remove leading and trailing <>. <> suppress embedding links.
+    #     query = query.strip('<>')
+    #     # Search YouTube for given query
+    #     query = f'ytsearch:{query}'
+    #     results = await player.node.get_tracks(query)
+    #     embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
+
+    #     embed.description = '__**Results**__' + '\n \n'
+    #     count = 1
+    #     for track in results['tracks']:
+    #         embed.description += f'{count}. [{track["info"]["title"]}]({track["info"]["uri"]}) \n'
+    #         count += 1
+    #         if count > 10:
+    #             break
+
+    #     await ctx.send(embed = embed)
+
+    #     # Start disconnect timer.
+    #     time = 0
+    #     while True:
+    #         await asyncio.sleep(1)
+    #         time += 1
+    #         if not ctx.guild.voice_client:
+    #             break
+    #         if player.is_playing:
+    #             break
+    #         if time == 90:
+    #             player.queue.clear()
+    #             await player.stop()
+    #             await ctx.guild.voice_client.disconnect(force=True)
+    #             break
+
     @commands.command(aliases=['st'])
     async def stop(self, ctx):
         """ stop playback and clear queue """
@@ -244,7 +282,11 @@ class Music(commands.Cog):
                 break
             if player.paused == False:
                 break
-            if time == 600:
+            # if time == 1740:
+            #     embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
+            #     embed.description = 'Tempo will disconnect in 60 seconds. Use `!resume` command now to continue playing.'
+            #     await ctx.send(embed = embed)
+            if time == 1800:
                 player = self.bot.lavalink.player_manager.get(ctx.guild.id)
                 player.queue.clear()
                 await player.stop()

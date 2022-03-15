@@ -112,17 +112,13 @@ class Chat(commands.Cog):
             '**[!l] [!lyrics] <song title, artist>** \n'
             '— show song lyrics in text channel \n'
             '\n'
-            '__**Tempo v2.7.0**__ \n'
+            '__**Tempo v2.7.1**__ \n'
             '__**Developed by Hexxzn (Hexxzn#0001)**__'
         )
         await ctx.channel.send(embed=help_menu)
 
     @commands.command(aliases=['l'])
     async def lyrics(self, ctx, *, query: str = ''):
-        # embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
-        # embed.description = 'lyrics command coming soon.'
-        # await ctx.send(embed = embed)
-
         if query != '':
             embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
             song = genius.search_song(query, '')
