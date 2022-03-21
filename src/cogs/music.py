@@ -273,6 +273,8 @@ class Music(commands.Cog):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         await player.set_pause(True)
 
+        await ctx.send('Tempo will disconnect if paused for 30 minutes. Use `!resume` to continue playing.')
+
         # Start disconnect timer.
         time = 0
         while True:
@@ -282,10 +284,6 @@ class Music(commands.Cog):
                 break
             if player.paused == False:
                 break
-            # if time == 1740:
-            #     embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
-            #     embed.description = 'Tempo will disconnect in 60 seconds. Use `!resume` command now to continue playing.'
-            #     await ctx.send(embed = embed)
             if time == 1800:
                 player = self.bot.lavalink.player_manager.get(ctx.guild.id)
                 player.queue.clear()
