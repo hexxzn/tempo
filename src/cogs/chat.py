@@ -11,18 +11,21 @@ class Chat(commands.Cog):
         self.bot = bot
     
     async def cog_command_error(self, ctx, error):
-            if isinstance(error, commands.CommandInvokeError):
-                if ctx.guild == None:
-                    await ctx.send('Unable to locate user/voice channel.')
-                else:
-                    await ctx.send(error.original)
+        if isinstance(error, commands.CommandInvokeError):
+            embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
+            if ctx.guild == None:
+                embed.description = 'Unable to locate user/voice channel.'
+                await ctx.send(embed = embed)
+            else:
                 # Log cog errors
+                embed.description = error.original
+                await ctx.send(embed = embed)
 
     @commands.command(aliases=['bc'])
     async def broadcast(self, ctx, *, message):
         """ send message to all guilds """
+        embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
         if ctx.author.id == 488812651514691586:
-            embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
             embed.description = message
             for guild in self.bot.guilds:
                 for channel in guild.text_channels:
@@ -33,12 +36,13 @@ class Chat(commands.Cog):
                     else:
                         break
         else:
-            await ctx.send('You are not authorized to use this command.')
+            embed.description = 'You are not authorized to use this command.'
+            await ctx.send(embed = embed)
 
     @commands.command()
     async def stats(self, ctx, *, stat=''):
+        embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
         if ctx.author.id == 488812651514691586:
-            embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
             if stat == '':
                 embed.description = '__**!stats <stat>**__ \n' + '**guilds**' + ' — server count \n' + '**guild list**' + ' — list servers \n' + '**players**' + ' — active player count \n'
                 return await ctx.send(embed = embed)
@@ -64,7 +68,8 @@ class Chat(commands.Cog):
                 embed.description = f'"{stat}" is not an available stat.'
                 return await ctx.send(embed = embed)
         else:
-            await ctx.send('You are not authorized to use this command.')
+            embed.description = 'You are not authorized to use this command.'
+            await ctx.send(embed = embed)
 
     @commands.command()
     async def purge(self, ctx):
@@ -72,7 +77,9 @@ class Chat(commands.Cog):
         if ctx.author.id == 488812651514691586:
             await ctx.channel.purge(limit=100)
         else:
-            await ctx.send('You are not authorized to use this command.')
+            embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
+            embed.description = 'You are not authorized to use this command.'
+            await ctx.send(embed = embed)
 
     @commands.command(aliases=['h'])
     async def help(self, ctx):
@@ -112,7 +119,7 @@ class Chat(commands.Cog):
             '**[!l] [!lyrics] <song title, artist>** \n'
             '— show song lyrics in text channel \n'
             '\n'
-            '__**Tempo v2.7.2**__ \n'
+            '__**Tempo v2.7.3**__ \n'
             '__**Developed by Hexxzn (Hexxzn#0001)**__'
         )
         await ctx.channel.send(embed=help_menu)

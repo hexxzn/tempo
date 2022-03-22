@@ -80,11 +80,14 @@ class Music(commands.Cog):
 
     async def cog_command_error(self, ctx, error):
         if isinstance(error, commands.CommandInvokeError):
+            embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
             if ctx.guild == None:
-                await ctx.send('Unable to locate user/voice channel.')
+                embed.description = 'Unable to locate user/voice channel.'
+                await ctx.send(embed = embed)
             else:
-                await ctx.send(error.original)
-            # Log cog errors
+                # Log cog errors
+                embed.description = error.original
+                await ctx.send(embed = embed)
 
     async def ensure_voice(self, ctx):
         """ ensure bot and user are in same voice channel """
@@ -152,14 +155,15 @@ class Music(commands.Cog):
         # Get results for query from Lavalink.
         results = await player.node.get_tracks(query)
 
+        embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
+
         # Results could be None if Lavalink returns invalid response (non-JSON/non-200 (OK)).
         # Results['tracks'] could be empty array if query yields no tracks.
         if not results or not results['tracks']:
             if not player.is_playing:
                 await ctx.voice_client.disconnect(force=True)
-            return await ctx.send('No tracks found.')
-
-        embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
+            embed.description = 'No tracks found.'
+            return await ctx.send(embed = embed)
 
         # Valid loadTypes:
         #   TRACK_LOADED    - single video/direct URL
@@ -205,7 +209,7 @@ class Music(commands.Cog):
             track = lavalink.models.AudioTrack(track, ctx.author.id, recommended=True)
             player.add(requester=ctx.author.id, track=track)
 
-        await ctx.send(embed=embed)
+        await ctx.send(embed = embed)
 
         if not player.is_playing:
             await player.play()
@@ -252,12 +256,15 @@ class Music(commands.Cog):
     async def stop(self, ctx):
         """ stop playback and clear queue """
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+        embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
 
         if not player.is_connected:
-            return await ctx.send('Tempo is not connected to a voice channel.')
+            embed.description = 'Tempo is not connected to a voice channel.'
+            return await ctx.send(embed = embed)
 
         if not ctx.author.voice or (player.is_connected and ctx.author.voice.channel.id != int(player.channel_id)):
-            return await ctx.send('You must be in the same voice channel as Tempo to use this command.')
+            embed.description = 'You must be in the same voice channel as Tempo to use this command.'
+            return await ctx.send(embed = embed)
 
         # Clear queue.
         player.queue.clear()
@@ -265,15 +272,17 @@ class Music(commands.Cog):
         await player.stop()
         # Disconnect from voice channel.
         await ctx.voice_client.disconnect(force=True)
-        await ctx.send('Queue has been cleared.')
+        embed.description = 'Queue has been cleared.'
+        await ctx.send(embed = embed)
 
     @commands.command(aliases=['ps'])
     async def pause(self, ctx):
         """ pause playback """
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         await player.set_pause(True)
-
-        await ctx.send('Tempo will disconnect if paused for 30 minutes. Use `!resume` to continue playing.')
+        embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
+        embed.description = 'Tempo will disconnect if paused for 30 minutes. Use `!resume` to continue playing.'
+        await ctx.send(embed = embed)
 
         # Start disconnect timer.
         time = 0
@@ -307,7 +316,9 @@ class Music(commands.Cog):
     async def forward(self, ctx, seconds = None):
         """ skip forward given number of seconds """
         if seconds == None:
-            return await ctx.send('How far? Try `!forward 15` or `!fw 15` to skip forward 15 seconds.')
+            embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
+            embed.description = 'How far? Try `!forward 15` or `!fw 15` to skip forward 15 seconds.'
+            return await ctx.send(embed = embed)
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         await player.seek(player.position + int(seconds) * 1000)
 
@@ -315,7 +326,9 @@ class Music(commands.Cog):
     async def backward(self, ctx, seconds = None):
         """ skip backward given number of seconds """
         if seconds == None:
-            return await ctx.send('How far? Try `!backward 15` or `!bw 15` to skip backward 15 seconds.')
+            embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
+            embed.description = 'How far? Try `!backward 15` or `!bw 15` to skip backward 15 seconds.'
+            return await ctx.send(embed = embed)
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         await player.seek(player.position - int(seconds) * 1000)
 
@@ -339,7 +352,7 @@ class Music(commands.Cog):
                 if len(embed.description) + len(f'[{track["title"]}]({track["uri"]}) \n') > 4096:
                     break
                 embed.description += f'[{track["title"]}]({track["uri"]}) \n'
-        await ctx.send(embed=embed)
+        await ctx.send(embed = embed)
 
     @commands.command(aliases=['sn'])
     async def song(self, ctx):
