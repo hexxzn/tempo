@@ -317,7 +317,7 @@ class Music(commands.Cog):
         """ skip forward given number of seconds """
         if seconds == None:
             embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
-            embed.description = 'How far? Try `!forward 15` or `!fw 15` to skip forward 15 seconds.'
+            embed.description = 'How far? Try `!forward 15` to skip forward 15 seconds.'
             return await ctx.send(embed = embed)
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         await player.seek(player.position + int(seconds) * 1000)
@@ -327,7 +327,7 @@ class Music(commands.Cog):
         """ skip backward given number of seconds """
         if seconds == None:
             embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
-            embed.description = 'How far? Try `!backward 15` or `!bw 15` to skip backward 15 seconds.'
+            embed.description = 'How far? Try `!backward 15` to skip backward 15 seconds.'
             return await ctx.send(embed = embed)
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         await player.seek(player.position - int(seconds) * 1000)
