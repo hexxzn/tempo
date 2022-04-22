@@ -87,7 +87,7 @@ class Chat(commands.Cog):
         help_menu = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
         help_menu.description = (
             '__**Links**__ \n'
-            '**[More Info](https://sourceflow.io/tempo)** - More links, commands, updates and unreleased features. \n'
+            '**[More Info](https://sourceflow.io/portfolio/tempo)** - More links, commands, updates and unreleased features. \n'
             '**[Invite Tempo](https://discord.com/api/oauth2/authorize?client_id=897864886095343687&permissions=3156992&scope=bot%20applications.commands)** - Invite Tempo to your Discord server. \n'
             '\n'
             '__**Updates**__ \n'
