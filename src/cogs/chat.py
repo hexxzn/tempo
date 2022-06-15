@@ -119,7 +119,7 @@ class Chat(commands.Cog):
             '**[!l] [!lyrics] <song title, artist>** \n'
             '— show song lyrics in text channel \n'
             '\n'
-            '__**Tempo v2.7.4**__ \n'
+            '__**Tempo v2.7.5**__ \n'
             '__**Developed by Hexxzn (Hexxzn#0001)**__'
         )
         await ctx.channel.send(embed=help_menu)

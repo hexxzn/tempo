@@ -209,6 +209,9 @@ class Music(commands.Cog):
             track = lavalink.models.AudioTrack(track, ctx.author.id, recommended=True)
             player.add(requester=ctx.author.id, track=track)
 
+        if player.paused == True:
+            embed.description += '\n \n Tempo is paused. Use `!resume` to continue playing.' # Alert user that Tempo is paused.
+
         await ctx.send(embed = embed)
 
         if not player.is_playing:
