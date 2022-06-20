@@ -240,15 +240,17 @@ class Music(commands.Cog):
         embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
 
         embed.description = '__**Results**__' + '\n \n'
-        count = 1
+        reactions = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '❌']
+        count = 0
         for track in results['tracks']:
-            embed.description += f'{count}. [{track["info"]["title"]}]({track["info"]["uri"]}) \n'
+            embed.description += f'{reactions[count]} [{track["info"]["title"]}]({track["info"]["uri"]}) \n'
             count += 1
-            if count > 5:
+            if count > 4:
                 break
+        # embed.description += '\n' + 'Wait for all 5 reactions to load then choose one to play a song.' + '\n' + 'Ex. Clicking 1️⃣ will play '
+        # print(results['tracks'][0]['info']['title'])
 
         message = await ctx.send(embed = embed)
-        reactions = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '❌']
         for reaction in reactions:
             await message.add_reaction(reaction)
 
