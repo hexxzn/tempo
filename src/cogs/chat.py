@@ -91,13 +91,15 @@ class Chat(commands.Cog):
             '**[Invite Tempo](https://discord.com/api/oauth2/authorize?client_id=897864886095343687&permissions=3156992&scope=bot%20applications.commands)** - Invite Tempo to your Discord server. \n'
             '\n'
             '__**Updates**__ \n'
+            '**2.8.0** - Added search command. \n'
             '**2.7.0** - Added lyrics command. \n'
-            '**2.6.0** - Tempo can now stream audio from Twitch and SoundCloud. \n'
             '**2.5.0** - Tempo can now play YouTube livestreams. \n'
             '\n'
             '__**Commands**__ \n'
             '**[!p] [!play] <song title, artist> or <link>** \n' +
             '— play song or add to queue \n'
+            '**[!se] [!search] <song title, artist>** \n' +
+            '— choose song from the top 5 search results. \n'
             '**[!sn] [!song]** \n'
             '— show current track in text channel \n'
             '**[!sk] [!skip]** \n'
@@ -119,7 +121,7 @@ class Chat(commands.Cog):
             '**[!l] [!lyrics] <song title, artist>** \n'
             '— show song lyrics in text channel \n'
             '\n'
-            '__**Tempo v2.7.5**__ \n'
+            '__**Tempo v2.8.0**__ \n'
             '__**Developed by Hexxzn (Hexxzn#0001)**__'
         )
         await ctx.channel.send(embed=help_menu)

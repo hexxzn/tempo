@@ -6,6 +6,15 @@ import re
 
 url_rx = re.compile(r'https?://(?:www\.)?.+')
 
+class SearchMessage:
+    def __init__(self, ctx, message_embed, message_id, message_tracklist):
+        self.ctx = ctx
+        self.embed = message_embed
+        self.id = message_id
+        self.requester = ctx.author
+        self.tracklist = message_tracklist
+
+search_messages = []
 
 class LavalinkVoiceClient(discord.VoiceClient):
     def __init__(self, client: discord.Client, channel: discord.abc.Connectable):
@@ -217,43 +226,82 @@ class Music(commands.Cog):
         if not player.is_playing:
             await player.play()
 
-    # @commands.command(aliases=['se'])
-    # async def search(self, ctx, *, query: str):
-    #     # Get player for guild from cache.
-    #     player = self.bot.lavalink.player_manager.get(ctx.guild.id)
-    #     # Set player volume.
-    #     await player.set_volume(17)
-    #     # Remove leading and trailing <>. <> suppress embedding links.
-    #     query = query.strip('<>')
-    #     # Search YouTube for given query
-    #     query = f'ytsearch:{query}'
-    #     results = await player.node.get_tracks(query)
-    #     embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
+    @commands.command(aliases=['se'])
+    async def search(self, ctx, *, query: str):
+        # Get player for guild from cache.
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+        # Set player volume.
+        await player.set_volume(17)
+        # Remove leading and trailing <>. <> suppress embedding links.
+        query = query.strip('<>')
+        # Search YouTube for given query
+        query = f'ytsearch:{query}'
+        results = await player.node.get_tracks(query)
+        embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
 
-    #     embed.description = '__**Results**__' + '\n \n'
-    #     count = 1
-    #     for track in results['tracks']:
-    #         embed.description += f'{count}. [{track["info"]["title"]}]({track["info"]["uri"]}) \n'
-    #         count += 1
-    #         if count > 10:
-    #             break
+        embed.description = '__**Results**__' + '\n \n'
+        count = 1
+        for track in results['tracks']:
+            embed.description += f'{count}. [{track["info"]["title"]}]({track["info"]["uri"]}) \n'
+            count += 1
+            if count > 5:
+                break
 
-    #     await ctx.send(embed = embed)
+        message = await ctx.send(embed = embed)
+        reactions = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '❌']
+        for reaction in reactions:
+            await message.add_reaction(reaction)
 
-    #     # Start disconnect timer.
-    #     time = 0
-    #     while True:
-    #         await asyncio.sleep(1)
-    #         time += 1
-    #         if not ctx.guild.voice_client:
-    #             break
-    #         if player.is_playing:
-    #             break
-    #         if time == 90:
-    #             player.queue.clear()
-    #             await player.stop()
-    #             await ctx.guild.voice_client.disconnect(force=True)
-    #             break
+        search_messages.append(SearchMessage(ctx, message, message.id, results))
+
+        # Start disconnect timer.
+        time = 0
+        while True:
+            await asyncio.sleep(1)
+            time += 1
+            if not ctx.guild.voice_client:
+                break
+            if player.is_playing:
+                break
+            if time == 90:
+                player.queue.clear()
+                await player.stop()
+                await ctx.guild.voice_client.disconnect(force=True)
+                break
+
+    @commands.Cog.listener()
+    async def on_reaction_add(self, reaction, user):
+        if not user == self.bot.user:
+            for message in search_messages:
+                if message.id == reaction.message.id and message.requester == user:
+                    match reaction.emoji:
+                        case '1️⃣':
+                            track = message.tracklist['tracks'][0]
+                        case '2️⃣':
+                            track = message.tracklist['tracks'][1]
+                        case '3️⃣':
+                            track = message.tracklist['tracks'][2]
+                        case '4️⃣':
+                            track = message.tracklist['tracks'][3]
+                        case '5️⃣':
+                            track = message.tracklist['tracks'][4]
+                        case '❌':
+                            return await message.embed.delete(delay=None)
+
+                    player = self.bot.lavalink.player_manager.get(user.guild.id)
+                    embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
+                    if not player.is_playing:
+                        embed.description = 'Now Playing: '
+                    else:
+                        embed.description ='Queued: '
+                    embed.description += f'[{track["info"]["title"]}]({track["info"]["uri"]})'
+                    player.add(requester=user.id, track=track)
+                    await message.ctx.send(embed = embed)
+                    if not player.is_playing:
+                        await player.play()
+                    search_messages.remove(message)
+                    await message.embed.delete(delay=None)
+                    break
 
     @commands.command(aliases=['st'])
     async def stop(self, ctx):
