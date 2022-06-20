@@ -242,17 +242,14 @@ class Music(commands.Cog):
         embed.description = '__**Results**__' + '\n \n'
         reactions = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '❌']
         count = 0
-        for track in results['tracks']:
+        for track in results['tracks'][0:5]:
             embed.description += f'{reactions[count]} [{track["info"]["title"]}]({track["info"]["uri"]}) \n'
             count += 1
-            if count > 4:
-                break
-        # embed.description += '\n' + 'Wait for all 5 reactions to load then choose one to play a song.' + '\n' + 'Ex. Clicking 1️⃣ will play '
-        # print(results['tracks'][0]['info']['title'])
 
         message = await ctx.send(embed = embed)
-        for reaction in reactions:
-            await message.add_reaction(reaction)
+        for i in range(len(results['tracks'][0:5])):
+            await message.add_reaction(reactions[i])
+        await message.add_reaction(reactions[5])
 
         search_messages.append(SearchMessage(ctx, message, message.id, results))
 
@@ -278,15 +275,30 @@ class Music(commands.Cog):
                 if message.id == reaction.message.id and message.requester == user:
                     match reaction.emoji:
                         case '1️⃣':
-                            track = message.tracklist['tracks'][0]
+                            if len(message.tracklist['tracks']) > 0:
+                                track = message.tracklist['tracks'][0]
+                            else:
+                                return
                         case '2️⃣':
-                            track = message.tracklist['tracks'][1]
+                            if len(message.tracklist['tracks']) > 1:
+                                track = message.tracklist['tracks'][1]
+                            else:
+                                return
                         case '3️⃣':
-                            track = message.tracklist['tracks'][2]
+                            if len(message.tracklist['tracks']) > 2:
+                                track = message.tracklist['tracks'][2]
+                            else:
+                                return
                         case '4️⃣':
-                            track = message.tracklist['tracks'][3]
+                            if len(message.tracklist['tracks']) > 3:
+                                track = message.tracklist['tracks'][3]
+                            else:
+                                return
                         case '5️⃣':
-                            track = message.tracklist['tracks'][4]
+                            if len(message.tracklist['tracks']) > 4:
+                                track = message.tracklist['tracks'][4]
+                            else:
+                                return
                         case '❌':
                             search_messages.remove(message)
                             return await message.embed.delete(delay=None)
