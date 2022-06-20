@@ -286,6 +286,7 @@ class Music(commands.Cog):
                         case '5️⃣':
                             track = message.tracklist['tracks'][4]
                         case '❌':
+                            search_messages.remove(message)
                             return await message.embed.delete(delay=None)
 
                     player = self.bot.lavalink.player_manager.get(user.guild.id)
@@ -421,7 +422,6 @@ class Music(commands.Cog):
         """ disconnect if left alone in voice channel """
         if member.id != self.bot.user.id and member.guild.voice_client:
             if before.channel == member.guild.voice_client.channel and len(member.guild.voice_client.channel.members) == 1:
-
                 # Start disconnect timer.
                 time = 0
                 while True:
@@ -437,7 +437,12 @@ class Music(commands.Cog):
                         await player.stop()
                         await member.guild.voice_client.disconnect(force=True)
                         break
-
+        
+        if member.id == self.bot.user.id:
+            if after.channel == None:
+                for message in search_messages:
+                    await message.embed.delete(delay=None)
+                search_messages.clear()
 
 def setup(bot):
     bot.add_cog(Music(bot))
