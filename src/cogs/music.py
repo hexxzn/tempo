@@ -226,6 +226,16 @@ class Music(commands.Cog):
         if not player.is_playing:
             await player.play()
 
+    class SearchMessage:
+        def __init__(self, ctx, message_embed, message_id, message_tracklist):
+            self.ctx = ctx
+            self.embed = message_embed
+            self.id = message_id
+            self.requester = ctx.author
+            self.tracklist = message_tracklist
+
+    search_messages = []
+
     @commands.command(aliases=['se'])
     async def search(self, ctx, *, query: str):
         # Get player for guild from cache.
@@ -267,56 +277,6 @@ class Music(commands.Cog):
                 await player.stop()
                 await ctx.guild.voice_client.disconnect(force=True)
                 break
-
-    @commands.Cog.listener()
-    async def on_reaction_add(self, reaction, user):
-        if not user == self.bot.user:
-            for message in search_messages:
-                if message.id == reaction.message.id and message.requester == user:
-                    match reaction.emoji:
-                        case '1️⃣':
-                            if len(message.tracklist['tracks']) > 0:
-                                track = message.tracklist['tracks'][0]
-                            else:
-                                return
-                        case '2️⃣':
-                            if len(message.tracklist['tracks']) > 1:
-                                track = message.tracklist['tracks'][1]
-                            else:
-                                return
-                        case '3️⃣':
-                            if len(message.tracklist['tracks']) > 2:
-                                track = message.tracklist['tracks'][2]
-                            else:
-                                return
-                        case '4️⃣':
-                            if len(message.tracklist['tracks']) > 3:
-                                track = message.tracklist['tracks'][3]
-                            else:
-                                return
-                        case '5️⃣':
-                            if len(message.tracklist['tracks']) > 4:
-                                track = message.tracklist['tracks'][4]
-                            else:
-                                return
-                        case '❌':
-                            search_messages.remove(message)
-                            return await message.embed.delete(delay=None)
-
-                    player = self.bot.lavalink.player_manager.get(user.guild.id)
-                    embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
-                    if not player.is_playing:
-                        embed.description = 'Now Playing: '
-                    else:
-                        embed.description ='Queued: '
-                    embed.description += f'[{track["info"]["title"]}]({track["info"]["uri"]})'
-                    player.add(requester=user.id, track=track)
-                    await message.ctx.send(embed = embed)
-                    if not player.is_playing:
-                        await player.play()
-                    search_messages.remove(message)
-                    await message.embed.delete(delay=None)
-                    break
 
     @commands.command(aliases=['st'])
     async def stop(self, ctx):
@@ -455,8 +415,61 @@ class Music(commands.Cog):
         if member.id == self.bot.user.id:
             if after.channel == None:
                 for message in search_messages:
-                    await message.embed.delete(delay=None)
+                    try:
+                        await message.embed.delete(delay=None)
+                    except discord.errors.NotFound:
+                        print('discord.errors.NotFound >>> Message already deleted.')
                 search_messages.clear()
+
+    @commands.Cog.listener()
+    async def on_reaction_add(self, reaction, user):
+        if not user == self.bot.user:
+            for message in search_messages:
+                if message.id == reaction.message.id and message.requester == user:
+                    match reaction.emoji:
+                        case '1️⃣':
+                            if len(message.tracklist['tracks']) > 0:
+                                track = message.tracklist['tracks'][0]
+                            else:
+                                return
+                        case '2️⃣':
+                            if len(message.tracklist['tracks']) > 1:
+                                track = message.tracklist['tracks'][1]
+                            else:
+                                return
+                        case '3️⃣':
+                            if len(message.tracklist['tracks']) > 2:
+                                track = message.tracklist['tracks'][2]
+                            else:
+                                return
+                        case '4️⃣':
+                            if len(message.tracklist['tracks']) > 3:
+                                track = message.tracklist['tracks'][3]
+                            else:
+                                return
+                        case '5️⃣':
+                            if len(message.tracklist['tracks']) > 4:
+                                track = message.tracklist['tracks'][4]
+                            else:
+                                return
+                        case '❌':
+                            search_messages.remove(message)
+                            return await message.embed.delete(delay=None)
+
+                    player = self.bot.lavalink.player_manager.get(user.guild.id)
+                    embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
+                    if not player.is_playing:
+                        embed.description = 'Now Playing: '
+                    else:
+                        embed.description ='Queued: '
+                    embed.description += f'[{track["info"]["title"]}]({track["info"]["uri"]})'
+                    player.add(requester=user.id, track=track)
+                    await message.ctx.send(embed = embed)
+                    if not player.is_playing:
+                        await player.play()
+                    search_messages.remove(message)
+                    await message.embed.delete(delay=None)
+                    break
 
 def setup(bot):
     bot.add_cog(Music(bot))
