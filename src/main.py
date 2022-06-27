@@ -1,17 +1,19 @@
-from discord.ext import commands
+import nextcord as nxt
+from nextcord.ext import commands as cmd
 from tokens import *
-import discord
 
-# intents = discord.Intents.default()
-# intents.members = True
-bot = commands.Bot(command_prefix = '!', case_insensitive = True, help_command = None)
+intents = nxt.Intents.default()
+intents.message_content = True
+
+bot = cmd.Bot(command_prefix = prefix, case_insensitive = True, help_command = None, intents = intents)
 
 @bot.event
 async def on_ready():
     bot.load_extension('cogs.music')
-    bot.load_extension('cogs.chat')
-    await bot.change_presence(activity=discord.Game(name="!help"))
+    bot.load_extension('cogs.help')
+    await bot.change_presence(activity=nxt.Activity(type=nxt.ActivityType.listening, name="!help"))
     print(f'{bot.user} is online.')
     print('--------------------')
 
 bot.run(beta_token)
+

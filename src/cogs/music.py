@@ -1,34 +1,25 @@
-from discord.ext import commands
+import nextcord as nxt
+from nextcord.ext import commands as cmd
+from lyricsgenius import Genius
+from tokens import *
 import lavalink
-import discord
 import asyncio
+import math
 import re
 
-url_rx = re.compile(r'https?://(?:www\.)?.+')
-
-class SearchMessage:
-    def __init__(self, ctx, message_embed, message_id, message_tracklist):
-        self.ctx = ctx
-        self.embed = message_embed
-        self.id = message_id
-        self.requester = ctx.author
-        self.tracklist = message_tracklist
-
-search_messages = []
-
-class LavalinkVoiceClient(discord.VoiceClient):
-    def __init__(self, client: discord.Client, channel: discord.abc.Connectable):
+class LavalinkVoiceClient(nxt.VoiceClient):
+    def __init__(self, client: nxt.Client, channel: nxt.abc.Connectable):
         self.client = client
         self.channel = channel
         if hasattr(self.client, 'lavalink'):
             self.lavalink = self.client.lavalink
         else:
             self.client.lavalink = lavalink.Client(client.user.id)
-            self.client.lavalink.add_node('localhost', 7000, 'sourceflow', 'na', 'default-node')
+            self.client.lavalink.add_node(node_host, node_port, node_password, node_region, node_name)
             self.lavalink = self.client.lavalink
 
     async def on_voice_server_update(self, data):
-        # convert data before sending to voice_update_handler
+        # Convert data before sending to voice_update_handler
         lavalink_data = {
                 't': 'VOICE_SERVER_UPDATE',
                 'd': data
@@ -36,7 +27,7 @@ class LavalinkVoiceClient(discord.VoiceClient):
         await self.lavalink.voice_update_handler(lavalink_data)
 
     async def on_voice_state_update(self, data):
-        # convert data before sending to voice_update_handler
+        # Convert data before sending to voice_update_handler
         lavalink_data = {
                 't': 'VOICE_STATE_UPDATE',
                 'd': data
@@ -44,12 +35,12 @@ class LavalinkVoiceClient(discord.VoiceClient):
         await self.lavalink.voice_update_handler(lavalink_data)
 
     async def connect(self, *, timeout: float, reconnect: bool) -> None:
-        """ connect to voice channel and create a player_manager """
+        # Connect to voice channel and create a player_manager
         self.lavalink.player_manager.create(guild_id=self.channel.guild.id)
         await self.channel.guild.change_voice_state(channel=self.channel)
 
     async def disconnect(self, *, force: bool) -> None:
-        """ disconnect, clean up running player and leave voice client """
+        # Disconnect, clean up running player and leave voice client
         player = self.lavalink.player_manager.get(self.channel.guild.id)
 
         if not force and not player.is_connected:
@@ -58,38 +49,37 @@ class LavalinkVoiceClient(discord.VoiceClient):
         # None = disconnect
         await self.channel.guild.change_voice_state(channel=None)
 
-        # Must manually change channel_id to None. 
+        # Must manually change channel_id to None
         player.channel_id = None
         self.cleanup()
 
-
-class Music(commands.Cog):
+class Music(cmd.Cog):
     def __init__(self, bot):
         self.bot = bot
 
         if not hasattr(bot, 'lavalink'):
             bot.lavalink = lavalink.Client(bot.user.id)
-            bot.lavalink.add_node('localhost', 7000, 'sourceflow', 'na', 'default-node')  # Host, Port, Password, Region, Name
+            bot.lavalink.add_node(node_host, node_port, node_password, node_region, node_name)  # Host, Port, Password, Region, Name
 
             lavalink.add_event_hook(self.track_hook)
 
     def cog_unload(self):
-        """ remove registered event hooks """
+        # remove registered event hooks
         self.bot.lavalink._event_hooks.clear()
 
     async def cog_before_invoke(self, ctx):
-        """ command before-invoke handler """
+        # command before-invoke handler
         guild_check = ctx.guild is not None
 
+        # ensure bot and user are in same voice channel.
         if guild_check:
             await self.ensure_voice(ctx)
-            #  ensure bot and user are in same voice channel.
 
         return guild_check
 
     async def cog_command_error(self, ctx, error):
-        if isinstance(error, commands.CommandInvokeError):
-            embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
+        if isinstance(error, cmd.CommandInvokeError):
+            embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
             if ctx.guild == None:
                 embed.description = 'Unable to locate user/voice channel.'
                 await ctx.send(embed = embed)
@@ -98,33 +88,60 @@ class Music(commands.Cog):
                 embed.description = error.original
                 await ctx.send(embed = embed)
 
+    # ensure bot and user are in same voice channel
     async def ensure_voice(self, ctx):
-        """ ensure bot and user are in same voice channel """
-        # Returns player if one exists, otherwise creates. Ensures that a player always exists for guild.
+        # Returns player if one exists, otherwise creates. Ensures that a player always exists for guild
         player = self.bot.lavalink.player_manager.create(ctx.guild.id, endpoint=str(ctx.guild.region))
         
-        # Commands that require the bot to join a voicechannel (i.e. initiating playback).
-        should_connect = ctx.command.name in ('play', 'search')
+        # Commands that require the bot to join a voicechannel (i.e. initiating playback)
+        should_connect = ctx.command.name in ('play')
 
         if not ctx.author.voice or not ctx.author.voice.channel:
-            # cog_command_error handler catches this and sends it to the voicechannel.
-            raise commands.CommandInvokeError('You must be in a voice channel to use this command.')
+            # cog_command_error handler catches this and sends it to the voicechannel
+            raise cmd.CommandInvokeError('You must be in a voice channel to use this command.')
 
         if not player.is_connected:
             if not should_connect:
-                raise commands.CommandInvokeError('Tempo is not connected to a voice channel.')
+                raise cmd.CommandInvokeError('Tempo is not connected to a voice channel.')
 
             permissions = ctx.author.voice.channel.permissions_for(ctx.me)
 
             if not permissions.connect or not permissions.speak:  # Check user limit too?
-                raise commands.CommandInvokeError('Tempo needs `CONNECT` and `SPEAK` permissions.')
+                raise cmd.CommandInvokeError('Tempo needs `Connect` and `Speak` permissions.')
 
             player.store('channel', ctx.channel.id)
             await ctx.author.voice.channel.connect(cls=LavalinkVoiceClient)
         else:
             if int(player.channel_id) != ctx.author.voice.channel.id:
-                raise commands.CommandInvokeError('You must be in the same voice channel as Tempo to use this command.')
+                raise cmd.CommandInvokeError('You must be in the same voice channel as Tempo to use this command.')
 
+    # Automatically disconnect after period of inactivity
+    async def disconnect_timer(self, guild, player, delay):
+            timer = 0
+            while True:
+                # Sleep and increment timer
+                await asyncio.sleep(1)
+                timer += 1
+
+                # If Tempo is not connected to a voice channel
+                if not guild.voice_client: break
+
+                # If Tempo is playing music
+                if player.is_playing: break
+
+                # If time limit is reached
+                if timer == delay:
+                    # Clear queue
+                    player.queue.clear()
+
+                    # Stop player
+                    await player.stop()
+
+                    # Disconnect from voice channel
+                    await guild.voice_client.disconnect(force=True)
+                    break
+
+    # Runs when the music stops
     async def track_hook(self, event):
         if isinstance(event, lavalink.events.QueueEndEvent):
             # When track_hook receives "QueueEndEvent" from lavalink.py
@@ -132,344 +149,631 @@ class Music(commands.Cog):
             guild = self.bot.get_guild(guild_id)
             player = event.player
 
-            # Start disconnect timer.
-            time = 0
-            while True:
-                await asyncio.sleep(1)
-                time += 1
-                if not guild.voice_client:
-                    break
-                if player.is_playing:
-                    break
-                if time == 90:
-                    player.queue.clear()
-                    await player.stop()
-                    await guild.voice_client.disconnect(force=True)
-                    break
+            # Start disconnect timer (90 seconds)
+            await self.disconnect_timer(guild, player, 90)
 
-    @commands.command(aliases=['p'])
-    async def play(self, ctx, *, query: str):
-        """ play song or add to queue """
-        # Get player for guild from cache.
+    # Play a song or, if a song is already playing, add to the queue
+    @cmd.command(aliases = ['p'])
+    async def play(self, ctx, *, query: str = ''):
+        # Get player for guild from guild cache
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
-        # Set player volume.
-        await player.set_volume(17)
-        # Remove leading and trailing <>. <> suppress embedding links.
+
+        # Set volume
+        await player.set_volume(10)
+
+        # Create embed and set border color
+        embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+
+        current_query = query
+
+        # If user input invalid
+        if query == '':
+            # Send embed message
+            embed.description = 'What song? Try `play <song title and artist>`.'
+            return await ctx.send(embed = embed)
+
+        # Suppress link embeds
         query = query.strip('<>')
 
-        # Check if input is URL. If not, YouTube search.
-        if not url_rx.match(query):
+        # Check if input is URL
+        url_rx = re.compile(r'https?://(?:www\.)?.+')
+        if url_rx.match(query):
+            if 'soundcloud.com' in (query):
+                embed.description = ('SoundCloud is currently unsupported.')
+                return await ctx.send(embed = embed)
+        else:
             query = f'ytsearch:{query}'
 
-        # Get results for query from Lavalink.
+        # Get results for query from Lavalink
         results = await player.node.get_tracks(query)
 
-        embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
-
-        # Results could be None if Lavalink returns invalid response (non-JSON/non-200 (OK)).
-        # Results['tracks'] could be empty array if query yields no tracks.
+        # If query returns no results
         if not results or not results['tracks']:
+            # Disconnect if no audio is playing
             if not player.is_playing:
                 await ctx.voice_client.disconnect(force=True)
+
+            # Send embed message
             embed.description = 'No tracks found.'
             return await ctx.send(embed = embed)
 
-        # Valid loadTypes:
-        #   TRACK_LOADED    - single video/direct URL
-        #   PLAYLIST_LOADED - direct URL to playlist
-        #   SEARCH_RESULT   - query prefixed with either ytsearch: or scsearch:
-        #   NO_MATCHES      - query yielded no results
-        #   LOAD_FAILED     - most likely, the video encountered an exception during loading
+        # If result is a playlist
         if results['loadType'] == 'PLAYLIST_LOADED':
+            # Get tracklist from results
             tracks = results['tracks']
 
+            # Add all tracks from playlist to queue
             for track in tracks:
-                # Add all tracks from playlist to queue.
                 player.add(requester=ctx.author.id, track=track)
 
+            # Embed message content
             if not player.is_playing:
                 embed.description = 'Now Playing: ' + f'{results["playlistInfo"]["name"]} ({len(tracks)} tracks)'
             else:
                 embed.description = 'Queued: ' + f'{results["playlistInfo"]["name"]} ({len(tracks)} tracks)'
         else:
-            index = 0
-            # To avoid music videos with extended intros, skits etc.
-            exclude = ['music video', 'official video']
+            # Select track that isn't a music video if one exists, otherwise select first track in results
+            excluded_phrases = ['music video', 'official video']
             if not url_rx.match(query):
-                while index <= 5:
-                    for string in exclude:
-                        if string in results['tracks'][index]['info']['title'].lower():
-                            index += 1
-                            break
-                    else:
+                for result in results['tracks']:
+                    if not any(phrase in result['info']['title'].lower() for phrase in excluded_phrases):
+                        track = result
                         break
-                else:
-                    index = 0
-
-            track = results['tracks'][index]
-
+                    elif results['tracks'].index(result) == 9:
+                        track = results['tracks'][0]
+                        break
+                        
+            # Embed message content
             if not player.is_playing:
-                embed.description = 'Now Playing: '
+                embed.description = 'Now Playing: ' + f'[{track["info"]["title"]}]({track["info"]["uri"]})'
             else:
-                embed.description ='Queued: '
+                embed.description ='Queued: ' + f'[{track["info"]["title"]}]({track["info"]["uri"]})'
 
-            embed.description += f'[{track["info"]["title"]}]({track["info"]["uri"]})'
-
+            # Load track
             track = lavalink.models.AudioTrack(track, ctx.author.id, recommended=True)
             player.add(requester=ctx.author.id, track=track)
 
-        if player.paused == True:
-            embed.description += '\n \n Tempo is paused. Use `!resume` to continue playing.' # Alert user that Tempo is paused.
+            # If Tempo is paused, alert user
+            if player.paused and player.is_playing:
+                embed.description += '\n Tempo is paused. Use the `resume` command to continue playing.'
 
-        await ctx.send(embed = embed)
+            # If repeat is enabled, alert user
+            if player.repeat and player.is_playing:
+                embed.description += '\n Repeat is enabled. Use the `repeat` command to disable.'
 
-        if not player.is_playing:
-            await player.play()
+            # If shuffle is enabled, alert user
+            if player.shuffle and player.is_playing:
+                embed.description += '\n Shuffle is enabled. Use the `shuffle` command to disable.'
 
-    class SearchMessage:
-        def __init__(self, ctx, message_embed, message_id, message_tracklist):
-            self.ctx = ctx
-            self.embed = message_embed
-            self.id = message_id
-            self.requester = ctx.author
-            self.tracklist = message_tracklist
+            # Send embed message
+            await ctx.send(embed = embed)
 
-    search_messages = []
+            # Play track
+            if not player.is_playing:
+                await player.play()
 
-    @commands.command(aliases=['se'])
-    async def search(self, ctx, *, query: str):
-        # Get player for guild from cache.
-        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
-        # Set player volume.
-        await player.set_volume(17)
-        # Remove leading and trailing <>. <> suppress embedding links.
-        query = query.strip('<>')
-        # Search YouTube for given query
-        query = f'ytsearch:{query}'
-        results = await player.node.get_tracks(query)
-        embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
-
-        embed.description = '__**Results**__' + '\n \n'
-        reactions = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '❌']
-        count = 0
-        for track in results['tracks'][0:5]:
-            embed.description += f'{reactions[count]} [{track["info"]["title"]}]({track["info"]["uri"]}) \n'
-            count += 1
-
-        message = await ctx.send(embed = embed)
-        for i in range(len(results['tracks'][0:5])):
-            await message.add_reaction(reactions[i])
-        await message.add_reaction(reactions[5])
-
-        search_messages.append(SearchMessage(ctx, message, message.id, results))
-
-        # Start disconnect timer.
-        time = 0
-        while True:
-            await asyncio.sleep(1)
-            time += 1
-            if not ctx.guild.voice_client:
-                break
-            if player.is_playing:
-                break
-            if time == 90:
-                player.queue.clear()
-                await player.stop()
-                await ctx.guild.voice_client.disconnect(force=True)
-                break
-
-    @commands.command(aliases=['st'])
+    # Stop audio playback, clear queue and disconnect
+    @cmd.command(aliases=['st'])
     async def stop(self, ctx):
-        """ stop playback and clear queue """
+        # Get player for guild from guild cache
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
-        embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
 
+        # Create embed and set border color
+        embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+
+        # If player not connected
         if not player.is_connected:
             embed.description = 'Tempo is not connected to a voice channel.'
             return await ctx.send(embed = embed)
 
+        # If user is not in the same voice channel
         if not ctx.author.voice or (player.is_connected and ctx.author.voice.channel.id != int(player.channel_id)):
             embed.description = 'You must be in the same voice channel as Tempo to use this command.'
             return await ctx.send(embed = embed)
 
-        # Clear queue.
-        player.queue.clear()
-        # Stop current track.
+        # Stop current track
         await player.stop()
-        # Disconnect from voice channel.
+
+        # Clear queue
+        player.queue.clear()
+
+        # Disconnect from voice channel
         await ctx.voice_client.disconnect(force=True)
-        embed.description = 'Queue has been cleared.'
+
+        # Send embed message
+        embed.description = 'Tempo has disconnected. \n' + 'The queue has been cleared.'
         await ctx.send(embed = embed)
 
-    @commands.command(aliases=['ps'])
+    # Pause audio playback
+    @cmd.command(aliases=['ps'])
     async def pause(self, ctx):
-        """ pause playback """
+        # Get player for guild from guild cache
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+
+        # Get guild
+        guild = ctx.guild
+
+        # Create embed and set border color
+        embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+
+        # If player is not active
+        if not player.is_playing:
+            # Send embed message
+            embed.description = 'Unable to pause. \n' + 'No music playing.'
+            return await ctx.send(embed = embed)
+
+        # If player is paused
+        if player.paused:
+            # Send embed message
+            embed.description = 'Unable to pause. \n' + 'Tempo is already paused.'
+            return await ctx.send(embed = embed)
+
+        # Pause
         await player.set_pause(True)
-        embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
-        embed.description = 'Tempo will disconnect if paused for 30 minutes. Use `!resume` to continue playing.'
-        await ctx.send(embed = embed)
 
-        # Start disconnect timer.
-        time = 0
-        while True:
-            await asyncio.sleep(1)
-            time += 1
-            if not ctx.guild.voice_client:
-                break
-            if player.paused == False:
-                break
-            if time == 1800:
-                player = self.bot.lavalink.player_manager.get(ctx.guild.id)
-                player.queue.clear()
-                await player.stop()
-                await ctx.guild.voice_client.disconnect(force=True)
-                break
+        # Start disconnect timer (1800 seconds = 30 minutes)
+        await self.disconnect_timer(guild, player, 1800)
 
-    @commands.command(aliases=['rs'])
+        # Send embed message
+        embed.description = 'Tempo will disconnect if paused for 30 minutes. \n' + 'Use the `resume` command to continue playing.'
+        return await ctx.send(embed = embed)
+
+    # Resume audio playback
+    @cmd.command(aliases=['rs'])
     async def resume(self, ctx):
-        """ unpause playback """
+        # Get player for guild from guild cache
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+
+        # Create embed and set border color
+        embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+
+        # If player is not active
+        if not player.is_playing:
+            # Send embed message
+            embed.description = 'Unable to resume. \n' + 'No music playing.'
+            return await ctx.send(embed = embed)
+
+        # If player not paused
+        if not player.paused:
+            # Send embed message
+            embed.description = 'Unable to resume. \n' + 'Tempo is not paused.'
+            return await ctx.send(embed = embed)
+            
+        # Resume
         await player.set_pause(False)
 
-    @commands.command(aliases=['sk'])
+        # Send embed message
+        track = player.current
+        embed.description = f'Resumed: [{track["title"]}]({track["uri"]})'
+        return await ctx.send(embed = embed)
+
+    # Skip the current song
+    @cmd.command(aliases=['sk'])
     async def skip(self, ctx):
-        """ skip to next track in queue """
+        # Get player for guild from guild cache
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+
+        # Create embed and set border color
+        embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+
+        # If player not active
+        if not player.is_playing:
+            # Send embed message
+            embed.description = 'Unable to skip. \n' + 'No music playing.'
+            return await ctx.send(embed = embed)
+
+        # If player is paused
+        if player.paused:
+            # Send embed message
+            embed.description = 'Unable to skip while Tempo is paused. \n' + 'Use the `resume` command to continue playing.'
+            return await ctx.send(embed = embed)
+
+        # Skip
         await player.skip()
 
-    @commands.command(aliases=['fw'])
-    async def forward(self, ctx, seconds = None):
-        """ skip forward given number of seconds """
-        if seconds == None:
-            embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
-            embed.description = 'How far? Try `!forward 15` to skip forward 15 seconds.'
-            return await ctx.send(embed = embed)
-        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
-        await player.seek(player.position + int(seconds) * 1000)
-
-    @commands.command(aliases=['bw'])
-    async def backward(self, ctx, seconds = None):
-        """ skip backward given number of seconds """
-        if seconds == None:
-            embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
-            embed.description = 'How far? Try `!backward 15` to skip backward 15 seconds.'
-            return await ctx.send(embed = embed)
-        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
-        await player.seek(player.position - int(seconds) * 1000)
-
-    @commands.command(aliases=['re'])
-    async def restart(self, ctx):
-        """ returns to beginning of current track """
-        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
-        await player.seek(player.position - player.position)
-
-    @commands.command(aliases=['q'])
-    async def queue(self, ctx):
-        """ show active queue in text channel """
-        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
-
-        embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
-        embed.description = 'Queue Empty'
-        if len(player.queue) > 0:
-            track = player.current
-            embed.description = f'Now Playing: [{track["title"]}]({track["uri"]}) \n Next: '
-            for track in player.queue:
-                if len(embed.description) + len(f'[{track["title"]}]({track["uri"]}) \n') > 4096:
-                    break
-                embed.description += f'[{track["title"]}]({track["uri"]}) \n'
-        await ctx.send(embed = embed)
-
-    @commands.command(aliases=['sn'])
-    async def song(self, ctx):
-        """ show current track in text channel """
-        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
-
-        embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
+        # Embed message content
         if player.is_playing:
             track = player.current
-            embed.description = f'Now Playing: [{track["title"]}]({track["uri"]})'
+            embed.description = 'Now Playing: ' + f'[{track["title"]}]({track["uri"]})'
+
+        # If repeat is enabled, alert user
+        if player.repeat and player.is_playing:
+            embed.description += '\n Repeat is enabled. Use the `repeat` command to disable.'
+
+        # If shuffle is enabled, alert user
+        if player.shuffle and player.is_playing:
+            embed.description += '\n Shuffle is enabled. Use the `shuffle` command to disable.'
+
+        # Send embed message
+        await ctx.send(embed = embed)
+
+    # Return to the beginning of the current song
+    @cmd.command(aliases=['re'])
+    async def restart(self, ctx):
+        # Get player for guild from guild cache
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+
+        # Create embed and set border color
+        embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+
+        # If player not active
+        if not player.is_playing:
+            # Send embed message
+            embed.description = 'Unable to restart. \n' + 'No music playing.'
+            return await ctx.send(embed = embed)
+
+        # If player is paused
+        if player.paused:
+            # Send embed message
+            embed.description = 'Unable to restart while Tempo is paused. \n' + 'Use the `resume` command to continue playing.'
+            return await ctx.send(embed = embed)
+
+        # Restart
+        await player.seek(0)
+
+        # Send embed message
+        track = player.current
+        embed.description = f'Now Playing: [{track["title"]}]({track["uri"]})'
+        return await ctx.send(embed = embed)
+
+    # Seek to specified positon in song
+    @cmd.command(aliases=['se'])
+    async def seek(self, ctx, position = ''):
+        # Get player for guild from guild cache
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+
+        # Create embed and set border color
+        embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+
+        # If player is not active
+        if not player.is_playing:
+            # Send embed message
+            embed.description = 'Unable to seek. \n' + 'No music playing.'
+            return await ctx.send(embed = embed)
+
+        # If player is paused
+        if player.paused:
+            # Send embed message
+            embed.description = 'Unable to seek while Tempo is paused. \n' + 'Use the `resume` command to continue playing.'
+            return await ctx.send(embed = embed)
+
+        # If user input invalid
+        if not position.isnumeric():
+            # Send embed message
+            embed.description = 'Invalid position. \n' + 'Try `seek 30` to jump to 30 seconds.'
+            return await ctx.send(embed = embed)
+
+        # Convert user input
+        position = int(position)
+
+        # Track duration
+        duration = math.floor(player.current.duration / 1000)
+        half_duration = math.floor(duration / 2)
+
+        # Wait for track to buffer
+        if player.position < (player.current.duration * 0.02):
+            # Send embed message
+            embed.description = 'Track loading... \n' + f'Try again in {math.ceil(((player.current.duration * 0.02) - player.position) / 1000)} seconds.'
+            return await ctx.send(embed = embed)
+
+        # If no user input
+        if position == '':
+            # Send embed message
+            embed.description = f'Current track length: {duration} seconds \n' + f'Try `seek {half_duration}` to jump to {half_duration} seconds.'
+            return await ctx.send(embed = embed)
+
+        # If user input out of range
+        if position < 0 or position * 1000 > player.current.duration:
+            embed.description = f'Current track length: {duration} seconds \n' + f'Try `seek {half_duration}` to jump to {half_duration} seconds.'
+            return await ctx.send(embed = embed)
+
+        # Send embed message
+        embed.description = f'Seeking to {position} seconds.'
+        await ctx.send(embed = embed)
+
+        # Seek
+        position = int(position)
+        await player.seek(position * 1000)
+
+    # Get the title of the current song
+    @cmd.command(aliases=['sn'])
+    async def song(self, ctx):
+        # Get player for guild from guild cache
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+
+        # Create embed and set border color
+        embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+
+        # If player is not active
+        if not player.is_playing:
+            # Send embed message
+            embed.description = 'No music playing.'
+            return await ctx.send(embed = embed)
+
+        # Get current song title
+        track = player.current
+
+        # Send embed message
+        embed.description = f'Now Playing: [{track["title"]}]({track["uri"]})'
+        await ctx.send(embed = embed)
+
+    # Get a list of all songs currently in the queue
+    @cmd.command(aliases=['q'])
+    async def queue(self, ctx):
+        # Get player for guild from guild cache
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+
+        # Create embed and set border color
+        embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+        embed.description = ''
+
+        # If player is not active
+        if not player.is_playing:
+            # Send embed message
+            embed.description = 'No music playing.'
+            return await ctx.send(embed = embed)
+
+        # If queue is empty
+        if len(player.queue) == 0:
+            # Send embed message
+            embed.description = 'The queue is empty.'
+            return await ctx.send(embed = embed)
+
+        # Get all queued song titles
+        for track in player.queue:
+            # If adding song title to list exceeds max embed message length, break
+            if len(embed.description) + len(f'[{track["title"]}]({track["uri"]}) \n') > 4096:
+                break
+            # Add queued track to embed message content
+            embed.description += f'{player.queue.index(track) + 1}. [{track["title"]}]({track["uri"]}) \n'
+
+        # Send embed message
+        await ctx.send(embed = embed)
+
+    # Change audio playback volume
+    @cmd.command(aliases=['v', 'vol'])
+    async def volume(self, ctx, volume = ''):
+        # Get player for guild from guild cache
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+
+        # Create embed and set border color
+        embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+
+        # Get admin ID
+        owner = await self.bot.fetch_user(ctx.guild.owner_id)
+
+        # Check if user has privelege to use command (admin only)
+        if ctx.author.id != owner.id:
+            # Send embed message
+            embed.description = 'Only the server admin has access to the `volume` command.'
+            return await ctx.send(embed = embed)
+
+        # If user input invalid
+        if not volume.isdigit() or int(volume) < 1 or int(volume) > 100:
+            # Send embed message
+            embed.description = 'Enter a value from 1 to 100. \n' + 'Try `volume 25` to set volume to 25%.'
+            return await ctx.send(embed = embed)
+
+        # Get current volume and user input volume
+        current_volume = player.volume
+        volume = int(volume)
+
+        # Set player volume
+        await player.set_volume(volume)
+
+        # If volume increased
+        if volume > current_volume:
+            embed.description = f'Volume increased from {current_volume}% to {volume}%.'
+        # If volume decreased
+        elif volume < current_volume: 
+            embed.description = f'Volume decreased from {current_volume}% to {volume}%.'
+        # If volume unchanged
+        elif volume == current_volume:
+            embed.description = f'Volume is already set to {current_volume}%'
+        
+        # Send embed message
+        await ctx.send(embed = embed)
+
+    @cmd.command(aliases=['rp'])
+    async def repeat(self, ctx):
+        # Get player for guild from guild cache
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+
+        # Create embed and set border color
+        embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+
+        # Toggle repeat
+        if player.repeat:
+            # Disabled repeat
+            player.set_repeat(False)
+
+            # Send embed message
+            embed.description = 'Repeat disabled.'
+            await ctx.send(embed = embed)
+        else:
+            # Enable repeat
+            player.set_repeat(True)
+            
+            # Send embed message
+            embed.description = 'Repeat enabled.'
             await ctx.send(embed = embed)
 
-    @commands.Cog.listener()
+    @cmd.command(aliases=['sh'])
+    async def shuffle(self, ctx):
+        # Get player for guild from guild cache
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+
+        # Create embed and set border color
+        embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+
+        # Toggle shuffle
+        if player.shuffle:
+            # Disable shuffle
+            player.set_shuffle(False)
+
+            # Send embed message
+            embed.description = 'Shuffle disabled.'
+            await ctx.send(embed = embed)
+        else:
+            # Enable shuffle
+            player.set_shuffle(True)
+
+            # Send embed message
+            embed.description = 'Shuffle enabled.'
+            await ctx.send(embed = embed)
+
+    @cmd.command(aliases=['rm'])
+    async def remove(self, ctx, index = ''):
+        # Get player for guild from guild cache
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+
+        # Create embed and set border color
+        embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+
+        # If player is not active
+        if not player.is_playing:
+            # Send embed message
+            embed.description = 'No music playing.'
+            return await ctx.send(embed = embed)
+
+        # If queue is empty
+        if len(player.queue) == 0:
+            # Send embed message
+            embed.description = 'The queue is empty.'
+            return await ctx.send(embed = embed)
+
+        # If user input invalid
+        if index == '' or not index.isnumeric() or int(index) < 1 or int(index) > len(player.queue):
+            # Send embed message
+            embed.description = f'Try `rm {len(player.queue)}` to remove track number {len(player.queue)} from the queue.'
+            return await ctx.send(embed = embed)
+
+        # Get track from queue
+        track = player.queue[int(index) - 1]
+
+        # Embed message content
+        embed.description = f'Removed: [{track["title"]}]({track["uri"]})'
+
+        # Remove track
+        del player.queue[int(index) - 1]
+
+        # Send embed message
+        await ctx.send(embed = embed)
+
+    @cmd.command(aliases=['eq'])
+    async def equalizer(self, ctx, preset):
+        # Get player for guild from guild cache
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+
+        # Create embed and set border color
+        embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+
+        if preset == 'default':
+            await player.reset_equalizer()
+
+        if preset == 'bass':
+            await player.set_gain(0, 1)
+            await player.set_gain(1, 0)
+            await player.set_gain(2, 0)
+            await player.set_gain(3, 0)
+            await player.set_gain(4, 0)
+            await player.set_gain(5, 0)
+            await player.set_gain(6, 0)
+            await player.set_gain(7, 0)
+            await player.set_gain(8, 0)
+            await player.set_gain(9, 0)
+            await player.set_gain(10, 1)
+            await player.set_gain(11, 0)
+            await player.set_gain(12, 0)
+            await player.set_gain(13, 0)
+            await player.set_gain(14, 0)
+
+        if preset == 'clean':
+            bands = [(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14)]
+            await player.set_gains(bands)
+
+    # Get the lyrics of the current song or a specified song
+    @cmd.command(aliases=['l'])
+    async def lyrics(self, ctx, *, query: str = ''):
+        # Get player for guild from guild cache
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+
+        # Create embed and set border color
+        embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+
+        # Lyrics Genius
+        genius = Genius(genius_token)
+        
+        # Get current song lyrics
+        if query == '':
+            song = genius.search_song(player.current.title, '')
+                
+        # Get specified song lyrics
+        else:
+            # Get song info from genius
+            song = genius.search_song(query, '')
+
+        # If song info not found
+        if not song:
+            # Send embed message
+            embed.description = f'No lyrics found for: __{player.current.title}__ \n\n' + 'Try `lyrics <song title and artist>` to perform a manual search.'
+            return await ctx.send(embed = embed)
+
+        # Add song title to embed title
+        embed_title = f'__**{song.artist} - {song.title}**__ \n \n'
+
+        # Remove song title from embed description content (since it's already displayed in embed title)
+        song.lyrics = song.lyrics[len(song.title)+7:-5]
+
+        # Remove ID number from end of lyrics string
+        for char in song.lyrics[len(song.lyrics)-7:]:
+            if char.isnumeric():
+                song.lyrics = song.lyrics[:-1]
+
+        # Message to display if lyrics string exceeds max embed message length
+        char_limit_message = '... \n \n [Exceeds maximum size of 4096 characters.]'
+
+        # If lyrics string does not exceed max embed message length
+        if len(embed_title) + len(song.lyrics) < 4096:
+            embed.description = embed_title + song.lyrics
+        else:
+            embed.description = embed_title + song.lyrics[:4096 - (len(embed_title) + len(char_limit_message))] + char_limit_message
+            print(len(embed.description))
+
+        # Send embed message
+        await ctx.send(embed = embed)
+
+    # When any user's voice state changes
+    @cmd.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
-        """ disconnect if left alone in voice channel """
+        # If voice state update is not Tempo
         if member.id != self.bot.user.id and member.guild.voice_client:
+            # Get player for guild from guild cache
+            player = self.bot.lavalink.player_manager.get(member.guild.id)
+
+            # If user was in same channel as Tempo prior to voice state update
             if before.channel == member.guild.voice_client.channel and len(member.guild.voice_client.channel.members) == 1:
-                # Start disconnect timer.
-                time = 0
+                # Start disconnect timer
+                timer = 0
                 while True:
+                    # Sleep and increment timer
                     await asyncio.sleep(1)
-                    time += 1
-                    if not member.guild.voice_client:
-                        break
-                    if len(member.guild.voice_client.channel.members) != 1:
-                        break
-                    if time == 90:
-                        player = self.bot.lavalink.player_manager.get(member.guild.id)
+                    timer += 1
+
+                    # If Tempo is no longer connected to a voice channel, stop timer
+                    if not member.guild.voice_client: break
+
+                    # If Tempo is no longer alone in voice channel, stop timer
+                    if len(member.guild.voice_client.channel.members) > 1: break
+
+                    # If time limit is reached
+                    if timer == 180:
+                        # Clear queue, stop player, disconnect from voice channel
                         player.queue.clear()
                         await player.stop()
                         await member.guild.voice_client.disconnect(force=True)
                         break
-        
-        if member.id == self.bot.user.id:
-            if after.channel == None:
-                for message in search_messages:
-                    try:
-                        await message.embed.delete(delay=None)
-                    except discord.errors.NotFound:
-                        print('discord.errors.NotFound >>> Message already deleted.')
-                search_messages.clear()
 
-    @commands.Cog.listener()
-    async def on_reaction_add(self, reaction, user):
-        if not user == self.bot.user:
-            for message in search_messages:
-                if message.id == reaction.message.id and message.requester == user:
-                    match reaction.emoji:
-                        case '1️⃣':
-                            if len(message.tracklist['tracks']) > 0:
-                                track = message.tracklist['tracks'][0]
-                            else:
-                                return
-                        case '2️⃣':
-                            if len(message.tracklist['tracks']) > 1:
-                                track = message.tracklist['tracks'][1]
-                            else:
-                                return
-                        case '3️⃣':
-                            if len(message.tracklist['tracks']) > 2:
-                                track = message.tracklist['tracks'][2]
-                            else:
-                                return
-                        case '4️⃣':
-                            if len(message.tracklist['tracks']) > 3:
-                                track = message.tracklist['tracks'][3]
-                            else:
-                                return
-                        case '5️⃣':
-                            if len(message.tracklist['tracks']) > 4:
-                                track = message.tracklist['tracks'][4]
-                            else:
-                                return
-                        case '❌':
-                            search_messages.remove(message)
-                            return await message.embed.delete(delay=None)
-
-                    player = self.bot.lavalink.player_manager.get(user.guild.id)
-                    embed = discord.Embed(color=discord.Color.from_rgb(134, 194, 50))
-                    if not player.is_playing:
-                        embed.description = 'Now Playing: '
-                    else:
-                        embed.description ='Queued: '
-                    embed.description += f'[{track["info"]["title"]}]({track["info"]["uri"]})'
-                    player.add(requester=user.id, track=track)
-                    await message.ctx.send(embed = embed)
-                    if not player.is_playing:
-                        await player.play()
-                    search_messages.remove(message)
-                    await message.embed.delete(delay=None)
-                    break
-
+# Add cog
 def setup(bot):
     bot.add_cog(Music(bot))
