@@ -152,6 +152,37 @@ class Music(cmd.Cog):
             # Start disconnect timer (90 seconds)
             await self.disconnect_timer(guild, player, 90)
 
+    # When any user's voice state changes
+    @cmd.Cog.listener()
+    async def on_voice_state_update(self, member, before, after):
+        # If voice state update is not Tempo
+        if member.id != self.bot.user.id and member.guild.voice_client:
+            # Get player for guild from guild cache
+            player = self.bot.lavalink.player_manager.get(member.guild.id)
+
+            # If user was in same channel as Tempo prior to voice state update
+            if before.channel == member.guild.voice_client.channel and len(member.guild.voice_client.channel.members) == 1:
+                # Start disconnect timer
+                timer = 0
+                while True:
+                    # Sleep and increment timer
+                    await asyncio.sleep(1)
+                    timer += 1
+
+                    # If Tempo is no longer connected to a voice channel, stop timer
+                    if not member.guild.voice_client: break
+
+                    # If Tempo is no longer alone in voice channel, stop timer
+                    if len(member.guild.voice_client.channel.members) > 1: break
+
+                    # If time limit is reached
+                    if timer == 180:
+                        # Clear queue, stop player, disconnect from voice channel
+                        player.queue.clear()
+                        await player.stop()
+                        await member.guild.voice_client.disconnect(force=True)
+                        break
+
     # Play a song or, if a song is already playing, add to the queue
     @cmd.command(aliases = ['p'])
     async def play(self, ctx, *, query: str = ''):
@@ -574,6 +605,7 @@ class Music(cmd.Cog):
         # Send embed message
         await ctx.send(embed = embed)
 
+    # Turn repeat on or off
     @cmd.command(aliases=['rp'])
     async def repeat(self, ctx):
         # Get player for guild from guild cache
@@ -598,6 +630,7 @@ class Music(cmd.Cog):
             embed.description = 'Repeat enabled.'
             await ctx.send(embed = embed)
 
+    # Turn shuffle on or off
     @cmd.command(aliases=['sh'])
     async def shuffle(self, ctx):
         # Get player for guild from guild cache
@@ -622,6 +655,7 @@ class Music(cmd.Cog):
             embed.description = 'Shuffle enabled.'
             await ctx.send(embed = embed)
 
+    # Remove a song from the queue
     @cmd.command(aliases=['rm'])
     async def remove(self, ctx, index = ''):
         # Get player for guild from guild cache
@@ -660,119 +694,89 @@ class Music(cmd.Cog):
         # Send embed message
         await ctx.send(embed = embed)
 
-    @cmd.command(aliases=['eq'])
-    async def equalizer(self, ctx, preset):
-        # Get player for guild from guild cache
-        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+    # Choose from a list of equalizer presets for a more personalized listening experience
+    # @cmd.command(aliases=['eq'])
+    # async def equalizer(self, ctx, preset):
+    #     # Get player for guild from guild cache
+    #     player = self.bot.lavalink.player_manager.get(ctx.guild.id)
 
-        # Create embed and set border color
-        embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+    #     # Create embed and set border color
+    #     embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
 
-        if preset == 'default':
-            await player.reset_equalizer()
+    #     if preset == 'default':
+    #         await player.reset_equalizer()
 
-        if preset == 'bass':
-            await player.set_gain(0, 1)
-            await player.set_gain(1, 0)
-            await player.set_gain(2, 0)
-            await player.set_gain(3, 0)
-            await player.set_gain(4, 0)
-            await player.set_gain(5, 0)
-            await player.set_gain(6, 0)
-            await player.set_gain(7, 0)
-            await player.set_gain(8, 0)
-            await player.set_gain(9, 0)
-            await player.set_gain(10, 1)
-            await player.set_gain(11, 0)
-            await player.set_gain(12, 0)
-            await player.set_gain(13, 0)
-            await player.set_gain(14, 0)
+    #     if preset == 'bass':
+    #         await player.set_gain(0, 1)
+    #         await player.set_gain(1, 0)
+    #         await player.set_gain(2, 0)
+    #         await player.set_gain(3, 0)
+    #         await player.set_gain(4, 0)
+    #         await player.set_gain(5, 0)
+    #         await player.set_gain(6, 0)
+    #         await player.set_gain(7, 0)
+    #         await player.set_gain(8, 0)
+    #         await player.set_gain(9, 0)
+    #         await player.set_gain(10, 1)
+    #         await player.set_gain(11, 0)
+    #         await player.set_gain(12, 0)
+    #         await player.set_gain(13, 0)
+    #         await player.set_gain(14, 0)
 
-        if preset == 'clean':
-            bands = [(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14)]
-            await player.set_gains(bands)
+    #     if preset == 'clean':
+    #         bands = [(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14)]
+    #         await player.set_gains(bands)
 
     # Get the lyrics of the current song or a specified song
-    @cmd.command(aliases=['l'])
-    async def lyrics(self, ctx, *, query: str = ''):
-        # Get player for guild from guild cache
-        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+    # @cmd.command(aliases=['l'])
+    # async def lyrics(self, ctx, *, query: str = ''):
+    #     # Get player for guild from guild cache
+    #     player = self.bot.lavalink.player_manager.get(ctx.guild.id)
 
-        # Create embed and set border color
-        embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+    #     # Create embed and set border color
+    #     embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
 
-        # Lyrics Genius
-        genius = Genius(genius_token)
+    #     # Lyrics Genius
+    #     genius = Genius(genius_token)
         
-        # Get current song lyrics
-        if query == '':
-            song = genius.search_song(player.current.title, '')
+    #     # Get current song lyrics
+    #     if query == '':
+    #         song = genius.search_song(player.current.title, '')
                 
-        # Get specified song lyrics
-        else:
-            # Get song info from genius
-            song = genius.search_song(query, '')
+    #     # Get specified song lyrics
+    #     else:
+    #         # Get song info from genius
+    #         song = genius.search_song(query, '')
 
-        # If song info not found
-        if not song:
-            # Send embed message
-            embed.description = f'No lyrics found for: __{player.current.title}__ \n\n' + 'Try `lyrics <song title and artist>` to perform a manual search.'
-            return await ctx.send(embed = embed)
+    #     # If song info not found
+    #     if not song:
+    #         # Send embed message
+    #         embed.description = f'No lyrics found for: __{player.current.title}__ \n\n' + 'Try `lyrics <song title and artist>` to perform a manual search.'
+    #         return await ctx.send(embed = embed)
 
-        # Add song title to embed title
-        embed_title = f'__**{song.artist} - {song.title}**__ \n \n'
+    #     # Add song title to embed title
+    #     embed_title = f'__**{song.artist} - {song.title}**__ \n \n'
 
-        # Remove song title from embed description content (since it's already displayed in embed title)
-        song.lyrics = song.lyrics[len(song.title)+7:-5]
+    #     # Remove song title from embed description content (since it's already displayed in embed title)
+    #     song.lyrics = song.lyrics[len(song.title)+7:-5]
 
-        # Remove ID number from end of lyrics string
-        for char in song.lyrics[len(song.lyrics)-7:]:
-            if char.isnumeric():
-                song.lyrics = song.lyrics[:-1]
+    #     # Remove ID number from end of lyrics string
+    #     for char in song.lyrics[len(song.lyrics)-7:]:
+    #         if char.isnumeric():
+    #             song.lyrics = song.lyrics[:-1]
 
-        # Message to display if lyrics string exceeds max embed message length
-        char_limit_message = '... \n \n [Exceeds maximum size of 4096 characters.]'
+    #     # Message to display if lyrics string exceeds max embed message length
+    #     char_limit_message = '... \n \n [Exceeds maximum size of 4096 characters.]'
 
-        # If lyrics string does not exceed max embed message length
-        if len(embed_title) + len(song.lyrics) < 4096:
-            embed.description = embed_title + song.lyrics
-        else:
-            embed.description = embed_title + song.lyrics[:4096 - (len(embed_title) + len(char_limit_message))] + char_limit_message
-            print(len(embed.description))
+    #     # If lyrics string does not exceed max embed message length
+    #     if len(embed_title) + len(song.lyrics) < 4096:
+    #         embed.description = embed_title + song.lyrics
+    #     else:
+    #         embed.description = embed_title + song.lyrics[:4096 - (len(embed_title) + len(char_limit_message))] + char_limit_message
+    #         print(len(embed.description))
 
-        # Send embed message
-        await ctx.send(embed = embed)
-
-    # When any user's voice state changes
-    @cmd.Cog.listener()
-    async def on_voice_state_update(self, member, before, after):
-        # If voice state update is not Tempo
-        if member.id != self.bot.user.id and member.guild.voice_client:
-            # Get player for guild from guild cache
-            player = self.bot.lavalink.player_manager.get(member.guild.id)
-
-            # If user was in same channel as Tempo prior to voice state update
-            if before.channel == member.guild.voice_client.channel and len(member.guild.voice_client.channel.members) == 1:
-                # Start disconnect timer
-                timer = 0
-                while True:
-                    # Sleep and increment timer
-                    await asyncio.sleep(1)
-                    timer += 1
-
-                    # If Tempo is no longer connected to a voice channel, stop timer
-                    if not member.guild.voice_client: break
-
-                    # If Tempo is no longer alone in voice channel, stop timer
-                    if len(member.guild.voice_client.channel.members) > 1: break
-
-                    # If time limit is reached
-                    if timer == 180:
-                        # Clear queue, stop player, disconnect from voice channel
-                        player.queue.clear()
-                        await player.stop()
-                        await member.guild.voice_client.disconnect(force=True)
-                        break
+    #     # Send embed message
+    #     await ctx.send(embed = embed)
 
 # Add cog
 def setup(bot):
