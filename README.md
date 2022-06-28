@@ -16,5 +16,5 @@
 1. Create a Discord server
 2. Click [here](https://discord.com/api/oauth2/authorize?client_id=897864886095343687&permissions=3156992&scope=bot%20applications.commands) to invite Tempo
 3. Type '!help' in chat to get a list of available commands
-4. Type '!help <command name>' to get information on how to use individual commands
+4. Type '!help' followed by another command to get information on how to use it
 5. Type a command preceeded by '!' to use it
