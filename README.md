@@ -4,14 +4,15 @@
 
 <h4>Tempo...</h4>
 
-1. Play music in your discord server
+   A Discord bot, written in Python, that makes it easy to stream music directly to your Discord server. Simply connect to a voice channel and type a command in any text channel visible to Tempo.
 
 <h4>Setup...</h4>
 
 1. Create a Discord server
 2. Invite Tempo with this link ()
-3. Type '!help' in chat to see all available commands
-4. Type a command in chat preceeded by '!'
+3. Type '!help' in chat to get a list of available commands
+4. Type '!help <command name>' to get information on how to use individual commands
+5. Type a command preceeded by '!' to use it.
 
 <h4>Commands...</h4>
 
