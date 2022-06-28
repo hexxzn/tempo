@@ -7,3 +7,4 @@
 .out
 run.bat
 src/reboot.sh
+application.yml

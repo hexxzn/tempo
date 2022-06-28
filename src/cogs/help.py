@@ -205,10 +205,9 @@ class Help(cmd.Cog):
         elif command == 'lyrics' or command == 'l':
             help_menu.description = (
                 '**Command: Lyrics** \n'
-                'Get the lyrics of the current song or a specified song. \n\n'
+                'Get the lyrics of any song. \n\n'
 
                 '**Syntax** \n'
-                '`lyrics` \n'
                 '`lyrics <song title and artist>` \n\n'
 
                 '**Aliases** \n'
@@ -283,5 +282,6 @@ class Help(cmd.Cog):
         # Send help message to text channel
         await ctx.channel.send(embed=help_menu)
         
+# Add cog
 def setup(bot):
     bot.add_cog(Help(bot))

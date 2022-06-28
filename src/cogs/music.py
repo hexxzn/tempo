@@ -1,6 +1,5 @@
 import nextcord as nxt
 from nextcord.ext import commands as cmd
-from lyricsgenius import Genius
 from tokens import *
 import lavalink
 import asyncio
@@ -189,9 +188,6 @@ class Music(cmd.Cog):
         # Get player for guild from guild cache
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
 
-        # Set volume
-        await player.set_volume(10)
-
         # Create embed and set border color
         embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
 
@@ -279,9 +275,10 @@ class Music(cmd.Cog):
             # Send embed message
             await ctx.send(embed = embed)
 
-            # Play track
+            # Play track and set initial volume
             if not player.is_playing:
                 await player.play()
+                await player.set_volume(20)
 
     # Stop audio playback, clear queue and disconnect
     @cmd.command(aliases=['st'])
@@ -292,15 +289,14 @@ class Music(cmd.Cog):
         # Create embed and set border color
         embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
 
-        # If player not connected
-        if not player.is_connected:
-            embed.description = 'Tempo is not connected to a voice channel.'
-            return await ctx.send(embed = embed)
-
         # If user is not in the same voice channel
         if not ctx.author.voice or (player.is_connected and ctx.author.voice.channel.id != int(player.channel_id)):
             embed.description = 'You must be in the same voice channel as Tempo to use this command.'
             return await ctx.send(embed = embed)
+
+        # Disable repeat and shuffle
+        player.set_repeat(False)
+        player.set_shuffle(False)
 
         # Stop current track
         await player.stop()
@@ -726,57 +722,6 @@ class Music(cmd.Cog):
     #     if preset == 'clean':
     #         bands = [(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14)]
     #         await player.set_gains(bands)
-
-    # Get the lyrics of the current song or a specified song
-    # @cmd.command(aliases=['l'])
-    # async def lyrics(self, ctx, *, query: str = ''):
-    #     # Get player for guild from guild cache
-    #     player = self.bot.lavalink.player_manager.get(ctx.guild.id)
-
-    #     # Create embed and set border color
-    #     embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
-
-    #     # Lyrics Genius
-    #     genius = Genius(genius_token)
-        
-    #     # Get current song lyrics
-    #     if query == '':
-    #         song = genius.search_song(player.current.title, '')
-                
-    #     # Get specified song lyrics
-    #     else:
-    #         # Get song info from genius
-    #         song = genius.search_song(query, '')
-
-    #     # If song info not found
-    #     if not song:
-    #         # Send embed message
-    #         embed.description = f'No lyrics found for: __{player.current.title}__ \n\n' + 'Try `lyrics <song title and artist>` to perform a manual search.'
-    #         return await ctx.send(embed = embed)
-
-    #     # Add song title to embed title
-    #     embed_title = f'__**{song.artist} - {song.title}**__ \n \n'
-
-    #     # Remove song title from embed description content (since it's already displayed in embed title)
-    #     song.lyrics = song.lyrics[len(song.title)+7:-5]
-
-    #     # Remove ID number from end of lyrics string
-    #     for char in song.lyrics[len(song.lyrics)-7:]:
-    #         if char.isnumeric():
-    #             song.lyrics = song.lyrics[:-1]
-
-    #     # Message to display if lyrics string exceeds max embed message length
-    #     char_limit_message = '... \n \n [Exceeds maximum size of 4096 characters.]'
-
-    #     # If lyrics string does not exceed max embed message length
-    #     if len(embed_title) + len(song.lyrics) < 4096:
-    #         embed.description = embed_title + song.lyrics
-    #     else:
-    #         embed.description = embed_title + song.lyrics[:4096 - (len(embed_title) + len(char_limit_message))] + char_limit_message
-    #         print(len(embed.description))
-
-    #     # Send embed message
-    #     await ctx.send(embed = embed)
 
 # Add cog
 def setup(bot):
