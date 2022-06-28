@@ -16,23 +16,4 @@
 
 <h4>Commands...</h4>
 
-1. Play
-2. Stop
-3. Pause
-4. Resume
-5. Skip
-6. Restart
-7. Seek
-8. Song
-9. Queue
-10. Repeat
-11. Shuffle
-12. Remove
-13. Help
-14. Links
-15. Lyrics
-16. Volume
-17. Interface
-18. Search
-19. Equalizer
-20. Prefix
+    play, stop, pause, resume, skip, restart, seek, song, queue, repeat, shuffle, remove, help, links, lyrics, volume, interface, search, equalizer, prefix
