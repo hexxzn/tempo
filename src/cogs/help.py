@@ -15,10 +15,10 @@ class Help(cmd.Cog):
         if command == '':
             help_menu.description = (
                 '**Standard Commands** \n'
-                '`play`, `stop`, `pause`, `resume`, `skip`, `restart`, `seek`, `song`, `queue`, `repeat`, `shuffle`, `remove`, `links`, `help` \n\n'
+                '`play`, `stop`, `pause`, `resume`, `skip`, `restart`, `seek`, `song`, `queue`, `repeat`, `shuffle`, `remove`, `help`, `links(incomplete)` \n\n'
 
                 '**Premium Commands** \n'
-                '`interface`, `search`, `lyrics`, `equalizer`, `volume`, `prefix` \n\n'
+                '`lyrics`, `volume`, `interface(incomplete)`, `search(incomplete)`, `equalizer(incomplete)`, `prefix(incomplete)` \n\n'
 
                 '**Command Details** \n'
                 '`help <command name>` \n\n'
@@ -164,17 +164,6 @@ class Help(cmd.Cog):
                 '`remove` \n'
                 '`rm` \n\n'
             )
-        
-        # Links command details/help menu
-        elif command == 'links' or command == 'li':
-            help_menu.description = (
-                '**Command: Links** \n'
-                'Get a list of active links. Linked pages may include information on subscriptions, promotions and giveaways. \n\n'
-
-                '**Aliases** \n'
-                '`links` \n'
-                '`li` \n\n'
-            )
 
         # Help command details/help menu
         elif command == 'help' or command == 'h':
@@ -185,6 +174,57 @@ class Help(cmd.Cog):
                 '**Aliases** \n'
                 '`help` \n'
                 '`h` \n\n'
+            )
+        
+        # Links command details/help menu
+        elif command == 'links' or command == 'ln':
+            help_menu.description = (
+                '**Command: Links** \n'
+                'Get a list of active links. \n\n'
+
+                '**Aliases** \n'
+                '`links` \n'
+                '`li` \n\n'
+            )
+
+        # Lyrics command details/help menu
+        elif command == 'lyrics' or command == 'l':
+            help_menu.description = (
+                '**Command: Lyrics** \n'
+                'Get the lyrics of any song. \n\n'
+
+                '**Syntax** \n'
+                '`lyrics <song title and artist>` \n\n'
+
+                '**Aliases** \n'
+                '`lyrics` \n'
+                '`l` \n\n'
+            )
+
+        # Volume command details/help menu
+        elif command == 'volume' or command == 'vol' or command == 'v':
+            help_menu.description = (
+                '**Command: Volume** \n'
+                'Change audio playback volume by adjusting Tempo\'s input volume. This does not affect the output \'User Volume\' slider set by individual server members. \n\n'
+
+                '**Syntax** \n'
+                '`volume <0 - 100>` \n\n'
+
+                '**Aliases** \n'
+                '`volume` \n'
+                '`vol` \n'
+                '`v` \n\n'
+            )
+
+        # Interface command details/help menu
+        elif command == 'interface' or command == 'if':
+            help_menu.description = (
+                '**Command: Interface** \n'
+                'Get a GUI for the music player in chat. GUI contains pause, resume, skip and stop buttons. \n\n'
+
+                '**Aliases** \n'
+                '`interface` \n'
+                '`if` \n\n'
             )
         
         # Search command details/help menu
@@ -201,32 +241,20 @@ class Help(cmd.Cog):
                 '`sr` \n\n'
             )
         
-        # Lyrics command details/help menu
-        elif command == 'lyrics' or command == 'l':
-            help_menu.description = (
-                '**Command: Lyrics** \n'
-                'Get the lyrics of any song. \n\n'
-
-                '**Syntax** \n'
-                '`lyrics <song title and artist>` \n\n'
-
-                '**Aliases** \n'
-                '`lyrics` \n'
-                '`l` \n\n'
-            )
-        
         # Equalizer command details/help menu
         elif command == 'equalizer' or command == 'eq':
             help_menu.description = (
                 '**Command: Equalizer** \n'
-                'Choose from a list of equalizer presets for a more personalized listening experience. \n\n'
+                'Choose from a list of equalizer presets for a unique listening experience. \n\n'
 
                 '**Syntax** \n'
                 '`equalizer <preset name>` \n\n'
 
                 '**Presets** \n'
                 '`default` \n'
-                '`bass` \n'
+                '`bassboost` \n'
+                '`lounge` \n'
+                '`elevator` \n'
                 '`more` \n'
                 '`coming` \n'
                 '`soon` \n\n'
@@ -234,21 +262,6 @@ class Help(cmd.Cog):
                 '**Aliases** \n'
                 '`equalizer` \n'
                 '`eq` \n\n'
-            )
-        
-        # Volume command details/help menu
-        elif command == 'volume' or command == 'vol' or command == 'v':
-            help_menu.description = (
-                '**Command: Volume** \n'
-                'Change audio playback volume by adjusting Tempo\'s input volume. This does not affect the output \'User Volume\' slider set by individual server members. \n\n'
-
-                '**Syntax** \n'
-                '`volume <0 - 100>` \n\n'
-
-                '**Aliases** \n'
-                '`volume` \n'
-                '`vol` \n'
-                '`v` \n\n'
             )
         
         # Prefix command details/help menu
