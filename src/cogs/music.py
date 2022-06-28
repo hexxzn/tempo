@@ -130,6 +130,10 @@ class Music(cmd.Cog):
 
                 # If time limit is reached
                 if timer == delay:
+                    # Disable repeat and shuffle
+                    player.set_repeat(False)
+                    player.set_shuffle(False)
+                    
                     # Clear queue
                     player.queue.clear()
 
@@ -148,8 +152,34 @@ class Music(cmd.Cog):
             guild = self.bot.get_guild(guild_id)
             player = event.player
 
-            # Start disconnect timer (90 seconds)
-            await self.disconnect_timer(guild, player, 90)
+            # Start disconnect timer
+            timer = 0
+            while True:
+                # Sleep and increment timer
+                await asyncio.sleep(1)
+                timer += 1
+
+                # If Tempo is not connected to a voice channel
+                if not guild.voice_client: break
+
+                # If Tempo is playing music
+                if player.is_playing: break
+
+                # If time limit is reached (90 seconds = 1.5 minutes)
+                if timer == 90:
+                    # Disable repeat and shuffle
+                    player.set_repeat(False)
+                    player.set_shuffle(False)
+                    
+                    # Clear queue
+                    player.queue.clear()
+
+                    # Stop player
+                    await player.stop()
+
+                    # Disconnect from voice channel
+                    await guild.voice_client.disconnect(force=True)
+                    break
 
     # When any user's voice state changes
     @cmd.Cog.listener()
@@ -168,17 +198,25 @@ class Music(cmd.Cog):
                     await asyncio.sleep(1)
                     timer += 1
 
-                    # If Tempo is no longer connected to a voice channel, stop timer
+                    # If Tempo is not connected to a voice channel
                     if not member.guild.voice_client: break
 
                     # If Tempo is no longer alone in voice channel, stop timer
                     if len(member.guild.voice_client.channel.members) > 1: break
 
-                    # If time limit is reached
+                    # If time limit is reached (180 seconds = 3 minutes)
                     if timer == 180:
-                        # Clear queue, stop player, disconnect from voice channel
+                        # Disable repeat and shuffle
+                        player.set_repeat(False)
+                        player.set_shuffle(False)
+                        
+                        # Clear queue
                         player.queue.clear()
+
+                        # Stop player
                         await player.stop()
+
+                        # Disconnect from voice channel
                         await member.guild.voice_client.disconnect(force=True)
                         break
 
@@ -294,6 +332,13 @@ class Music(cmd.Cog):
             embed.description = 'You must be in the same voice channel as Tempo to use this command.'
             return await ctx.send(embed = embed)
 
+        # Disconnect message
+        embed.description = 'Tempo has disconnected. \n'
+        
+        # If there are songs in queue alert user that queue has been cleared
+        if len(player.queue) > 0:
+            embed.description += 'The queue has been cleared. \n'
+
         # Disable repeat and shuffle
         player.set_repeat(False)
         player.set_shuffle(False)
@@ -308,7 +353,6 @@ class Music(cmd.Cog):
         await ctx.voice_client.disconnect(force=True)
 
         # Send embed message
-        embed.description = 'Tempo has disconnected. \n' + 'The queue has been cleared.'
         await ctx.send(embed = embed)
 
     # Pause audio playback
@@ -338,12 +382,38 @@ class Music(cmd.Cog):
         # Pause
         await player.set_pause(True)
 
-        # Start disconnect timer (1800 seconds = 30 minutes)
-        await self.disconnect_timer(guild, player, 1800)
-
         # Send embed message
         embed.description = 'Tempo will disconnect if paused for 30 minutes. \n' + 'Use the `resume` command to continue playing.'
-        return await ctx.send(embed = embed)
+        await ctx.send(embed = embed)
+
+        # Start disconnect timer
+        timer = 0
+        while True:
+            # Sleep and increment timer
+            await asyncio.sleep(1)
+            timer += 1
+
+            # If Tempo is not connected to a voice channel
+            if not guild.voice_client: break
+
+            # If Tempo is playing music
+            if not player.paused: break
+
+            # If time limit is reached (1800 seconds = 30 minutes)
+            if timer == 1800:
+                # Disable repeat and shuffle
+                player.set_repeat(False)
+                player.set_shuffle(False)
+                
+                # Clear queue
+                player.queue.clear()
+
+                # Stop player
+                await player.stop()
+
+                # Disconnect from voice channel
+                await guild.voice_client.disconnect(force=True)
+                break
 
     # Resume audio playback
     @cmd.command(aliases=['rs'])

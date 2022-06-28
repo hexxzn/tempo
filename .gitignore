@@ -5,6 +5,5 @@
 /logs
 .vscode/launch.json
 .out
-run.bat
-src/reboot.sh
+lavalink.bat
 application.yml
