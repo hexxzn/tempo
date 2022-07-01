@@ -12,9 +12,12 @@ async def on_ready():
     bot.load_extension('cogs.music')
     bot.load_extension('cogs.help')
     bot.load_extension('cogs.info')
+
+    # Set custom Discord status
     await bot.change_presence(activity=nxt.Activity(type=nxt.ActivityType.listening, name="!help"))
+
     print(f'{bot.user} is online.')
     print('--------------------')
 
+# Start Tempo
 bot.run(beta_token)
-

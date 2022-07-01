@@ -14,7 +14,7 @@ class LavalinkVoiceClient(nxt.VoiceClient):
             self.lavalink = self.client.lavalink
         else:
             self.client.lavalink = lavalink.Client(client.user.id)
-            self.client.lavalink.add_node(node_host, node_port, node_password, node_region, node_name)
+            self.client.lavalink.add_node(node_host, node_port, node_password, node_region, node_name)  # Host, Port, Password, Region, Name
             self.lavalink = self.client.lavalink
 
     async def on_voice_server_update(self, data):
@@ -244,7 +244,7 @@ class Music(cmd.Cog):
         url_rx = re.compile(r'https?://(?:www\.)?.+')
         if url_rx.match(query):
             if 'soundcloud.com' in (query):
-                embed.description = ('SoundCloud is currently unsupported.')
+                embed.description = ('SoundCloud is currently disabled.')
                 return await ctx.send(embed = embed)
         else:
             query = f'ytsearch:{query}'
@@ -760,7 +760,7 @@ class Music(cmd.Cog):
         # Send embed message
         await ctx.send(embed = embed)
 
-    # Choose from a list of equalizer presets for a more personalized listening experience
+    # Choose from a list of equalizer presets for a unique listening experience
     # @cmd.command(aliases=['eq'])
     # async def equalizer(self, ctx, preset):
     #     # Get player for guild from guild cache
