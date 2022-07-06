@@ -49,6 +49,18 @@ class Info(cmd.Cog):
         # Send embed message
         await ctx.send(embed = embed)
 
+    @cmd.command(aliases=['li'])
+    async def links(self, ctx):
+        # Create embed and set border color
+        embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+
+        # Set embed message
+        embed.description = (
+            '[Invite Tempo](https://discord.com/api/oauth2/authorize?client_id=897864886095343687&permissions=3156992&scope=bot%20applications.commands)'
+        )
+
+        await ctx.send(embed=embed)
+
 # Add cog
 def setup(bot):
     bot.add_cog(Info(bot))

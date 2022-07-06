@@ -15,7 +15,7 @@ class Help(cmd.Cog):
         if command == '':
             help_menu.description = (
                 '**Standard Commands** \n'
-                '`play`, `stop`, `pause`, `resume`, `skip`, `restart`, `seek`, `song`, `queue`, `repeat`, `shuffle`, `remove`, `help`, `links(incomplete)` \n\n'
+                '`play`, `stop`, `pause`, `resume`, `skip`, `restart`, `seek`, `song`, `queue`, `repeat`, `shuffle`, `remove`, `help`, `links` \n\n'
 
                 '**Premium Commands** \n'
                 '`lyrics`, `volume`, `interface(incomplete)`, `search(incomplete)`, `equalizer(incomplete)`, `prefix(incomplete)` \n\n'
