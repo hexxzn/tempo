@@ -18,7 +18,7 @@ class Help(cmd.Cog):
                 '`play`, `stop`, `pause`, `resume`, `skip`, `restart`, `seek`, `song`, `queue`, `repeat`, `shuffle`, `remove`, `help`, `links` \n\n'
 
                 '**Premium Commands** \n'
-                '`lyrics`, `volume`, `interface(incomplete)`, `search(incomplete)`, `equalizer(incomplete)`, `prefix(incomplete)` \n\n'
+                '`lyrics`, `volume`, `interface(incomplete)`, `search`, `equalizer(incomplete)`, `prefix(incomplete)` \n\n'
 
                 '**Command Details** \n'
                 '`help <command name>` \n\n'
@@ -231,7 +231,7 @@ class Help(cmd.Cog):
         elif command == 'search' or command == 'sr':
             help_menu.description = (
                 '**Command: Search** \n'
-                'Get a list of top search results for the given song title and choose which one to play. If the song you\'re trying to play has a commonly used or generic title, the `play` command may have trouble choosing the one you\'re looking for. \n\n'
+                'Get a list of search results and choose which song to play. \n\n'
 
                 '**Syntax** \n'
                 '`search <song title and artist>` \n\n'

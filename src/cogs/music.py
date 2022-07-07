@@ -52,6 +52,19 @@ class LavalinkVoiceClient(nxt.VoiceClient):
         player.channel_id = None
         self.cleanup()
 
+class TempoView(nxt.ui.View):
+    def __init__(self, ctx):
+        super().__init__(timeout = 60)
+        self.ctx = ctx
+        self.message = None
+        self.requester = ctx.author
+
+    async def on_timeout(self):
+        if self.message:
+            for item in self.children:
+                item.disabled = True
+            await self.message.edit(view=self)
+
 class Music(cmd.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -93,7 +106,7 @@ class Music(cmd.Cog):
         player = self.bot.lavalink.player_manager.create(ctx.guild.id, endpoint=str(ctx.guild.region))
         
         # Commands that require the bot to join a voicechannel (i.e. initiating playback)
-        should_connect = ctx.command.name in ('play')
+        should_connect = ctx.command.name in ('play', 'search')
 
         if not ctx.author.voice or not ctx.author.voice.channel:
             # cog_command_error handler catches this and sends it to the voicechannel
@@ -759,6 +772,110 @@ class Music(cmd.Cog):
 
         # Send embed message
         await ctx.send(embed = embed)
+
+    @cmd.command(aliases=['sr'])
+    async def search(self, ctx, *, query: str):
+        # Get player for guild from guild cache
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+
+        # Get guild
+        guild = ctx.guild
+
+        # Remove leading and trailing <>. <> suppress embedding links.
+        query = query.strip('<>')
+
+        # Search for given query, get results
+        query = f'ytsearch:{query}'
+        results = await player.node.get_tracks(query)
+
+        # When a button is clicked
+        async def track_select(interaction):
+            # If user interacting is not the user requesting
+            if interaction.user != view.requester:
+                return
+
+            # Delete message containing buttons
+            view.message = None
+            await interaction.response.edit_message(view=view)
+            await interaction.delete_original_message()
+
+            # ID of which button was clicked
+            track_number = int(interaction.data['custom_id'])
+
+            # If user clicked a track
+            track = results['tracks'][track_number]
+
+            # Create embed and set border color
+            embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+
+            # Add announcement to embed
+            if not player.is_playing:
+                embed.description = 'Now Playing: '
+            else:
+                embed.description ='Queued: '
+
+            # Add track title to embed
+            embed.description += f'[{track["info"]["title"]}]({track["info"]["uri"]})'
+
+            # Add track to player
+            player.add(requester=interaction.user, track=track)
+
+            # Send embed message
+            await interaction.channel.send(embed = embed)
+
+            # Play track and set initial volume
+            if not player.is_playing:
+                await player.play()
+                await player.set_volume(20)
+            
+        # Create view and add buttons for each track
+        view = TempoView(ctx)
+        for track in results['tracks'][0:5]:
+            track_number = results['tracks'].index(track)
+            track_button = nxt.ui.Button(
+                label = track['info']['title'][0:80], 
+                custom_id = str(track_number), 
+                row = track_number, 
+                style = nxt.ButtonStyle.primary
+            )
+            # Set callback
+            track_button.callback = track_select
+
+            # Add button to view
+            view.add_item(track_button)
+
+        # Send view and save as message
+        message = await ctx.send(view=view)
+        view.message = message
+
+        # Start disconnect timer.
+        timer = 0
+        while True:
+            # Sleep and increment timer
+            await asyncio.sleep(1)
+            timer += 1
+
+            # If Tempo is not connected to a voice channel
+            if not guild.voice_client: break
+
+            # If Tempo is playing music
+            if player.is_playing: break
+
+            # If time limit is reached (90 seconds = 1.5 minutes)
+            if timer == 90:
+                # Disable repeat and shuffle
+                player.set_repeat(False)
+                player.set_shuffle(False)
+                
+                # Clear queue
+                player.queue.clear()
+
+                # Stop player
+                await player.stop()
+
+                # Disconnect from voice channel
+                await guild.voice_client.disconnect(force=True)
+                break
 
     # Choose from a list of equalizer presets for a unique listening experience
     # @cmd.command(aliases=['eq'])
