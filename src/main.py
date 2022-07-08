@@ -26,8 +26,15 @@ async def execute_query(connection, query):
     except Error as e:
         print(f'SQLite Error: {e}')
 
+# Sets default prefix for direct messages
+prefix = '!'
+
 # Get server specific command prefix from database
+@cmd.guild_only()
 async def get_prefix(bot, ctx):
+    if isinstance(ctx.channel, nxt.channel.DMChannel):
+        return '!'
+
     # Connect to database
     connection = None
     try:
@@ -50,10 +57,8 @@ async def get_prefix(bot, ctx):
     # If prefix for guild exists in database return it, otherwise return the default prefix
     if data:
         return data[0]
-    else:
-        return '!'
 
-bot = cmd.Bot(command_prefix = get_prefix, case_insensitive = True, help_command = None, intents = intents)
+bot = cmd.Bot(command_prefix = prefix, case_insensitive = True, help_command = None, intents = intents)
 
 @bot.event
 async def on_ready():
@@ -92,6 +97,29 @@ async def on_guild_join(ctx):
 
     # Close connection to database
     connection.close()
+
+    # Create embed and set border color
+    embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+    embed.description = (
+            '**Hey! Here\'s some info on how to get started.** \n\n'
+            '__**Help**__ \n'
+            'Use the `!help` command to get a list of all the commands Tempo has to offer. Want to know how a specific command works? Use `!help` followed by the name of the command you want more information on. For example `!help search` will give you helpful information on the `!search` command. \n\n'
+
+            '__**Music**__ \n'
+            'To play music in your current voice channel, use the `!play` command followed by the name of a song. For example `!play cosmica sublab` will play the song Cosmica by Sublab & Azaleh. \n\n'
+
+            '__**Permissions**__ \n'
+            'Use the `!role` command to select which members have permission to use Tempo. Tempo is available to @everyone by default. \n\n'
+
+            '__**Prefix**__ \n'
+            'Use the `!prefix` command to change Tempo\'s command prefix. For example `!prefix ?` will change the command prefix from ! to ?. \n\n'
+
+            '**Thanks for the invite. Enjoy!**'
+        )
+
+    # Send private message to server owner
+    channel = await owner.create_dm()
+    await channel.send(embed=embed)
 
 @bot.event
 async def on_guild_remove(ctx):

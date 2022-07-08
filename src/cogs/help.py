@@ -231,7 +231,7 @@ class Help(cmd.Cog):
         elif command == 'search' or command == 'sr':
             help_menu.description = (
                 '**Command: Search** \n'
-                'Get a list of search results and choose which song to play. \n\n'
+                'Get a list of songs and choose which one to play. \n\n'
 
                 '**Syntax** \n'
                 '`search <song title and artist>` \n\n'

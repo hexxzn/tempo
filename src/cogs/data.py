@@ -80,6 +80,11 @@ class Data(cmd.Cog):
         # Create embed and set border color
         embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
 
+        # Ignore private messages
+        if ctx.guild == None:
+            embed.description = 'You cannot use this command in a private message.'
+            return await ctx.send(embed=embed)
+
         # If prefix exceeds two characters
         if len(prefix) > 2:
             embed.description = 'Prefix must be two characters or less.'
