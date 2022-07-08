@@ -18,7 +18,7 @@ class Help(cmd.Cog):
                 '`play`, `stop`, `pause`, `resume`, `skip`, `restart`, `seek`, `song`, `queue`, `repeat`, `shuffle`, `remove`, `help`, `links` \n\n'
 
                 '**Premium Commands** \n'
-                '`lyrics`, `volume`, `interface(incomplete)`, `search`, `equalizer(incomplete)`, `prefix(incomplete)` \n\n'
+                '`lyrics`, `volume`, `interface(incomplete)`, `search`, `equalizer`, `prefix(incomplete)` \n\n'
 
                 '**Command Details** \n'
                 '`help <command name>` \n\n'
@@ -246,18 +246,6 @@ class Help(cmd.Cog):
             help_menu.description = (
                 '**Command: Equalizer** \n'
                 'Choose from a list of equalizer presets for a unique listening experience. \n\n'
-
-                '**Syntax** \n'
-                '`equalizer <preset name>` \n\n'
-
-                '**Presets** \n'
-                '`default` \n'
-                '`bassboost` \n'
-                '`lounge` \n'
-                '`elevator` \n'
-                '`more` \n'
-                '`coming` \n'
-                '`soon` \n\n'
 
                 '**Aliases** \n'
                 '`equalizer` \n'
