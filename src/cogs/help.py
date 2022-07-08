@@ -15,10 +15,10 @@ class Help(cmd.Cog):
         if command == '':
             help_menu.description = (
                 '**Standard Commands** \n'
-                '`play`, `stop`, `pause`, `resume`, `skip`, `restart`, `seek`, `song`, `queue`, `repeat`, `shuffle`, `remove`, `help`, `links` \n\n'
+                '`play`, `stop`, `pause`, `resume`, `skip`, `restart`, `seek`, `volume`, `song`, `queue`, `repeat`, `shuffle`, `remove`, `help`, `links` \n\n'
 
                 '**Premium Commands** \n'
-                '`lyrics`, `volume`, `interface(incomplete)`, `search`, `equalizer`, `prefix(incomplete)` \n\n'
+                '`search`, `lyrics`, `equalizer`, `prefix` \n\n'
 
                 '**Command Details** \n'
                 '`help <command name>` \n\n'
@@ -253,13 +253,13 @@ class Help(cmd.Cog):
             )
         
         # Prefix command details/help menu
-        elif command == 'prefix':
+        elif command == 'prefix' or command == 'pf':
             help_menu.description = (
                 '**Command: Prefix** \n'
-                'Change the default command prefix from \'!\' to a custom character of your choice. This command can only be used by the server admin. \n\n'
+                'Change the default command prefix from \'!\' to a custom character of your choice. Your custom prefix is limited to two characters in length and must be composed of standard keyboard characters. This command can only be used by the server admin. \n\n'
 
                 '**Syntax** \n'
-                '`prefix <custom character>` \n\n'
+                '`prefix <custom characters>` \n\n'
 
                 '**Aliases** \n'
                 '`prefix` \n'
