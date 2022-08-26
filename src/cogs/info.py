@@ -13,6 +13,12 @@ class Info(cmd.Cog):
         # Create embed and set border color
         embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
 
+        # If user input invalid
+        if query == '':
+            # Send embed message
+            embed.description = 'What song? Try `lyrics <song title and artist>` to search for lyrics.'
+            return await ctx.send(embed = embed)
+
         # Lyrics Genius
         genius = Genius(genius_token)
                 
@@ -59,7 +65,20 @@ class Info(cmd.Cog):
             '[Invite Tempo](https://discord.com/api/oauth2/authorize?client_id=897864886095343687&permissions=3156992&scope=bot%20applications.commands)'
         )
 
-        await ctx.send(embed=embed)
+        await ctx.send(embed = embed)
+
+    @cmd.command(aliases=['gl'])
+    async def guild_list(self, ctx):
+        # Create embed and set border color
+        embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+        embed.description = '**Guild List** \n'
+
+        # Iterate through each guild Tempo is a member of
+        for guild in self.bot.guilds:
+            embed.description += f'`{guild} ({await self.bot.fetch_user(guild.owner_id)})` \n'
+
+        # Send embed message
+        await ctx.send(embed = embed)
 
 # Add cog
 def setup(bot):

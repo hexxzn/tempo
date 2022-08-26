@@ -477,13 +477,13 @@ class Music(cmd.Cog):
             embed.description = 'Unable to skip while Tempo is paused. \n' + 'Use the `resume` command to continue playing.'
             return await ctx.send(embed = embed)
 
-        # Skip
-        await player.skip()
-
-        # Embed message content
-        if player.is_playing:
+        # Initial embed message content
+        if len(player.queue) > 0:
+            track = player.queue[0]
+            embed.description = f'Now Playing: [{track["title"]}]({track["uri"]})'
+        else:
             track = player.current
-            embed.description = 'Now Playing: ' + f'[{track["title"]}]({track["uri"]})'
+            embed.description = f'Skipped: [{track["title"]}]({track["uri"]})'
 
         # If repeat is enabled, alert user
         if player.repeat and player.is_playing:
@@ -495,6 +495,9 @@ class Music(cmd.Cog):
 
         # Send embed message
         await ctx.send(embed = embed)
+
+        # Skip
+        await player.skip()
 
     # Return to the beginning of the current song
     @cmd.command(aliases=['re'])
@@ -772,6 +775,7 @@ class Music(cmd.Cog):
         # Send embed message
         await ctx.send(embed = embed)
 
+    # Get a list of songs and choose which one to play
     @cmd.command(aliases=['sr'])
     async def search(self, ctx, *, query: str):
         # Get player for guild from guild cache
@@ -795,7 +799,7 @@ class Music(cmd.Cog):
 
             # Delete message containing buttons
             view.message = None
-            await interaction.response.edit_message(view=view)
+            await interaction.response.edit_message(view = view)
             await interaction.delete_original_message()
 
             # ID of which button was clicked
@@ -844,7 +848,7 @@ class Music(cmd.Cog):
             view.add_item(track_button)
 
         # Send view and save as message
-        message = await ctx.send(view=view)
+        message = await ctx.send(view = view)
         view.message = message
 
         # Start disconnect timer.
@@ -913,7 +917,7 @@ class Music(cmd.Cog):
         async def select_preset(interaction, gains = gains):
             # Delete message containing buttons
             view.message = None
-            await interaction.response.edit_message(view=view)
+            await interaction.response.edit_message(view = view)
             await interaction.delete_original_message()
 
             # Activate preset
@@ -928,7 +932,7 @@ class Music(cmd.Cog):
                 await player.set_gains(*gains[3])
 
             embed.description = f'Preset selected: {preset}'
-            await ctx.send(embed=embed)
+            await ctx.send(embed = embed)
 
         # Create view
         view = TempoView(ctx)
@@ -959,7 +963,7 @@ class Music(cmd.Cog):
         old_radio_button.callback = select_preset
         view.add_item(old_radio_button)
         
-        message = await ctx.send(view=view)
+        message = await ctx.send(view = view)
         view.message = message
 
 # Add cog

@@ -18,7 +18,7 @@ class Help(cmd.Cog):
                 '`play`, `stop`, `pause`, `resume`, `skip`, `restart`, `seek`, `volume`, `song`, `queue`, `repeat`, `shuffle`, `remove`, `help`, `links` \n\n'
 
                 '**Premium Commands** \n'
-                '`search`, `lyrics`, `equalizer`, `prefix` \n\n'
+                '`search`, `lyrics`, `equalizer` \n\n'
 
                 '**Command Details** \n'
                 '`help <command name>` \n\n'
@@ -250,20 +250,6 @@ class Help(cmd.Cog):
                 '**Aliases** \n'
                 '`equalizer` \n'
                 '`eq` \n\n'
-            )
-        
-        # Prefix command details/help menu
-        elif command == 'prefix' or command == 'pf':
-            help_menu.description = (
-                '**Command: Prefix** \n'
-                'Change the default command prefix from \'!\' to a custom character of your choice. Your custom prefix is limited to two characters in length and must be composed of standard keyboard characters. This command can only be used by the server admin. \n\n'
-
-                '**Syntax** \n'
-                '`prefix <custom characters>` \n\n'
-
-                '**Aliases** \n'
-                '`prefix` \n'
-                '`pf` \n\n'
             )
 
         # Command help details/help menu
