@@ -34,7 +34,6 @@ class Help(cmd.Cog):
                 '`play <song title and artist>` \n\n'
 
                 '**Aliases** \n'
-                '`play` \n'
                 '`p` \n\n'
             )
         
@@ -45,7 +44,6 @@ class Help(cmd.Cog):
                 'Stop audio playback, clear queue and disconnect. \n\n'
 
                 '**Aliases** \n'
-                '`stop` \n'
                 '`st` \n\n'
             )
         
@@ -56,7 +54,6 @@ class Help(cmd.Cog):
                 'Pause audio playback. Use the `resume` command to continue playing. \n\n'
 
                 '**Aliases** \n'
-                '`pause` \n'
                 '`ps` \n\n'
             )
         
@@ -67,7 +64,6 @@ class Help(cmd.Cog):
                 'Resume audio playback after audio has been paused with the `pause` command. \n\n'
 
                 '**Aliases** \n'
-                '`resume` \n'
                 '`rs` \n\n'
             )
         
@@ -78,7 +74,6 @@ class Help(cmd.Cog):
                 'Skip the current song. \n\n'
 
                 '**Aliases** \n'
-                '`skip` \n'
                 '`sk` \n\n'
             )
 
@@ -89,7 +84,6 @@ class Help(cmd.Cog):
                 'Return to the beginning of the current song. \n\n'
 
                 '**Aliases** \n'
-                '`restart` \n'
                 '`re` \n\n'
             )
         
@@ -100,10 +94,9 @@ class Help(cmd.Cog):
                 'Seek to position in song. \n\n'
 
                 '**Syntax** \n'
-                '`seek <position in seconds>`'
+                '`seek <position in seconds>` \n\n'
 
                 '**Aliases** \n'
-                '`seek` \n'
                 '`se` \n\n'
             )
         
@@ -114,7 +107,6 @@ class Help(cmd.Cog):
                 'Get the title of the current song. \n\n'
 
                 '**Aliases** \n'
-                '`song` \n'
                 '`sn` \n\n'
             )
         
@@ -125,7 +117,6 @@ class Help(cmd.Cog):
                 'Get a list of all songs currently in the queue. \n\n'
 
                 '**Aliases** \n'
-                '`queue` \n'
                 '`q` \n\n'
             )
 
@@ -136,7 +127,6 @@ class Help(cmd.Cog):
                 'Turn repeat on or off. \n\n'
 
                 '**Aliases** \n'
-                '`repeat` \n'
                 '`rp` \n\n'
             )
 
@@ -147,7 +137,6 @@ class Help(cmd.Cog):
                 'Turn shuffle on or off. \n\n'
 
                 '**Aliases** \n'
-                '`shuffle` \n'
                 '`sh` \n\n'
             )
 
@@ -161,7 +150,6 @@ class Help(cmd.Cog):
                 '`remove <track number>` \n\n'
 
                 '**Aliases** \n'
-                '`remove` \n'
                 '`rm` \n\n'
             )
 
@@ -172,7 +160,6 @@ class Help(cmd.Cog):
                 'Get a list of all available commands. \n\n'
 
                 '**Aliases** \n'
-                '`help` \n'
                 '`h` \n\n'
             )
         
@@ -183,7 +170,6 @@ class Help(cmd.Cog):
                 'Get a list of active links. \n\n'
 
                 '**Aliases** \n'
-                '`links` \n'
                 '`li` \n\n'
             )
 
@@ -197,7 +183,6 @@ class Help(cmd.Cog):
                 '`lyrics <song title and artist>` \n\n'
 
                 '**Aliases** \n'
-                '`lyrics` \n'
                 '`l` \n\n'
             )
 
@@ -211,20 +196,7 @@ class Help(cmd.Cog):
                 '`volume <0 - 100>` \n\n'
 
                 '**Aliases** \n'
-                '`volume` \n'
-                '`vol` \n'
                 '`v` \n\n'
-            )
-
-        # Interface command details/help menu
-        elif command == 'interface' or command == 'if':
-            help_menu.description = (
-                '**Command: Interface** \n'
-                'Get a GUI for the music player in chat. GUI contains pause, resume, skip and stop buttons. \n\n'
-
-                '**Aliases** \n'
-                '`interface` \n'
-                '`if` \n\n'
             )
         
         # Search command details/help menu
@@ -237,7 +209,6 @@ class Help(cmd.Cog):
                 '`search <song title and artist>` \n\n'
 
                 '**Aliases** \n'
-                '`search` \n'
                 '`sr` \n\n'
             )
         
@@ -248,7 +219,6 @@ class Help(cmd.Cog):
                 'Choose from a list of equalizer presets for a unique listening experience. \n\n'
 
                 '**Aliases** \n'
-                '`equalizer` \n'
                 '`eq` \n\n'
             )
 
@@ -262,7 +232,6 @@ class Help(cmd.Cog):
                 '`help <command name>` \n\n'
 
                 '**Aliases** \n'
-                '`help` \n'
                 '`h` \n\n'
             )
         
