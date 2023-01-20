@@ -55,8 +55,8 @@ class Info(cmd.Cog):
         # Send embed message
         await ctx.send(embed = embed)
 
-    @cmd.command(aliases=['li'])
-    async def links(self, ctx):
+    @cmd.command(aliases=['inv'])
+    async def invite(self, ctx):
         # Create embed and set border color
         embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
 
@@ -74,8 +74,20 @@ class Info(cmd.Cog):
         embed.description = '**Guild List** \n'
 
         # Iterate through each guild Tempo is a member of
+        guild_list = []
         for guild in self.bot.guilds:
-            embed.description += f'`{guild} ({await self.bot.fetch_user(guild.owner_id)})` \n'
+            tempo = guild.get_member(self.bot.user.id)
+            guild_info = {
+                "guild_name": guild,
+                "guild_owner": await self.bot.fetch_user(guild.owner_id),
+                "join_date": tempo.joined_at,
+                "join_date_string": tempo.joined_at.strftime("%m-%d-%y"),
+            }
+            guild_list.append(guild_info)
+
+        # Build embed message with guilds sorted by bot join date
+        for guild_info in sorted(guild_list, key = lambda date: date["join_date"]):
+            embed.description += f'`[{guild_info["join_date_string"]}] {guild_info["guild_name"]} ({guild_info["guild_owner"]})` \n'
 
         # Send embed message
         await ctx.send(embed = embed)

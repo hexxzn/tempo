@@ -15,7 +15,7 @@ class Help(cmd.Cog):
         if command == '':
             help_menu.description = (
                 '**Standard Commands** \n'
-                '`play`, `stop`, `pause`, `resume`, `skip`, `restart`, `seek`, `volume`, `song`, `queue`, `repeat`, `shuffle`, `remove`, `help`, `links` \n\n'
+                '`play`, `stop`, `pause`, `resume`, `skip`, `restart`, `seek`, `volume`, `song`, `queue`, `repeat`, `shuffle`, `remove`, `help`, `invite` \n\n'
 
                 '**Premium Commands** \n'
                 '`search`, `lyrics`, `equalizer` \n\n'
@@ -164,13 +164,13 @@ class Help(cmd.Cog):
             )
         
         # Links command details/help menu
-        elif command == 'links' or command == 'ln':
+        elif command == 'invite' or command == 'inv':
             help_menu.description = (
-                '**Command: Links** \n'
-                'Get a list of active links. \n\n'
+                '**Command: Invite** \n'
+                'Invite Tempo to your Discord server. \n\n'
 
                 '**Aliases** \n'
-                '`li` \n\n'
+                '`inv` \n\n'
             )
 
         # Lyrics command details/help menu
