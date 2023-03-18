@@ -3,6 +3,7 @@ from nextcord.ext import commands as cmd
 from tokens import *
 import lavalink
 import asyncio
+import random
 import math
 import re
 
@@ -239,8 +240,17 @@ class Music(cmd.Cog):
         # Get player for guild from guild cache
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
 
+        # Random number for hints message
+        rand = int(random.random() * 100)
+
         # Create embed and set border color
         embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+
+        # 1% chance to send search hint message
+        if rand == 1:
+            embed.description = 'Did you know Tempo has search function? \n Try `!search <song title and artist>` to pick from a list of results.'
+            await ctx.send(embed = embed)
+            embed.description = ''
 
         # If user input invalid
         if query == '':
@@ -654,16 +664,20 @@ class Music(cmd.Cog):
         # Get admin ID
         owner = await self.bot.fetch_user(ctx.guild.owner_id)
 
-        # Check if user has privelege to use command (admin only)
-        if ctx.author.id != owner.id:
-            # Send embed message
-            embed.description = 'Only the server admin has access to the `volume` command.'
+        if volume == '':
+            embed.description = f'Volume: {player.volume}%'
             return await ctx.send(embed = embed)
 
         # If user input invalid
         if not volume.isdigit() or int(volume) < 1 or int(volume) > 100:
             # Send embed message
-            embed.description = 'Enter a value from 1 to 100. \n' + 'Try `volume 25` to set volume to 25%.'
+            embed.description = 'Enter a value from 1 to 100. \n' + 'Try `volume` to check current volume. **[everyone]**\n' + 'Try `volume 25` to set volume to 25%. **[admin only]**' 
+            return await ctx.send(embed = embed)
+        
+        # Check if user has privelege to use command (admin only)
+        if ctx.author.id != owner.id:
+            # Send embed message
+            embed.description = 'Only the server owner can adjust volume.'
             return await ctx.send(embed = embed)
 
         # Get current volume and user input volume
@@ -931,7 +945,7 @@ class Music(cmd.Cog):
             elif preset == 'Lounge':
                 await player.set_gains(*gains[3])
 
-            embed.description = f'Preset selected: {preset}'
+            embed.description = f'Applying: {preset}\nPlease wait...'
             await ctx.send(embed = embed)
 
         # Create view

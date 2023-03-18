@@ -14,11 +14,11 @@ class Help(cmd.Cog):
         # Default help menu
         if command == '':
             help_menu.description = (
-                '**Standard Commands** \n'
-                '`play`, `stop`, `pause`, `resume`, `skip`, `restart`, `seek`, `volume`, `song`, `queue`, `repeat`, `shuffle`, `remove`, `help`, `invite` \n\n'
+                '**Commands** \n'
+                '`play`, `search`, `stop`, `pause`, `resume`, `skip`, `restart`, `seek`, `volume`, `song`, `queue`, `repeat`, `shuffle`, `remove`, `help`, `invite` \n\n'
 
-                '**Premium Commands** \n'
-                '`search`, `lyrics`, `equalizer` \n\n'
+                '**Beta Commands** \n'
+                '`lyrics`, `equalizer` \n\n'
 
                 '**Command Details** \n'
                 '`help <command name>` \n\n'
