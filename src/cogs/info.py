@@ -2,7 +2,7 @@ import nextcord as nxt
 from nextcord.ext import commands as cmd
 from lyricsgenius import Genius
 from tokens import *
-import os
+
 class Info(cmd.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -132,6 +132,13 @@ class Info(cmd.Cog):
         embed.add_field(name=f'__Guild Details__', value=info_list, inline=False)
 
         # Send embed message
+        await ctx.send(embed = embed)
+
+    @cmd.command(aliases=['inv'])
+    async def invite(self, ctx):
+        # Create and send embed
+        embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+        embed.description = f'[Invite Tempo](https://discord.com/api/oauth2/authorize?client_id=897864886095343687&permissions=3156992&scope=bot%20applications.commands)'
         await ctx.send(embed = embed)
 
 # Add cog
