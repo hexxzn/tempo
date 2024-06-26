@@ -268,7 +268,7 @@ class Music(cmd.Cog):
                 embed.description = ('SoundCloud is currently disabled.')
                 return await ctx.send(embed = embed)
         else:
-            query = f'ytsearch:{query}'
+            query = f'scsearch:{query}'
 
         # Get results for query from Lavalink
         results = await player.node.get_tracks(query)
@@ -802,7 +802,7 @@ class Music(cmd.Cog):
         query = query.strip('<>')
 
         # Search for given query, get results
-        query = f'ytsearch:{query}'
+        query = f'scsearch:{query}'
         results = await player.node.get_tracks(query)
 
         # When a button is clicked
@@ -894,91 +894,91 @@ class Music(cmd.Cog):
                 await guild.voice_client.disconnect(force=True)
                 break
 
-    # Choose from a list of equalizer presets for a unique listening experience
-    @cmd.command(aliases=['eq'])
-    async def equalizer(self, ctx):
-        # Get player for guild from guild cache
-        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+    # # Choose from a list of equalizer presets for a unique listening experience
+    # @cmd.command(aliases=['eq'])
+    # async def equalizer(self, ctx):
+    #     # Get player for guild from guild cache
+    #     player = self.bot.lavalink.player_manager.get(ctx.guild.id)
 
-        # Create embed and set border color
-        embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+    #     # Create embed and set border color
+    #     embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
 
-        # Get admin ID
-        owner = await self.bot.fetch_user(ctx.guild.owner_id)
+    #     # Get admin ID
+    #     owner = await self.bot.fetch_user(ctx.guild.owner_id)
 
-        # Check if user has privelege to use command (admin only)
-        if ctx.author.id != owner.id:
-            # Send embed message
-            embed.description = 'Only the server admin has access to the `equalizer` command.'
-            return await ctx.send(embed = embed)
+    #     # Check if user has privelege to use command (admin only)
+    #     if ctx.author.id != owner.id:
+    #         # Send embed message
+    #         embed.description = 'Only the server admin has access to the `equalizer` command.'
+    #         return await ctx.send(embed = embed)
 
-        # [(0, 25hz), (1, 40hz), (2, 63hz), (3, 100hz), (4, 160hz), (5, 250hz), (6, 400hz), (7, 630hz), (8, 1khz), (9, 1.6khz), (10, 2.5khz), (11, 4khz), (12, 6.3khz), (13, 10khz), (14, 16khz)]
-        gains = [
-            # Bass Boost
-            [(0, 0), (1, 0), (2, 0.1), (3, 0.1), (4, 0.1), (5, 0.1), (6, 0), (7, 0), (8, 0), (9, 0), (10, 0), (11, 0), (12, 0), (13, 0), (14, 0)],
-            # Mid Boost
-            [(0, 0), (1, 0), (2, 0), (3, 0), (4, 0), (5, 0), (6, 0), (7, 0.1), (8, 0.1), (9, 0.1), (10, 0.1), (11, 0), (12, 0), (13, 0), (14, 0)],
-            # Treble Boost
-            [(0, 0), (1, 0), (2, 0), (3, 0), (4, 0), (5, 0), (6, 0), (7, 0), (8, 0), (9, 0), (10, 0), (11, 0), (12, 0.1), (13, 0.1), (14, 0.1)],
-            # Old Radio
-            [(0, -0.25), (1, -0.25), (2, -0.25), (3, -0.25), (4, -0.25), (5, -0.25), (6, -0.25), (7, -0.25), (8, -0.25), (9, -0.25), (10, 1), (11, -0.25), (12, -0.25), (13, -0.25), (14, -0.25)]
-            ]
+    #     # [(0, 25hz), (1, 40hz), (2, 63hz), (3, 100hz), (4, 160hz), (5, 250hz), (6, 400hz), (7, 630hz), (8, 1khz), (9, 1.6khz), (10, 2.5khz), (11, 4khz), (12, 6.3khz), (13, 10khz), (14, 16khz)]
+    #     gains = [
+    #         # Bass Boost
+    #         [(0, 0), (1, 0), (2, 0.1), (3, 0.1), (4, 0.1), (5, 0.1), (6, 0), (7, 0), (8, 0), (9, 0), (10, 0), (11, 0), (12, 0), (13, 0), (14, 0)],
+    #         # Mid Boost
+    #         [(0, 0), (1, 0), (2, 0), (3, 0), (4, 0), (5, 0), (6, 0), (7, 0.1), (8, 0.1), (9, 0.1), (10, 0.1), (11, 0), (12, 0), (13, 0), (14, 0)],
+    #         # Treble Boost
+    #         [(0, 0), (1, 0), (2, 0), (3, 0), (4, 0), (5, 0), (6, 0), (7, 0), (8, 0), (9, 0), (10, 0), (11, 0), (12, 0.1), (13, 0.1), (14, 0.1)],
+    #         # Old Radio
+    #         [(0, -0.25), (1, -0.25), (2, -0.25), (3, -0.25), (4, -0.25), (5, -0.25), (6, -0.25), (7, -0.25), (8, -0.25), (9, -0.25), (10, 1), (11, -0.25), (12, -0.25), (13, -0.25), (14, -0.25)]
+    #         ]
 
-        # Reset player to default
-        await player.reset_equalizer()
+    #     # Reset player to default
+    #     await player.reset_equalizer()
 
-        # Applies a preset based on which button user clicks
-        async def select_preset(interaction, gains = gains):
-            # Delete message containing buttons
-            view.message = None
-            await interaction.response.edit_message(view = view)
-            await interaction.delete_original_message()
+    #     # Applies a preset based on which button user clicks
+    #     async def select_preset(interaction, gains = gains):
+    #         # Delete message containing buttons
+    #         view.message = None
+    #         await interaction.response.edit_message(view = view)
+    #         await interaction.delete_original_message()
 
-            # Activate preset
-            preset = interaction.data['custom_id']
-            if preset == 'Bass Boost':
-                await player.set_gains(*gains[0])
-            elif preset == 'Mid Boost':
-                await player.set_gains(*gains[1])
-            elif preset == 'Treble Boost':
-                await player.set_gains(*gains[2])
-            elif preset == 'Lounge':
-                await player.set_gains(*gains[3])
+    #         # Activate preset
+    #         preset = interaction.data['custom_id']
+    #         if preset == 'Bass Boost':
+    #             await player.set_gains(*gains[0])
+    #         elif preset == 'Mid Boost':
+    #             await player.set_gains(*gains[1])
+    #         elif preset == 'Treble Boost':
+    #             await player.set_gains(*gains[2])
+    #         elif preset == 'Lounge':
+    #             await player.set_gains(*gains[3])
 
-            embed.description = f'Applying: {preset}\nPlease wait...'
-            await ctx.send(embed = embed)
+    #         embed.description = f'Applying: {preset}\nPlease wait...'
+    #         await ctx.send(embed = embed)
 
-        # Create view
-        view = TempoView(ctx)
+    #     # Create view
+    #     view = TempoView(ctx)
 
-        # Create default preset button
-        default_button = nxt.ui.Button(label = 'Default', custom_id = 'Default', style = nxt.ButtonStyle.grey)
-        default_button.callback = select_preset
-        view.add_item(default_button)
+    #     # Create default preset button
+    #     default_button = nxt.ui.Button(label = 'Default', custom_id = 'Default', style = nxt.ButtonStyle.grey)
+    #     default_button.callback = select_preset
+    #     view.add_item(default_button)
 
-        # Create bass boost preset button
-        bass_boost_button = nxt.ui.Button(label = 'Bass Boost', custom_id = 'Bass Boost', style = nxt.ButtonStyle.grey)
-        bass_boost_button.callback = select_preset
-        view.add_item(bass_boost_button)
+    #     # Create bass boost preset button
+    #     bass_boost_button = nxt.ui.Button(label = 'Bass Boost', custom_id = 'Bass Boost', style = nxt.ButtonStyle.grey)
+    #     bass_boost_button.callback = select_preset
+    #     view.add_item(bass_boost_button)
 
-        # Create treble boost preset button
-        mid_boost_button = nxt.ui.Button(label = 'Mid Boost', custom_id = 'Mid Boost', style = nxt.ButtonStyle.grey)
-        mid_boost_button.callback = select_preset
-        view.add_item(mid_boost_button)
+    #     # Create treble boost preset button
+    #     mid_boost_button = nxt.ui.Button(label = 'Mid Boost', custom_id = 'Mid Boost', style = nxt.ButtonStyle.grey)
+    #     mid_boost_button.callback = select_preset
+    #     view.add_item(mid_boost_button)
 
 
-        # Create balanced boost preset button
-        treble_boost_button = nxt.ui.Button(label = 'Treble Boost', custom_id = 'Treble Boost', style = nxt.ButtonStyle.grey)
-        treble_boost_button.callback = select_preset
-        view.add_item(treble_boost_button)
+    #     # Create balanced boost preset button
+    #     treble_boost_button = nxt.ui.Button(label = 'Treble Boost', custom_id = 'Treble Boost', style = nxt.ButtonStyle.grey)
+    #     treble_boost_button.callback = select_preset
+    #     view.add_item(treble_boost_button)
 
-        # Create old radio preset button
-        old_radio_button = nxt.ui.Button(label = 'Lounge', custom_id = 'Lounge', style = nxt.ButtonStyle.grey)
-        old_radio_button.callback = select_preset
-        view.add_item(old_radio_button)
+    #     # Create old radio preset button
+    #     old_radio_button = nxt.ui.Button(label = 'Lounge', custom_id = 'Lounge', style = nxt.ButtonStyle.grey)
+    #     old_radio_button.callback = select_preset
+    #     view.add_item(old_radio_button)
         
-        message = await ctx.send(view = view)
-        view.message = message
+    #     message = await ctx.send(view = view)
+    #     view.message = message
 
 # Add cog
 def setup(bot):

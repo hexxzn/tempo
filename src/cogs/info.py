@@ -91,6 +91,7 @@ class Info(cmd.Cog):
                 await ctx.send(embed = embed)
                 song.lyrics = song.lyrics[len(lyrics_chunk):]
 
+    # Display a list of servers Tempo is a member of (developer only)
     @cmd.command(aliases=['gl'])
     async def guild_list(self, ctx):
         # Command can only be used by developer
@@ -134,6 +135,7 @@ class Info(cmd.Cog):
         # Send embed message
         await ctx.send(embed = embed)
 
+    # Display a clickable link to invite Tempo
     @cmd.command(aliases=['inv'])
     async def invite(self, ctx):
         # Create and send embed
