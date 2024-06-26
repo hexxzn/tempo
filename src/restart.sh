@@ -1,4 +1,3 @@
-  GNU nano 5.4                                                                                                     restart.sh                                                                                                               
 #!/bin/bash
 
 kill $(ps aux | grep '[p]ython3 main.py' | awk '{print $2}')
@@ -26,12 +25,40 @@ echo -n "."
 sleep 1
 echo -n "."
 sleep 1
+echo -n "."
+sleep 1
+echo -n "."
+sleep 1
+echo -n "."
+sleep 1
+echo -n "."
+sleep 1
+echo -n "."
+sleep 1
+echo -n "."
+sleep 1
+echo -n "."
+sleep 1
 echo "."
 
 cd src
 nohup python3 main.py &> "$_file" &
 
 echo -n "Starting Tempo"
+sleep 1
+echo -n "."
+sleep 1
+echo -n "."
+sleep 1
+echo -n "."
+sleep 1
+echo -n "."
+sleep 1
+echo -n "."
+sleep 1
+echo -n "."
+sleep 1
+echo -n "."
 sleep 1
 echo -n "."
 sleep 1
