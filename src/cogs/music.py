@@ -234,6 +234,11 @@ class Music(cmd.Cog):
                         await member.guild.voice_client.disconnect(force=True)
                         break
 
+    @cmd.command(guild_ids=[949642805138059285])
+    async def ping(interaction: nxt.Interaction):
+        """Simple command that responds with Pong!"""
+        await interaction.response.send_message("Pong!")
+
     # Play a song or, if a song is already playing, add to the queue
     @cmd.command(aliases = ['p'])
     async def play(self, ctx, *, query: str = ''):
@@ -248,7 +253,7 @@ class Music(cmd.Cog):
 
         # 1% chance to send search hint message
         if rand == 1:
-            embed.description = 'Did you know Tempo has search function? \n Try `!search <song title and artist>` to pick from a list of results.'
+            embed.description = 'Did you know Tempo has a search function? \n Try `!search <song title and artist>` to pick from a list of results.'
             await ctx.send(embed = embed)
             embed.description = ''
 
@@ -264,11 +269,13 @@ class Music(cmd.Cog):
         # Check if input is URL
         url_rx = re.compile(r'https?://(?:www\.)?.+')
         if url_rx.match(query):
-            if 'soundcloud.com' in (query):
-                embed.description = ('SoundCloud is currently disabled.')
+            if 'youtube.com' in (query):
+                embed.description = ('URL lookup currently disabled.')
+                await player.stop()
+                await ctx.voice_client.disconnect(force=True)
                 return await ctx.send(embed = embed)
         else:
-            query = f'scsearch:{query}'
+            query = f'ytsearch:{query}'
 
         # Get results for query from Lavalink
         results = await player.node.get_tracks(query)
@@ -802,7 +809,7 @@ class Music(cmd.Cog):
         query = query.strip('<>')
 
         # Search for given query, get results
-        query = f'scsearch:{query}'
+        query = f'ytsearch:{query}'
         results = await player.node.get_tracks(query)
 
         # When a button is clicked

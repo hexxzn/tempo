@@ -7,6 +7,7 @@ class Info(cmd.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+
     # Get song lyrics
     @cmd.command(aliases=['l'])
     async def lyrics(self, ctx, *, query: str = ''):
