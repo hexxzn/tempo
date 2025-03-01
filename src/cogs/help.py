@@ -13,8 +13,8 @@ class Help(cmd.Cog):
         # Help embed with thumbnail
         help_menu = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
         help_menu.title = "Help Menu"
-        help_menu.description = "Select a command from the dropdown below to view details."
-        help_menu.set_thumbnail(url="https://your-bot-image-link.com/logo.png")
+        help_menu.description = "Select a command from the dropdown below to view details.\n\n*The dropdown will disappear after 60 seconds of inactivity.*"
+        help_menu.set_thumbnail(url="https://raw.githubusercontent.com/hexxzn/tempo/refs/heads/main/resources/logo-transparent.png")
 
         # Command descriptions (Dropdown options)
         command_descriptions = {
@@ -48,34 +48,44 @@ class Help(cmd.Cog):
 
                 # Generate detailed help embed
                 command_help = {
-                    "play": "**Command: Play**\nPlay a song or add it to the queue.\n\n**Syntax**\n`/play <song title>`\n`/play <youtube video link>`\n`/play <youtube playlist link>`",
-                    "stop": "**Command: Stop**\nStop playback, clear the queue, and disconnect.",
-                    "pause": "**Command: Pause**\nPause playback.",
-                    "resume": "**Command: Resume**\nResume playback.",
-                    "skip": "**Command: Skip**\nSkip the current song.",
-                    "restart": "**Command: Restart**\nRestart the current song.",
-                    "seek": "**Command: Seek**\nSeek to a position in the current song.\n\n**Syntax**\n`/seek <seconds>`",
-                    "song": "**Command: Song**\nGet the title of the current song.",
-                    "queue": "**Command: Queue**\nShow the song queue.",
-                    "repeat": "**Command: Repeat**\nToggle repeat mode.",
-                    "shuffle": "**Command: Shuffle**\nToggle shuffle mode.",
-                    "remove": "**Command: Remove**\nRemove a song from the queue.\n\n**Syntax**\n`/remove <track number>`",
-                    "volume": "**Command: Volume**\nAdjust playback volume.\n\n**Syntax**\n`/volume <1-100>`",
-                    "search": "**Command: Search**\nSearch for a song before playing.\n\n**Syntax**\n`/search <song title>`",
+                    "play": "**Play**\nPlay a song or add it to the queue.\n\n**Syntax**\n`/play <song title and artist>`\n`/play <youtube video link>`\n`/play <youtube playlist link>`",
+                    "stop": "**Stop**\nStop playback, clear the queue, and disconnect.\n\n**Syntax**\n`/stop`",
+                    "pause": "**Pause**\nPause playback.\n\n**Syntax**\n`/pause`",
+                    "resume": "**Resume**\nResume playback.\n\n**Syntax**\n`/resume`",
+                    "skip": "**Skip**\nSkip the current song.\n\n**Syntax**\n`/skip`",
+                    "restart": "**Restart**\nRestart the current song.\n\n**Syntax**\n`/restart`",
+                    "seek": "**Seek**\nSeek to a position in the current song.\n\n**Syntax**\n`/seek <seconds>`",
+                    "song": "**Song**\nGet the title of the current song.\n\n**Syntax**\n`/song`",
+                    "queue": "**Queue**\nShow the song queue.\n\n**Syntax**\n`/queue`",
+                    "repeat": "**Repeat**\nToggle repeat mode.\n\n**Syntax**\n`/repeat`",
+                    "shuffle": "**Shuffle**\nToggle shuffle mode.\n\n**Syntax**\n`/shuffle`",
+                    "remove": "**Remove**\nRemove a song from the queue.\n\n**Syntax**\n`/remove <track number>`",
+                    "volume": "**Volume**\nCheck current playback volume or adjust volume from 1 to 100.\nDefault volume is 20.\n\n**Syntax**\n`/volume`\n`/volume <1 - 100>`",
+                    "search": "**Search**\nSearch for a song before playing.\n\n**Syntax**\n`/search <song title and artist>`",
                 }
 
                 embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
                 embed.description = command_help[selected_command]
-                embed.set_thumbnail(url="https://your-bot-image-link.com/logo.png")  # Keeps thumbnail in responses
+                embed.set_thumbnail(url="https://raw.githubusercontent.com/hexxzn/tempo/refs/heads/main/resources/logo-transparent.png")  # Keeps thumbnail in responses
 
                 await interaction.response.edit_message(embed=embed)  # Dropdown remains for multiple selections
 
-        # Create a view for the dropdown
-        view = nxt.ui.View()
-        view.add_item(HelpDropdown())
+        # Create a view for the dropdown with timeout
+        class HelpView(nxt.ui.View):
+            def __init__(self):
+                super().__init__(timeout=60)  # Timeout set to 60 seconds
+                self.add_item(HelpDropdown())
+
+            async def on_timeout(self):
+                for child in self.children:
+                    child.disabled = True  # Disable dropdown on timeout
+                await self.message.edit(view=None)  # Remove dropdown from message
+
+        view = HelpView()
 
         # Send message with dropdown menu
-        await interaction.response.send_message(embed=help_menu, view=view)
+        message = await interaction.response.send_message(embed=help_menu, view=view)
+        view.message = message  # Store message reference for timeout handling
 
 # Add cog
 def setup(bot):
