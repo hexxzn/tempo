@@ -30,7 +30,7 @@ async def on_ready():
 
     while True:
         # Set custom Discord status
-        await bot.change_presence(activity=nxt.Activity(type=nxt.ActivityType.listening, name="!help"))
+        await bot.change_presence(activity=nxt.Activity(type=nxt.ActivityType.listening, name="/help"))
 
         # Refresh custom Discord status
         await asyncio.sleep(3600)
