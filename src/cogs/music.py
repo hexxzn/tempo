@@ -1,64 +1,55 @@
-import nextcord as nxt
+from nextcord import Interaction, slash_command
 from nextcord.ext import commands as cmd
+import nextcord as nxt
 from tokens import *
 import lavalink
 import asyncio
-import random
+import logging
 import math
 import re
 
+
+# ---------------------------- #
+# Lavalink Voice Client
+# ---------------------------- #
 class LavalinkVoiceClient(nxt.VoiceClient):
     def __init__(self, client: nxt.Client, channel: nxt.abc.Connectable):
         self.client = client
         self.channel = channel
-        if hasattr(self.client, 'lavalink'):
-            self.lavalink = self.client.lavalink
-        else:
-            self.client.lavalink = lavalink.Client(client.user.id)
-            self.client.lavalink.add_node(node_host, node_port, node_password, node_region, node_name)  # Host, Port, Password, Region, Name
-            self.lavalink = self.client.lavalink
+        self.lavalink = getattr(client, "lavalink", None)
+
+        if not self.lavalink:
+            client.lavalink = lavalink.Client(client.user.id)
+            client.lavalink.add_node(node_host, node_port, node_password, node_region, node_name)
+            self.lavalink = client.lavalink
 
     async def on_voice_server_update(self, data):
-        # Convert data before sending to voice_update_handler
-        lavalink_data = {
-                't': 'VOICE_SERVER_UPDATE',
-                'd': data
-                }
-        await self.lavalink.voice_update_handler(lavalink_data)
+        await self.lavalink.voice_update_handler({"t": "VOICE_SERVER_UPDATE", "d": data})
 
     async def on_voice_state_update(self, data):
-        # Convert data before sending to voice_update_handler
-        lavalink_data = {
-                't': 'VOICE_STATE_UPDATE',
-                'd': data
-                }
-        await self.lavalink.voice_update_handler(lavalink_data)
+        await self.lavalink.voice_update_handler({"t": "VOICE_STATE_UPDATE", "d": data})
 
     async def connect(self, *, timeout: float, reconnect: bool) -> None:
-        # Connect to voice channel and create a player_manager
-        self.lavalink.player_manager.create(guild_id=self.channel.guild.id)
+        self.lavalink.player_manager.create(self.channel.guild.id)
         await self.channel.guild.change_voice_state(channel=self.channel)
 
     async def disconnect(self, *, force: bool) -> None:
-        # Disconnect, clean up running player and leave voice client
         player = self.lavalink.player_manager.get(self.channel.guild.id)
+        if force or player.is_connected:
+            await self.channel.guild.change_voice_state(channel=None)
+            player.channel_id = None
+            self.cleanup()
 
-        if not force and not player.is_connected:
-            return
 
-        # None = disconnect
-        await self.channel.guild.change_voice_state(channel=None)
-
-        # Must manually change channel_id to None
-        player.channel_id = None
-        self.cleanup()
-
+# ---------------------------- #
+# UI View for Search Command
+# ---------------------------- #
 class TempoView(nxt.ui.View):
-    def __init__(self, ctx):
-        super().__init__(timeout = 60)
-        self.ctx = ctx
+    def __init__(self, interaction: Interaction):
+        super().__init__(timeout=60)
+        self.interaction = interaction
         self.message = None
-        self.requester = ctx.author
+        self.requester = interaction.user
 
     async def on_timeout(self):
         if self.message:
@@ -66,322 +57,150 @@ class TempoView(nxt.ui.View):
                 item.disabled = True
             await self.message.edit(view=self)
 
+
+# ---------------------------- #
+# Music Cog
+# ---------------------------- #
 class Music(cmd.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-        if not hasattr(bot, 'lavalink'):
+        if not hasattr(bot, "lavalink"):
             bot.lavalink = lavalink.Client(bot.user.id)
-            bot.lavalink.add_node(node_host, node_port, node_password, node_region, node_name)  # Host, Port, Password, Region, Name
+            bot.lavalink.add_node(node_host, node_port, node_password, node_region, node_name)
+
+            # Apply Log Filter to Lavalink Logger
+            class LavalinkFilter(logging.Filter):
+                def filter(self, record):
+                    return "Received unknown op: ready" not in record.getMessage()
+
+            lavalink_logger = logging.getLogger("lavalink")  # Correct way to access Lavalink logs
+            lavalink_logger.addFilter(LavalinkFilter())  # Suppresses the specific message
+            lavalink_logger.setLevel(logging.INFO)  # Reduces excessive debug logs
 
             lavalink.add_event_hook(self.track_hook)
 
     def cog_unload(self):
-        # remove registered event hooks
         self.bot.lavalink._event_hooks.clear()
 
-    async def cog_before_invoke(self, ctx):
-        # command before-invoke handler
-        guild_check = ctx.guild is not None
-
-        # ensure bot and user are in same voice channel.
-        if guild_check:
-            await self.ensure_voice(ctx)
-
-        return guild_check
-
-    async def cog_command_error(self, ctx, error):
-        if isinstance(error, cmd.CommandInvokeError):
-            embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
-            if ctx.guild == None:
-                embed.description = 'Unable to locate user/voice channel.'
-                await ctx.send(embed = embed)
-            else:
-                # Log cog errors
-                embed.description = error.original
-                await ctx.send(embed = embed)
-
-    # ensure bot and user are in same voice channel
-    async def ensure_voice(self, ctx):
-        # Returns player if one exists, otherwise creates. Ensures that a player always exists for guild
-        player = self.bot.lavalink.player_manager.create(ctx.guild.id, endpoint=str(ctx.guild.region))
-        
-        # Commands that require the bot to join a voicechannel (i.e. initiating playback)
-        should_connect = ctx.command.name in ('play', 'search')
-
-        if not ctx.author.voice or not ctx.author.voice.channel:
-            # cog_command_error handler catches this and sends it to the voicechannel
-            raise cmd.CommandInvokeError('You must be in a voice channel to use this command.')
-
-        if not player.is_connected:
-            if not should_connect:
-                raise cmd.CommandInvokeError('Tempo is not connected to a voice channel.')
-
-            permissions = ctx.author.voice.channel.permissions_for(ctx.me)
-
-            if not permissions.connect or not permissions.speak:  # Check user limit too?
-                raise cmd.CommandInvokeError('Tempo needs `Connect` and `Speak` permissions.')
-
-            player.store('channel', ctx.channel.id)
-            await ctx.author.voice.channel.connect(cls=LavalinkVoiceClient)
-        else:
-            if int(player.channel_id) != ctx.author.voice.channel.id:
-                raise cmd.CommandInvokeError('You must be in the same voice channel as Tempo to use this command.')
-
-    # Automatically disconnect after period of inactivity
+    # Automatically disconnect after inactivity
     async def disconnect_timer(self, guild, player, delay):
-            timer = 0
-            while True:
-                # Sleep and increment timer
-                await asyncio.sleep(1)
-                timer += 1
-
-                # If Tempo is not connected to a voice channel
-                if not guild.voice_client: break
-
-                # If Tempo is playing music
-                if player.is_playing: break
-
-                # If time limit is reached
-                if timer == delay:
-                    # Disable repeat and shuffle
-                    player.set_repeat(False)
-                    player.set_shuffle(False)
-                    
-                    # Clear queue
-                    player.queue.clear()
-
-                    # Stop player
-                    await player.stop()
-
-                    # Disconnect from voice channel
-                    await guild.voice_client.disconnect(force=True)
-                    break
+        for timer in range(delay):
+            await asyncio.sleep(1)
+            if not guild.voice_client or player.is_playing:
+                return
+        player.set_repeat(False)
+        player.set_shuffle(False)
+        player.queue.clear()
+        await player.stop()
+        await guild.voice_client.disconnect(force=True)
 
     # Runs when the music stops
     async def track_hook(self, event):
         if isinstance(event, lavalink.events.QueueEndEvent):
-            # When track_hook receives "QueueEndEvent" from lavalink.py
-            guild_id = int(event.player.guild_id)
-            guild = self.bot.get_guild(guild_id)
-            player = event.player
+            guild = self.bot.get_guild(int(event.player.guild_id))
+            await self.disconnect_timer(guild, event.player, 90)
 
-            # Start disconnect timer
-            timer = 0
-            while True:
-                # Sleep and increment timer
-                await asyncio.sleep(1)
-                timer += 1
-
-                # If Tempo is not connected to a voice channel
-                if not guild.voice_client: break
-
-                # If Tempo is playing music
-                if player.is_playing: break
-
-                # If time limit is reached (90 seconds = 1.5 minutes)
-                if timer == 90:
-                    # Disable repeat and shuffle
-                    player.set_repeat(False)
-                    player.set_shuffle(False)
-                    
-                    # Clear queue
-                    player.queue.clear()
-
-                    # Stop player
-                    await player.stop()
-
-                    # Disconnect from voice channel
-                    await guild.voice_client.disconnect(force=True)
-                    break
-
-    # When any user's voice state changes
+    # Handle user disconnects
     @cmd.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
-        # If voice state update is not Tempo
-        if member.id != self.bot.user.id and member.guild.voice_client:
-            # Get player for guild from guild cache
-            player = self.bot.lavalink.player_manager.get(member.guild.id)
+        if member.id == self.bot.user.id or not member.guild.voice_client:
+            return
 
-            # If user was in same channel as Tempo prior to voice state update
-            if before.channel == member.guild.voice_client.channel and len(member.guild.voice_client.channel.members) == 1:
-                # Start disconnect timer
-                timer = 0
-                while True:
-                    # Sleep and increment timer
-                    await asyncio.sleep(1)
-                    timer += 1
+        player = self.bot.lavalink.player_manager.get(member.guild.id)
+        if before.channel == member.guild.voice_client.channel and len(member.guild.voice_client.channel.members) == 1:
+            await self.disconnect_timer(member.guild, player, 180)
 
-                    # If Tempo is not connected to a voice channel
-                    if not member.guild.voice_client: break
 
-                    # If Tempo is no longer alone in voice channel, stop timer
-                    if len(member.guild.voice_client.channel.members) > 1: break
-
-                    # If time limit is reached (180 seconds = 3 minutes)
-                    if timer == 180:
-                        # Disable repeat and shuffle
-                        player.set_repeat(False)
-                        player.set_shuffle(False)
-                        
-                        # Clear queue
-                        player.queue.clear()
-
-                        # Stop player
-                        await player.stop()
-
-                        # Disconnect from voice channel
-                        await member.guild.voice_client.disconnect(force=True)
-                        break
-
-    @cmd.command(guild_ids=[949642805138059285])
-    async def ping(interaction: nxt.Interaction):
-        """Simple command that responds with Pong!"""
-        await interaction.response.send_message("Pong!")
-
-    # Play a song or, if a song is already playing, add to the queue
-    @cmd.command(aliases = ['p'])
-    async def play(self, ctx, *, query: str = ''):
-        # Get player for guild from guild cache
-        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
-
-        # Random number for hints message
-        rand = int(random.random() * 100)
-
-        # Create embed and set border color
+    @slash_command(description="Play a song or add it to the queue.", guild_ids=[949642805138059285])
+    async def play(self, interaction: Interaction, query: str):
+        
+        # Get or create the player
+        player = self.bot.lavalink.player_manager.create(interaction.guild.id, endpoint=str(interaction.guild.region))
+        
+        # Create embed message
         embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
 
-        # 1% chance to send search hint message
-        if rand == 1:
-            embed.description = 'Did you know Tempo has a search function? \n Try `!search <song title and artist>` to pick from a list of results.'
-            await ctx.send(embed = embed)
-            embed.description = ''
+        # If user is not in a voice channel
+        if not interaction.user.voice or not interaction.user.voice.channel:
+            embed.description = "You must be in a voice channel to use this command."
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
 
-        # If user input invalid
-        if query == '':
-            # Send embed message
-            embed.description = 'What song? Try `play <song title and artist>`.'
-            return await ctx.send(embed = embed)
+        # Connect bot to voice channel if needed
+        if not player.is_connected:
+            permissions = interaction.user.voice.channel.permissions_for(interaction.guild.me)
+            if not permissions.connect or not permissions.speak:
+                embed.description = "Tempo needs `Connect` and `Speak` permissions."
+                return await interaction.response.send_message(embed=embed, ephemeral=True)
 
-        # Suppress link embeds
+            player.store('channel', interaction.channel_id)
+            await interaction.user.voice.channel.connect(cls=LavalinkVoiceClient)
+
+        # Search for the query
         query = query.strip('<>')
-
-        # Check if input is URL
-        # url_rx = re.compile(r'https?://(?:www\.)?.+')
-        # if url_rx.match(query):
-        #     if 'youtube.com' in (query):
-        #         embed.description = ('URL lookup currently disabled.')
-        #         await player.stop()
-        #         await ctx.voice_client.disconnect(force=True)
-        #         return await ctx.send(embed = embed)
-        # else:
-        #     query = f'ytsearch:{query}'
-
         url_rx = re.compile(r'https?://(?:www\.)?.+')
-        if not url_rx.match(query) or 'youtube.com' not in query:
+        
+        if not url_rx.match(query):
             query = f'ytsearch:{query}'
-            results = await player.node.get_tracks(query)
-        else:
-            results = await player.node.get_tracks(query)
-            track = results['tracks'][0] # Needed for URLS to work
 
-        # Get results for query from Lavalink
-        # results = await player.node.get_tracks(query)
+        results = await player.node.get_tracks(query)
 
-        # If query returns no results
+        # Handle invalid search results
         if not results or not results['tracks']:
-            # Disconnect if no audio is playing
-            if not player.is_playing:
-                await ctx.voice_client.disconnect(force=True)
+            embed.description = "No tracks found."
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
 
-            # Send embed message
-            embed.description = 'No tracks found.'
-            return await ctx.send(embed = embed)
-
-        # If result is a playlist
+        # If query returns a playlist
         if results['loadType'] == 'PLAYLIST_LOADED':
-            # Get tracklist from results
             tracks = results['tracks']
 
-            # Add all tracks from playlist to queue
             for song in tracks:
-                track = lavalink.models.AudioTrack(song, ctx.author.id, recommended=True)
-                player.add(requester=ctx.author.id, track=track)
+                track = lavalink.models.AudioTrack(song, interaction.user.id, recommended=True)
+                player.add(requester=interaction.user.id, track=track)
 
-            # Embed message content
-            if not player.is_playing:
-                embed.description = 'Now Playing: ' + f'{results["playlistInfo"]["name"]} ({len(tracks)} tracks)'
-            else:
-                embed.description = 'Queued: ' + f'{results["playlistInfo"]["name"]} ({len(tracks)} tracks)'
-
-            # Play track and set initial volume
-            if not player.is_playing:
-                await player.play()
-                await player.reset_equalizer()
-                await player.set_volume(20)
+            embed.description = f'Playlist queued: [{results["playlistInfo"]["name"]}]({query}) ({len(tracks)} tracks)'
         else:
-            # Select track that isn't a music video if one exists, otherwise select first track in results
-            excluded_phrases = ['music video', 'official video']
-            if not url_rx.match(query):
-                for result in results['tracks']:
-                    if not any(phrase in result['info']['title'].lower() for phrase in excluded_phrases):
-                        track = result
-                        break
-                    elif results['tracks'].index(result) == 9:
-                        track = results['tracks'][0]
-                        break
-                        
-            # Embed message content
-            if not player.is_playing:
-                embed.description = 'Now Playing: ' + f'[{track["info"]["title"]}]({track["info"]["uri"]})'
-            else:
-                embed.description ='Queued: ' + f'[{track["info"]["title"]}]({track["info"]["uri"]})'
+            # Pick the first track (or non-music video)
+            track = results['tracks'][0]
+            track = lavalink.models.AudioTrack(track, interaction.user.id, recommended=True)
+            player.add(requester=interaction.user.id, track=track)
 
-            # Load track
-            track = lavalink.models.AudioTrack(track, ctx.author.id, recommended=True)
-            player.add(requester=ctx.author.id, track=track)
+            embed.description = f'Now Playing: [{track.title}]({track.uri})' if not player.is_playing else f'Queued: [{track.title}]({track.uri})'
 
-            # If Tempo is paused, alert user
-            if player.paused and player.is_playing:
-                embed.description += '\n Tempo is paused. Use the `resume` command to continue playing.'
+        # Play the track
+        if not player.is_playing:
+            await player.play()
+            await player.set_volume(20)
 
-            # If repeat is enabled, alert user
-            if player.repeat and player.is_playing:
-                embed.description += '\n Repeat is enabled. Use the `repeat` command to disable.'
+        # Send response
+        await interaction.response.send_message(embed=embed)
 
-            # If shuffle is enabled, alert user
-            if player.shuffle and player.is_playing:
-                embed.description += '\n Shuffle is enabled. Use the `shuffle` command to disable.'
 
-            # Send embed message
-            await ctx.send(embed = embed)
+    @slash_command(description="Stop playback, clear the queue, and disconnect the bot.", guild_ids=[949642805138059285])
+    async def stop(self, interaction: Interaction):
 
-            # Play track and set initial volume
-            if not player.is_playing:
-                await player.play()
-                await player.reset_equalizer()
-                await player.set_volume(20)
-
-    # Stop audio playback, clear queue and disconnect
-    @cmd.command(aliases=['st'])
-    async def stop(self, ctx):
         # Get player for guild from guild cache
-        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+        player = interaction.client.lavalink.player_manager.get(interaction.guild.id)
 
         # Create embed and set border color
         embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
 
-        # If user is not in the same voice channel
-        if not ctx.author.voice or (player.is_connected and ctx.author.voice.channel.id != int(player.channel_id)):
-            embed.description = 'You must be in the same voice channel as Tempo to use this command.'
-            return await ctx.send(embed = embed)
+        # If player does not exist or isn't playing
+        if not player or not player.is_playing:
+            embed.description = "Nothing is currently playing."
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
 
-        # Disconnect message
-        embed.description = 'Tempo has disconnected. \n'
-        
-        # If there are songs in queue alert user that queue has been cleared
+        # If user is not in the same voice channel
+        if not interaction.user.voice or (player.is_connected and interaction.user.voice.channel.id != int(player.channel_id)):
+            embed.description = "You must be in the same voice channel as Tempo to use this command."
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
+
+        # Stop message
+        embed.description = "Tempo has disconnected. \n"
+
+        # If queue has songs, alert user it was cleared
         if len(player.queue) > 0:
-            embed.description += 'The queue has been cleared. \n'
+            embed.description += "The queue has been cleared. \n"
 
         # Disable repeat and shuffle
         player.set_repeat(False)
@@ -394,431 +213,347 @@ class Music(cmd.Cog):
         player.queue.clear()
 
         # Disconnect from voice channel
-        await ctx.voice_client.disconnect(force=True)
+        await interaction.guild.voice_client.disconnect(force=True)
 
-        # Send embed message
-        await ctx.send(embed = embed)
+        # Send response
+        await interaction.response.send_message(embed=embed)
 
-    # Pause audio playback
-    @cmd.command(aliases=['ps'])
-    async def pause(self, ctx):
+
+    @slash_command(description="Pause the current song.", guild_ids=[949642805138059285])
+    async def pause(self, interaction: Interaction):
+
         # Get player for guild from guild cache
-        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
-
-        # Get guild
-        guild = ctx.guild
+        player = interaction.client.lavalink.player_manager.get(interaction.guild.id)
 
         # Create embed and set border color
         embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
 
-        # If player is not active
-        if not player.is_playing:
-            # Send embed message
-            embed.description = 'Unable to pause. \n' + 'No music playing.'
-            return await ctx.send(embed = embed)
+        # If player does not exist or isn't playing
+        if not player or not player.is_playing:
+            embed.description = "Nothing is currently playing."
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
 
-        # If player is paused
+        # If player is already paused
         if player.paused:
-            # Send embed message
-            embed.description = 'Unable to pause. \n' + 'Tempo is already paused.'
-            return await ctx.send(embed = embed)
+            embed.description = "The music is already paused."
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
 
-        # Pause
+        # Pause playback
         await player.set_pause(True)
 
-        # Send embed message
-        embed.description = 'Tempo will disconnect if paused for 30 minutes. \n' + 'Use the `resume` command to continue playing.'
-        await ctx.send(embed = embed)
+        # Send response
+        embed.description = "Playback has been paused. Use `/resume` to continue playing."
+        await interaction.response.send_message(embed=embed)
 
-        # Start disconnect timer
-        timer = 0
-        while True:
-            # Sleep and increment timer
-            await asyncio.sleep(1)
-            timer += 1
 
-            # If Tempo is not connected to a voice channel
-            if not guild.voice_client: break
+    @slash_command(description="Resume the paused song.", guild_ids=[949642805138059285])
+    async def resume(self, interaction: Interaction):
 
-            # If Tempo is playing music
-            if not player.paused: break
-
-            # If time limit is reached (1800 seconds = 30 minutes)
-            if timer == 1800:
-                # Disable repeat and shuffle
-                player.set_repeat(False)
-                player.set_shuffle(False)
-                
-                # Clear queue
-                player.queue.clear()
-
-                # Stop player
-                await player.stop()
-
-                # Disconnect from voice channel
-                await guild.voice_client.disconnect(force=True)
-                break
-
-    # Resume audio playback
-    @cmd.command(aliases=['rs'])
-    async def resume(self, ctx):
         # Get player for guild from guild cache
-        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+        player = interaction.client.lavalink.player_manager.get(interaction.guild.id)
 
         # Create embed and set border color
         embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
 
-        # If player is not active
-        if not player.is_playing:
-            # Send embed message
-            embed.description = 'Unable to resume. \n' + 'No music playing.'
-            return await ctx.send(embed = embed)
+        # If player does not exist or isn't playing
+        if not player or not player.is_playing:
+            embed.description = "Nothing is currently playing."
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
 
-        # If player not paused
+        # If player is not paused
         if not player.paused:
-            # Send embed message
-            embed.description = 'Unable to resume. \n' + 'Tempo is not paused.'
-            return await ctx.send(embed = embed)
-            
-        # Resume
+            embed.description = "The music is already playing."
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
+
+        # Resume playback
         await player.set_pause(False)
 
-        # Send embed message
-        track = player.current
-        embed.description = f'Resumed: [{track["title"]}]({track["uri"]})'
-        return await ctx.send(embed = embed)
+        # Send response
+        embed.description = "Playback has resumed."
+        await interaction.response.send_message(embed=embed)
 
-    # Skip the current song
-    @cmd.command(aliases=['sk'])
-    async def skip(self, ctx):
+
+    @slash_command(description="Skip the current song.", guild_ids=[949642805138059285])
+    async def skip(self, interaction: Interaction):
+
         # Get player for guild from guild cache
-        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+        player = interaction.client.lavalink.player_manager.get(interaction.guild.id)
 
         # Create embed and set border color
         embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
 
-        # If player not active
-        if not player.is_playing:
-            # Send embed message
-            embed.description = 'Unable to skip. \n' + 'No music playing.'
-            return await ctx.send(embed = embed)
+        # If player does not exist or isn't playing
+        if not player or not player.is_playing:
+            embed.description = "Nothing is currently playing."
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         # If player is paused
         if player.paused:
-            # Send embed message
-            embed.description = 'Unable to skip while Tempo is paused. \n' + 'Use the `resume` command to continue playing.'
-            return await ctx.send(embed = embed)
+            embed.description = "Unable to skip while the player is paused. Use `/resume` to continue playing."
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         # Initial embed message content
         if len(player.queue) > 0:
             track = player.queue[0]
-            embed.description = f'Now Playing: [{track["title"]}]({track["uri"]})'
+            embed.description = f"Now Playing: [{track['title']}]({track['uri']})"
         else:
             track = player.current
-            embed.description = f'Skipped: [{track["title"]}]({track["uri"]})'
+            embed.description = f"Skipped: [{track['title']}]({track['uri']})"
 
-        # If repeat is enabled, alert user
-        if player.repeat and player.is_playing:
-            embed.description += '\n Repeat is enabled. Use the `repeat` command to disable.'
+        # Notify about repeat and shuffle
+        if player.repeat:
+            embed.description += "\n Repeat is enabled. Use `/repeat` to disable."
+        if player.shuffle:
+            embed.description += "\n Shuffle is enabled. Use `/shuffle` to disable."
 
-        # If shuffle is enabled, alert user
-        if player.shuffle and player.is_playing:
-            embed.description += '\n Shuffle is enabled. Use the `shuffle` command to disable.'
+        # Send embed message before skipping
+        await interaction.response.send_message(embed=embed)
 
-        # Send embed message
-        await ctx.send(embed = embed)
-
-        # Skip
+        # Skip the current track
         await player.skip()
 
-    # Return to the beginning of the current song
-    @cmd.command(aliases=['re'])
-    async def restart(self, ctx):
+
+    @slash_command(description="Restart the current song from the beginning.", guild_ids=[949642805138059285])
+    async def restart(self, interaction: Interaction):
+
         # Get player for guild from guild cache
-        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+        player = interaction.client.lavalink.player_manager.get(interaction.guild.id)
 
         # Create embed and set border color
         embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
 
-        # If player not active
-        if not player.is_playing:
-            # Send embed message
-            embed.description = 'Unable to restart. \n' + 'No music playing.'
-            return await ctx.send(embed = embed)
+        # If player does not exist or isn't playing
+        if not player or not player.is_playing:
+            embed.description = "Nothing is currently playing."
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         # If player is paused
         if player.paused:
-            # Send embed message
-            embed.description = 'Unable to restart while Tempo is paused. \n' + 'Use the `resume` command to continue playing.'
-            return await ctx.send(embed = embed)
+            embed.description = "Unable to restart while the player is paused. Use `/resume` to continue playing."
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
 
-        # Restart
+        # Restart the track from the beginning
         await player.seek(0)
 
         # Send embed message
         track = player.current
-        embed.description = f'Now Playing: [{track["title"]}]({track["uri"]})'
-        return await ctx.send(embed = embed)
+        embed.description = f"Restarted: [{track['title']}]({track['uri']})"
+        await interaction.response.send_message(embed=embed)
 
-    # Seek to specified positon in song
-    @cmd.command(aliases=['se'])
-    async def seek(self, ctx, position = ''):
+
+    @slash_command(description="Seek to a specific position in the current song.", guild_ids=[949642805138059285])
+    async def seek(self, interaction: Interaction, position: int):
+
         # Get player for guild from guild cache
-        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+        player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
         # Create embed and set border color
         embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
 
-        # If player is not active
-        if not player.is_playing:
-            # Send embed message
-            embed.description = 'Unable to seek. \n' + 'No music playing.'
-            return await ctx.send(embed = embed)
+        # If player does not exist or isn't playing
+        if not player or not player.is_playing:
+            embed.description = "Nothing is currently playing."
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         # If player is paused
         if player.paused:
-            # Send embed message
-            embed.description = 'Unable to seek while Tempo is paused. \n' + 'Use the `resume` command to continue playing.'
-            return await ctx.send(embed = embed)
+            embed.description = "Unable to seek while the player is paused. Use `/resume` to continue playing."
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
 
-        # If user input invalid
-        if not position.isnumeric():
-            # Send embed message
-            embed.description = 'Invalid position. \n' + 'Try `seek 30` to jump to 30 seconds.'
-            return await ctx.send(embed = embed)
-
-        # Convert user input
-        position = int(position)
-
-        # Track duration
+        # Track duration in seconds
         duration = math.floor(player.current.duration / 1000)
-        half_duration = math.floor(duration / 2)
 
-        # Wait for track to buffer
-        if player.position < (player.current.duration * 0.02):
-            # Send embed message
-            embed.description = 'Track loading... \n' + f'Try again in {math.ceil(((player.current.duration * 0.02) - player.position) / 1000)} seconds.'
-            return await ctx.send(embed = embed)
+        # Validate user input
+        if position < 0 or position > duration:
+            embed.description = f"Invalid position. Track length: {duration} seconds. Try `/seek {duration // 2}` to jump halfway."
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
 
-        # If no user input
-        if position == '':
-            # Send embed message
-            embed.description = f'Current track length: {duration} seconds \n' + f'Try `seek {half_duration}` to jump to {half_duration} seconds.'
-            return await ctx.send(embed = embed)
-
-        # If user input out of range
-        if position < 0 or position * 1000 > player.current.duration:
-            embed.description = f'Current track length: {duration} seconds \n' + f'Try `seek {half_duration}` to jump to {half_duration} seconds.'
-            return await ctx.send(embed = embed)
-
-        # Send embed message
-        embed.description = f'Seeking to {position} seconds.'
-        await ctx.send(embed = embed)
-
-        # Seek
-        position = int(position)
+        # Seek to the specified position
         await player.seek(position * 1000)
 
-    # Get the title of the current song
-    @cmd.command(aliases=['sn'])
-    async def song(self, ctx):
+        # Send confirmation
+        embed.description = f"Seeking to {position} seconds."
+        await interaction.response.send_message(embed=embed)
+
+
+    @slash_command(description="Get the title of the current song.", guild_ids=[949642805138059285])
+    async def song(self, interaction: Interaction):
+
         # Get player for guild from guild cache
-        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+        player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
         # Create embed and set border color
         embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
 
-        # If player is not active
-        if not player.is_playing:
-            # Send embed message
-            embed.description = 'No music playing.'
-            return await ctx.send(embed = embed)
+        # If player does not exist or isn't playing
+        if not player or not player.is_playing:
+            embed.description = "No music is currently playing."
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         # Get current song title
         track = player.current
+        embed.description = f"Now Playing: [{track['title']}]({track['uri']})"
 
         # Send embed message
-        embed.description = f'Now Playing: [{track["title"]}]({track["uri"]})'
-        await ctx.send(embed = embed)
+        await interaction.response.send_message(embed=embed)
 
-    # Get a list of all songs currently in the queue
-    @cmd.command(aliases=['q'])
-    async def queue(self, ctx):
+
+    @slash_command(description="View the current song queue.", guild_ids=[949642805138059285])
+    async def queue(self, interaction: Interaction):
+
         # Get player for guild from guild cache
-        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+        player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
         # Create embed and set border color
         embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
-        embed.description = ''
+        embed.description = ""
 
-        # If player is not active
-        if not player.is_playing:
-            # Send embed message
-            embed.description = 'No music playing.'
-            return await ctx.send(embed = embed)
+        # If player does not exist or isn't playing
+        if not player or not player.is_playing:
+            embed.description = "No music is currently playing."
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         # If queue is empty
         if len(player.queue) == 0:
-            # Send embed message
-            embed.description = 'The queue is empty.'
-            return await ctx.send(embed = embed)
+            embed.description = "The queue is empty."
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         # Get all queued song titles
-        for track in player.queue:
-            # If adding song title to list exceeds max embed message length, break
-            if len(embed.description) + len(f'[{track["title"]}]({track["uri"]}) \n') > 4096:
-                break
-            # Add queued track to embed message content
-            embed.description += f'{player.queue.index(track) + 1}. [{track["title"]}]({track["uri"]}) \n'
+        for index, track in enumerate(player.queue[:10]):  # Limit to first 10 tracks to prevent long messages
+            embed.description += f"{index + 1}. [{track['title']}]({track['uri']})\n"
 
         # Send embed message
-        await ctx.send(embed = embed)
+        await interaction.response.send_message(embed=embed)
 
-    # Change audio playback volume
-    @cmd.command(aliases=['v', 'vol'])
-    async def volume(self, ctx, volume = ''):
+
+    @slash_command(description="Check or adjust the music volume.", guild_ids=[949642805138059285])
+    async def volume(self, interaction: Interaction, volume: int = None):
+
         # Get player for guild from guild cache
-        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+        player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
         # Create embed and set border color
         embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
 
-        # Get admin ID
-        owner = await self.bot.fetch_user(ctx.guild.owner_id)
+        # Get server owner ID
+        owner = interaction.guild.owner_id
 
-        if volume == '':
-            embed.description = f'Volume: {player.volume}%'
-            return await ctx.send(embed = embed)
+        # If player does not exist
+        if not player:
+            embed.description = "No music is currently playing."
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
 
-        # If user input invalid
-        if not volume.isdigit() or int(volume) < 1 or int(volume) > 100:
-            # Send embed message
-            embed.description = 'Enter a value from 1 to 100. \n' + 'Try `volume` to check current volume. **[everyone]**\n' + 'Try `volume 25` to set volume to 25%. **[admin only]**' 
-            return await ctx.send(embed = embed)
-        
-        # Check if user has privelege to use command (admin only)
-        if ctx.author.id != owner.id:
-            # Send embed message
-            embed.description = 'Only the server owner can adjust volume.'
-            return await ctx.send(embed = embed)
+        # If no volume is specified, return current volume
+        if volume is None:
+            embed.description = f"Current volume: {player.volume}%"
+            return await interaction.response.send_message(embed=embed)
 
-        # Get current volume and user input volume
+        # Validate volume range
+        if volume < 1 or volume > 100:
+            embed.description = "Enter a value from 1 to 100. Example: `/volume 25`."
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
+
+        # Check if user has permission (server owner only)
+        if interaction.user.id != owner:
+            embed.description = "Only the server owner can adjust the volume."
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
+
+        # Get current and new volume
         current_volume = player.volume
-        volume = int(volume)
-
-        # Set player volume
         await player.set_volume(volume)
 
-        # If volume increased
+        # Respond based on change
         if volume > current_volume:
-            embed.description = f'Volume increased from {current_volume}% to {volume}%.'
-        # If volume decreased
-        elif volume < current_volume: 
-            embed.description = f'Volume decreased from {current_volume}% to {volume}%.'
-        # If volume unchanged
-        elif volume == current_volume:
-            embed.description = f'Volume is already set to {current_volume}%'
-        
-        # Send embed message
-        await ctx.send(embed = embed)
+            embed.description = f"Volume increased from {current_volume}% to {volume}%."
+        elif volume < current_volume:
+            embed.description = f"Volume decreased from {current_volume}% to {volume}%."
+        else:
+            embed.description = f"Volume is already set to {volume}%."
 
-    # Turn repeat on or off
-    @cmd.command(aliases=['rp'])
-    async def repeat(self, ctx):
+        # Send embed message
+        await interaction.response.send_message(embed=embed)
+
+
+    @slash_command(description="Toggle repeat mode for the current song.", guild_ids=[949642805138059285])
+    async def repeat(self, interaction: Interaction):
+
         # Get player for guild from guild cache
-        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+        player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
         # Create embed and set border color
         embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+
+        # If player does not exist or isn't playing
+        if not player or not player.is_playing:
+            embed.description = "No music is currently playing."
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         # Toggle repeat
-        if player.repeat:
-            # Disabled repeat
-            player.set_repeat(False)
+        player.set_repeat(not player.repeat)
+        status = "enabled" if player.repeat else "disabled"
 
-            # Send embed message
-            embed.description = 'Repeat disabled.'
-            await ctx.send(embed = embed)
-        else:
-            # Enable repeat
-            player.set_repeat(True)
-            
-            # Send embed message
-            embed.description = 'Repeat enabled.'
-            await ctx.send(embed = embed)
+        # Send response
+        embed.description = f"Repeat mode has been **{status}**."
+        await interaction.response.send_message(embed=embed)
 
-    # Turn shuffle on or off
-    @cmd.command(aliases=['sh'])
-    async def shuffle(self, ctx):
+
+    @slash_command(description="Toggle shuffle mode for the queue.", guild_ids=[949642805138059285])
+    async def shuffle(self, interaction: Interaction):
+
         # Get player for guild from guild cache
-        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+        player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
         # Create embed and set border color
         embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+
+        # If player does not exist or queue is empty
+        if not player or not player.queue:
+            embed.description = "The queue is empty, nothing to shuffle."
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         # Toggle shuffle
-        if player.shuffle:
-            # Disable shuffle
-            player.set_shuffle(False)
+        player.set_shuffle(not player.shuffle)
+        status = "enabled" if player.shuffle else "disabled"
 
-            # Send embed message
-            embed.description = 'Shuffle disabled.'
-            await ctx.send(embed = embed)
-        else:
-            # Enable shuffle
-            player.set_shuffle(True)
+        # Send response
+        embed.description = f"Shuffle mode has been **{status}**."
+        await interaction.response.send_message(embed=embed)
 
-            # Send embed message
-            embed.description = 'Shuffle enabled.'
-            await ctx.send(embed = embed)
 
-    # Remove a song from the queue
-    @cmd.command(aliases=['rm'])
-    async def remove(self, ctx, index = ''):
+    @slash_command(description="Remove a song from the queue by its position.", guild_ids=[949642805138059285])
+    async def remove(self, interaction: Interaction, index: int):
+
         # Get player for guild from guild cache
-        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+        player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
         # Create embed and set border color
         embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
 
-        # If player is not active
-        if not player.is_playing:
-            # Send embed message
-            embed.description = 'No music playing.'
-            return await ctx.send(embed = embed)
+        # If player does not exist or queue is empty
+        if not player or not player.queue:
+            embed.description = "The queue is empty, nothing to remove."
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
 
-        # If queue is empty
-        if len(player.queue) == 0:
-            # Send embed message
-            embed.description = 'The queue is empty.'
-            return await ctx.send(embed = embed)
-
-        # If user input invalid
-        if index == '' or not index.isnumeric() or int(index) < 1 or int(index) > len(player.queue):
-            # Send embed message
-            embed.description = f'Try `rm {len(player.queue)}` to remove track number {len(player.queue)} from the queue.'
-            return await ctx.send(embed = embed)
+        # Validate user input
+        if index < 1 or index > len(player.queue):
+            embed.description = f"Invalid position. The queue has {len(player.queue)} tracks. Try `/remove {len(player.queue)}` to remove the last song."
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         # Get track from queue
-        track = player.queue[int(index) - 1]
+        track = player.queue.pop(index - 1)
 
         # Embed message content
-        embed.description = f'Removed: [{track["title"]}]({track["uri"]})'
-
-        # Remove track
-        del player.queue[int(index) - 1]
+        embed.description = f"Removed: [{track['title']}]({track['uri']})"
 
         # Send embed message
-        await ctx.send(embed = embed)
+        await interaction.response.send_message(embed=embed)
 
-    # Get a list of songs and choose which one to play
-    @cmd.command(aliases=['sr'])
-    async def search(self, ctx, *, query: str):
-        # Get player for guild from guild cache
-        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
 
-        # Get guild
-        guild = ctx.guild
+    @slash_command(description="Search for a song and choose which one to play.", guild_ids=[949642805138059285])
+    async def search(self, interaction: Interaction, query: str):
+
+        # Ensure player exists before fetching tracks
+        player = self.bot.lavalink.player_manager.create(interaction.guild.id, endpoint=str(interaction.guild.region))
 
         # Remove leading and trailing <>. <> suppress embedding links.
         query = query.strip('<>')
@@ -827,180 +562,72 @@ class Music(cmd.Cog):
         query = f'ytsearch:{query}'
         results = await player.node.get_tracks(query)
 
-        # When a button is clicked
-        async def track_select(interaction):
-            # If user interacting is not the user requesting
-            if interaction.user != view.requester:
-                return
-
-            # Delete message containing buttons
-            view.message = None
-            await interaction.response.edit_message(view = view)
-            await interaction.delete_original_message()
-
-            # ID of which button was clicked
-            track_number = int(interaction.data['custom_id'])
-
-            # If user clicked a track
-            track = results['tracks'][track_number]
-
-            # Create embed and set border color
+        # If no results found
+        if not results or not results['tracks']:
             embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+            embed.description = "No tracks found."
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
 
-            # Add announcement to embed
-            if not player.is_playing:
-                embed.description = 'Now Playing: '
-            else:
-                embed.description ='Queued: '
+        # Ensure user is in a voice channel
+        if not interaction.user.voice or not interaction.user.voice.channel:
+            embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+            embed.description = "You must be in a voice channel to use this command."
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
 
-            # Add track title to embed
-            embed.description += f'[{track["info"]["title"]}]({track["info"]["uri"]})'
+        # Create a view for buttons
+        view = TempoView(interaction)
+        view.requester = interaction.user  # Ensure only the requester can interact
 
-            # Add track to player
-            player.add(requester=interaction.user, track=track)
+        # Function to handle track selection
+        async def track_select(interaction: Interaction):
+            track_number = int(interaction.data['custom_id'])
+            track = results['tracks'][track_number]
+            track = lavalink.models.AudioTrack(track, interaction.user.id, recommended=True)
+            player.add(requester=interaction.user.id, track=track)
 
-            # Send embed message
-            await interaction.channel.send(embed = embed)
+            # Create embed for response
+            embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+            embed.description = f"Now Playing: [{track.title}]({track.uri})" if not player.is_playing else f"Queued: [{track.title}]({track.uri})"
 
-            # Play track and set initial volume
+            # Ensure bot joins the voice channel if not already connected
+            if not player.is_connected:
+                permissions = interaction.user.voice.channel.permissions_for(interaction.guild.me)
+                if not permissions.connect or not permissions.speak:
+                    embed.description = "Tempo needs `Connect` and `Speak` permissions."
+                    return await interaction.response.send_message(embed=embed, ephemeral=True)
+
+                player.store('channel', interaction.channel_id)
+                await interaction.user.voice.channel.connect(cls=LavalinkVoiceClient)
+
+            # Play track and set volume
             if not player.is_playing:
                 await player.play()
                 await player.set_volume(20)
 
-        # Create view and add buttons for each track
-        view = TempoView(ctx)
-        for track in results['tracks'][0:5]:
-            track_number = results['tracks'].index(track)
-            track_button = nxt.ui.Button(
-                label = track['info']['title'][0:80], 
-                custom_id = str(track_number), 
-                row = track_number, 
-                style = nxt.ButtonStyle.grey
-            )
-            # Set callback
-            track_button.callback = track_select
+            # Remove buttons after selection
+            await interaction.response.edit_message(embed=embed, view=None)  # Removes the view completely
 
-            # Add button to view
+        # Add buttons for each track
+        for i, track in enumerate(results['tracks'][:5]):  # Limit to 5 results
+            track_button = nxt.ui.Button(
+                label=track['info']['title'][:80],  # Limit button label length
+                custom_id=str(i),
+                row=i % 5,
+                style=nxt.ButtonStyle.secondary  # Matches Dark Gray theme
+            )
+            track_button.callback = track_select  # Calls track_select when clicked
             view.add_item(track_button)
 
         # Send view and save as message
-        message = await ctx.send(view = view)
-        view.message = message
-
-        # Start disconnect timer.
-        timer = 0
-        while True:
-            # Sleep and increment timer
-            await asyncio.sleep(1)
-            timer += 1
-
-            # If Tempo is not connected to a voice channel
-            if not guild.voice_client: break
-
-            # If Tempo is playing music
-            if player.is_playing: break
-
-            # If time limit is reached (90 seconds = 1.5 minutes)
-            if timer == 90:
-                # Disable repeat and shuffle
-                player.set_repeat(False)
-                player.set_shuffle(False)
-                
-                # Clear queue
-                player.queue.clear()
-
-                # Stop player
-                await player.stop()
-
-                # Disconnect from voice channel
-                await guild.voice_client.disconnect(force=True)
-                break
-
-    # # Choose from a list of equalizer presets for a unique listening experience
-    # @cmd.command(aliases=['eq'])
-    # async def equalizer(self, ctx):
-    #     # Get player for guild from guild cache
-    #     player = self.bot.lavalink.player_manager.get(ctx.guild.id)
-
-    #     # Create embed and set border color
-    #     embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
-
-    #     # Get admin ID
-    #     owner = await self.bot.fetch_user(ctx.guild.owner_id)
-
-    #     # Check if user has privelege to use command (admin only)
-    #     if ctx.author.id != owner.id:
-    #         # Send embed message
-    #         embed.description = 'Only the server admin has access to the `equalizer` command.'
-    #         return await ctx.send(embed = embed)
-
-    #     # [(0, 25hz), (1, 40hz), (2, 63hz), (3, 100hz), (4, 160hz), (5, 250hz), (6, 400hz), (7, 630hz), (8, 1khz), (9, 1.6khz), (10, 2.5khz), (11, 4khz), (12, 6.3khz), (13, 10khz), (14, 16khz)]
-    #     gains = [
-    #         # Bass Boost
-    #         [(0, 0), (1, 0), (2, 0.1), (3, 0.1), (4, 0.1), (5, 0.1), (6, 0), (7, 0), (8, 0), (9, 0), (10, 0), (11, 0), (12, 0), (13, 0), (14, 0)],
-    #         # Mid Boost
-    #         [(0, 0), (1, 0), (2, 0), (3, 0), (4, 0), (5, 0), (6, 0), (7, 0.1), (8, 0.1), (9, 0.1), (10, 0.1), (11, 0), (12, 0), (13, 0), (14, 0)],
-    #         # Treble Boost
-    #         [(0, 0), (1, 0), (2, 0), (3, 0), (4, 0), (5, 0), (6, 0), (7, 0), (8, 0), (9, 0), (10, 0), (11, 0), (12, 0.1), (13, 0.1), (14, 0.1)],
-    #         # Old Radio
-    #         [(0, -0.25), (1, -0.25), (2, -0.25), (3, -0.25), (4, -0.25), (5, -0.25), (6, -0.25), (7, -0.25), (8, -0.25), (9, -0.25), (10, 1), (11, -0.25), (12, -0.25), (13, -0.25), (14, -0.25)]
-    #         ]
-
-    #     # Reset player to default
-    #     await player.reset_equalizer()
-
-    #     # Applies a preset based on which button user clicks
-    #     async def select_preset(interaction, gains = gains):
-    #         # Delete message containing buttons
-    #         view.message = None
-    #         await interaction.response.edit_message(view = view)
-    #         await interaction.delete_original_message()
-
-    #         # Activate preset
-    #         preset = interaction.data['custom_id']
-    #         if preset == 'Bass Boost':
-    #             await player.set_gains(*gains[0])
-    #         elif preset == 'Mid Boost':
-    #             await player.set_gains(*gains[1])
-    #         elif preset == 'Treble Boost':
-    #             await player.set_gains(*gains[2])
-    #         elif preset == 'Lounge':
-    #             await player.set_gains(*gains[3])
-
-    #         embed.description = f'Applying: {preset}\nPlease wait...'
-    #         await ctx.send(embed = embed)
-
-    #     # Create view
-    #     view = TempoView(ctx)
-
-    #     # Create default preset button
-    #     default_button = nxt.ui.Button(label = 'Default', custom_id = 'Default', style = nxt.ButtonStyle.grey)
-    #     default_button.callback = select_preset
-    #     view.add_item(default_button)
-
-    #     # Create bass boost preset button
-    #     bass_boost_button = nxt.ui.Button(label = 'Bass Boost', custom_id = 'Bass Boost', style = nxt.ButtonStyle.grey)
-    #     bass_boost_button.callback = select_preset
-    #     view.add_item(bass_boost_button)
-
-    #     # Create treble boost preset button
-    #     mid_boost_button = nxt.ui.Button(label = 'Mid Boost', custom_id = 'Mid Boost', style = nxt.ButtonStyle.grey)
-    #     mid_boost_button.callback = select_preset
-    #     view.add_item(mid_boost_button)
+        try:
+            message = await interaction.response.send_message(view=view)
+            view.message = message
+        except:
+            embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+            embed.description = "Invalid search query."
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
-    #     # Create balanced boost preset button
-    #     treble_boost_button = nxt.ui.Button(label = 'Treble Boost', custom_id = 'Treble Boost', style = nxt.ButtonStyle.grey)
-    #     treble_boost_button.callback = select_preset
-    #     view.add_item(treble_boost_button)
-
-    #     # Create old radio preset button
-    #     old_radio_button = nxt.ui.Button(label = 'Lounge', custom_id = 'Lounge', style = nxt.ButtonStyle.grey)
-    #     old_radio_button.callback = select_preset
-    #     view.add_item(old_radio_button)
-        
-    #     message = await ctx.send(view = view)
-    #     view.message = message
 
 # Add cog
 def setup(bot):

@@ -31,7 +31,9 @@ class Help(cmd.Cog):
                 'Play a song or, if a song is already playing, add to the queue. \n\n'
 
                 '**Syntax** \n'
-                '`play <song title and artist>` \n\n'
+                '`play <song title and artist>` \n'
+                '`play <youtube video url>` \n'
+                '`play <youtube playlist url>` \n\n'
 
                 '**Aliases** \n'
                 '`p` \n\n'

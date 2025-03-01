@@ -1,7 +1,7 @@
-import asyncio
-import nextcord as nxt
 from nextcord.ext import commands as cmd
+import nextcord as nxt
 from tokens import *
+import asyncio
 
 intents = nxt.Intents.default()
 intents.message_content = True
@@ -10,12 +10,23 @@ bot = cmd.Bot(command_prefix = '!', case_insensitive = True, help_command = None
 
 @bot.event
 async def on_ready():
-    bot.load_extension('cogs.music')
-    bot.load_extension('cogs.help')
-    bot.load_extension('cogs.info')
+    await bot.wait_until_ready()
 
-    print(f'{bot.user} is online.')
-    print('--------------------')
+    try:
+        bot.load_extension('cogs.music')
+        bot.load_extension('cogs.help')
+        bot.load_extension('cogs.info')
+        print("\nCogs loaded successfully...")
+
+        # Explicitly register commands
+        if bot.application_id:
+            await bot.sync_all_application_commands()
+            print("Slash commands synced successfully...")
+
+    except Exception as e:
+        print(f"Error during bot startup: {e}")
+
+    print(f'Tempo is online.\n')
 
     while True:
         # Set custom Discord status
