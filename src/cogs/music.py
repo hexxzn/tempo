@@ -267,18 +267,26 @@ class Music(cmd.Cog):
         query = query.strip('<>')
 
         # Check if input is URL
+        # url_rx = re.compile(r'https?://(?:www\.)?.+')
+        # if url_rx.match(query):
+        #     if 'youtube.com' in (query):
+        #         embed.description = ('URL lookup currently disabled.')
+        #         await player.stop()
+        #         await ctx.voice_client.disconnect(force=True)
+        #         return await ctx.send(embed = embed)
+        # else:
+        #     query = f'ytsearch:{query}'
+
         url_rx = re.compile(r'https?://(?:www\.)?.+')
-        if url_rx.match(query):
-            if 'youtube.com' in (query):
-                embed.description = ('URL lookup currently disabled.')
-                await player.stop()
-                await ctx.voice_client.disconnect(force=True)
-                return await ctx.send(embed = embed)
-        else:
+        if not url_rx.match(query) or 'youtube.com' not in query:
             query = f'ytsearch:{query}'
+            results = await player.node.get_tracks(query)
+        else:
+            results = await player.node.get_tracks(query)
+            track = results['tracks'][0] # Needed for URLS to work
 
         # Get results for query from Lavalink
-        results = await player.node.get_tracks(query)
+        # results = await player.node.get_tracks(query)
 
         # If query returns no results
         if not results or not results['tracks']:
@@ -296,7 +304,8 @@ class Music(cmd.Cog):
             tracks = results['tracks']
 
             # Add all tracks from playlist to queue
-            for track in tracks:
+            for song in tracks:
+                track = lavalink.models.AudioTrack(song, ctx.author.id, recommended=True)
                 player.add(requester=ctx.author.id, track=track)
 
             # Embed message content
@@ -304,6 +313,12 @@ class Music(cmd.Cog):
                 embed.description = 'Now Playing: ' + f'{results["playlistInfo"]["name"]} ({len(tracks)} tracks)'
             else:
                 embed.description = 'Queued: ' + f'{results["playlistInfo"]["name"]} ({len(tracks)} tracks)'
+
+            # Play track and set initial volume
+            if not player.is_playing:
+                await player.play()
+                await player.reset_equalizer()
+                await player.set_volume(20)
         else:
             # Select track that isn't a music video if one exists, otherwise select first track in results
             excluded_phrases = ['music video', 'official video']
