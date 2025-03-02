@@ -3,6 +3,7 @@ import nextcord as nxt
 from tokens import *
 import asyncio
 
+
 intents = nxt.Intents.default()
 intents.message_content = True
 
@@ -15,7 +16,8 @@ async def on_ready():
     try:
         bot.load_extension('cogs.music')
         bot.load_extension('cogs.help')
-        bot.load_extension('cogs.info')
+        bot.load_extension('cogs.general')
+        bot.load_extension('cogs.warning')
         print("\nCogs loaded successfully...")
 
         # Explicitly register commands
@@ -30,7 +32,7 @@ async def on_ready():
 
     while True:
         # Set custom Discord status
-        await bot.change_presence(activity=nxt.Activity(type=nxt.ActivityType.listening, name="/help"))
+        await bot.change_presence(activity=nxt.CustomActivity(name="Loading: Bangers..."))
 
         # Refresh custom Discord status
         await asyncio.sleep(3600)

@@ -62,6 +62,7 @@ class TempoView(nxt.ui.View):
 # Music Cog
 # ---------------------------- #
 class Music(cmd.Cog):
+    # Initialize music cog and set up Lavalink for audio streaming
     def __init__(self, bot):
         self.bot = bot
 
@@ -80,6 +81,7 @@ class Music(cmd.Cog):
 
             lavalink.add_event_hook(self.track_hook)
 
+    # Clean up event hooks when music cog is unloaded
     def cog_unload(self):
         self.bot.lavalink._event_hooks.clear()
 
@@ -111,7 +113,7 @@ class Music(cmd.Cog):
         if before.channel == member.guild.voice_client.channel and len(member.guild.voice_client.channel.members) == 1:
             await self.disconnect_timer(member.guild, player, 180)
 
-    @slash_command(description="Play a song or add it to the queue.", guild_ids=[949642805138059285])
+    @slash_command(description="Play a song or add it to the queue.", guild_ids=tempo_guild_ids)
     async def play(self, interaction: Interaction, query: str):
         
         # Get or create the player
@@ -174,7 +176,7 @@ class Music(cmd.Cog):
         # Send response
         await interaction.response.send_message(embed=embed)
 
-    @slash_command(description="Stop playback, clear the queue, and disconnect the bot.", guild_ids=[949642805138059285])
+    @slash_command(description="Stop playback, clear the queue, and disconnect.", guild_ids=tempo_guild_ids)
     async def stop(self, interaction: Interaction):
 
         # Get player for guild from guild cache
@@ -216,7 +218,7 @@ class Music(cmd.Cog):
         # Send response
         await interaction.response.send_message(embed=embed)
 
-    @slash_command(description="Pause the current song.", guild_ids=[949642805138059285])
+    @slash_command(description="Pause the current song.", guild_ids=tempo_guild_ids)
     async def pause(self, interaction: Interaction):
 
         # Get player for guild from guild cache
@@ -242,7 +244,7 @@ class Music(cmd.Cog):
         embed.description = "Playback has been paused. Use `/resume` to continue playing."
         await interaction.response.send_message(embed=embed)
 
-    @slash_command(description="Resume the paused song.", guild_ids=[949642805138059285])
+    @slash_command(description="Resume the paused song.", guild_ids=tempo_guild_ids)
     async def resume(self, interaction: Interaction):
 
         # Get player for guild from guild cache
@@ -268,7 +270,7 @@ class Music(cmd.Cog):
         embed.description = "Playback has resumed."
         await interaction.response.send_message(embed=embed)
 
-    @slash_command(description="Skip the current song.", guild_ids=[949642805138059285])
+    @slash_command(description="Skip the current song.", guild_ids=tempo_guild_ids)
     async def skip(self, interaction: Interaction):
 
         # Get player for guild from guild cache
@@ -307,7 +309,7 @@ class Music(cmd.Cog):
         # Skip the current track
         await player.skip()
 
-    @slash_command(description="Restart the current song from the beginning.", guild_ids=[949642805138059285])
+    @slash_command(description="Restart the current song.", guild_ids=tempo_guild_ids)
     async def restart(self, interaction: Interaction):
 
         # Get player for guild from guild cache
@@ -334,7 +336,7 @@ class Music(cmd.Cog):
         embed.description = f"Restarted: [{track['title']}]({track['uri']})"
         await interaction.response.send_message(embed=embed)
 
-    @slash_command(description="Seek to a specific position in the current song.", guild_ids=[949642805138059285])
+    @slash_command(description="Seek to a specific position in the current song.", guild_ids=tempo_guild_ids)
     async def seek(self, interaction: Interaction, position: int):
 
         # Get player for guild from guild cache
@@ -368,7 +370,7 @@ class Music(cmd.Cog):
         embed.description = f"Seeking to {position} seconds."
         await interaction.response.send_message(embed=embed)
 
-    @slash_command(description="Get the title of the current song.", guild_ids=[949642805138059285])
+    @slash_command(description="Get the title of the current song.", guild_ids=tempo_guild_ids)
     async def song(self, interaction: Interaction):
 
         # Get player for guild from guild cache
@@ -389,7 +391,7 @@ class Music(cmd.Cog):
         # Send embed message
         await interaction.response.send_message(embed=embed)
 
-    @slash_command(description="View the current song queue.", guild_ids=[949642805138059285])
+    @slash_command(description="Get a list of all songs in the queue.", guild_ids=tempo_guild_ids)
     async def queue(self, interaction: Interaction):
 
         # Get player for guild from guild cache
@@ -416,7 +418,7 @@ class Music(cmd.Cog):
         # Send embed message
         await interaction.response.send_message(embed=embed)
 
-    @slash_command(description="Check or adjust the music volume.", guild_ids=[949642805138059285])
+    @slash_command(description="Check current playback volume or adjust volume from 1 to 100.", guild_ids=tempo_guild_ids)
     async def volume(self, interaction: Interaction, volume: int = None):
 
         # Get player for guild from guild cache
@@ -463,7 +465,7 @@ class Music(cmd.Cog):
         # Send embed message
         await interaction.response.send_message(embed=embed)
 
-    @slash_command(description="Toggle repeat mode for the current song.", guild_ids=[949642805138059285])
+    @slash_command(description="Toggle repeat mode for the current song.", guild_ids=tempo_guild_ids)
     async def repeat(self, interaction: Interaction):
 
         # Get player for guild from guild cache
@@ -485,7 +487,7 @@ class Music(cmd.Cog):
         embed.description = f"Repeat mode has been **{status}**."
         await interaction.response.send_message(embed=embed)
 
-    @slash_command(description="Toggle shuffle mode for the queue.", guild_ids=[949642805138059285])
+    @slash_command(description="Toggle shuffle mode for the queue.", guild_ids=tempo_guild_ids)
     async def shuffle(self, interaction: Interaction):
 
         # Get player for guild from guild cache
@@ -507,7 +509,7 @@ class Music(cmd.Cog):
         embed.description = f"Shuffle mode has been **{status}**."
         await interaction.response.send_message(embed=embed)
 
-    @slash_command(description="Remove a song from the queue by its position.", guild_ids=[949642805138059285])
+    @slash_command(description="Remove a song from the queue by its position.", guild_ids=tempo_guild_ids)
     async def remove(self, interaction: Interaction, index: int):
 
         # Get player for guild from guild cache
@@ -535,7 +537,7 @@ class Music(cmd.Cog):
         # Send embed message
         await interaction.response.send_message(embed=embed)
 
-    @slash_command(description="Search for a song and choose which one to play.", guild_ids=[949642805138059285])
+    @slash_command(description="Choose from a list of songs.", guild_ids=tempo_guild_ids)
     async def search(self, interaction: Interaction, query: str):
 
         # Ensure player exists before fetching tracks
@@ -614,6 +616,5 @@ class Music(cmd.Cog):
             return await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
-# Add cog
 def setup(bot):
     bot.add_cog(Music(bot))

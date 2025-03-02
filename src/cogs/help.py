@@ -1,13 +1,14 @@
 from nextcord import Interaction, slash_command, SelectOption
 from nextcord.ext import commands as cmd
 import nextcord as nxt
+from tokens import *
 
 
 class Help(cmd.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @slash_command(description="Select from a list of commands for additional info on what the command does and how to use it.", guild_ids=[949642805138059285])
+    @slash_command(description="Select from a list of commands for additional info on what the command does and how to use it.", guild_ids=tempo_guild_ids)
     async def help(self, interaction: Interaction):
 
         # Help embed with thumbnail
@@ -50,18 +51,18 @@ class Help(cmd.Cog):
                 command_help = {
                     "play": "**Play**\nPlay a song or add it to the queue.\n\n**Syntax**\n`/play <song title and artist>`\n`/play <youtube video link>`\n`/play <youtube playlist link>`",
                     "stop": "**Stop**\nStop playback, clear the queue, and disconnect.\n\n**Syntax**\n`/stop`",
-                    "pause": "**Pause**\nPause playback.\n\n**Syntax**\n`/pause`",
-                    "resume": "**Resume**\nResume playback.\n\n**Syntax**\n`/resume`",
+                    "pause": "**Pause**\nPause the current song.\n\n**Syntax**\n`/pause`",
+                    "resume": "**Resume**\nResume the paused song.\n\n**Syntax**\n`/resume`",
                     "skip": "**Skip**\nSkip the current song.\n\n**Syntax**\n`/skip`",
                     "restart": "**Restart**\nRestart the current song.\n\n**Syntax**\n`/restart`",
-                    "seek": "**Seek**\nSeek to a position in the current song.\n\n**Syntax**\n`/seek <seconds>`",
+                    "seek": "**Seek**\nSeek to a specific position in the current song.\n\n**Syntax**\n`/seek <seconds>`",
                     "song": "**Song**\nGet the title of the current song.\n\n**Syntax**\n`/song`",
-                    "queue": "**Queue**\nShow the song queue.\n\n**Syntax**\n`/queue`",
-                    "repeat": "**Repeat**\nToggle repeat mode.\n\n**Syntax**\n`/repeat`",
-                    "shuffle": "**Shuffle**\nToggle shuffle mode.\n\n**Syntax**\n`/shuffle`",
-                    "remove": "**Remove**\nRemove a song from the queue.\n\n**Syntax**\n`/remove <track number>`",
+                    "queue": "**Queue**\nGet a list of all songs in the queue.\n\n**Syntax**\n`/queue`",
+                    "repeat": "**Repeat**\nToggle repeat mode for the current song.\n\n**Syntax**\n`/repeat`",
+                    "shuffle": "**Shuffle**\nToggle shuffle mode for the queue.\n\n**Syntax**\n`/shuffle`",
+                    "remove": "**Remove**\nRemove a song from the queue by its position.\n\n**Syntax**\n`/remove <queue number>`",
                     "volume": "**Volume**\nCheck current playback volume or adjust volume from 1 to 100.\nDefault volume is 20.\n\n**Syntax**\n`/volume`\n`/volume <1 - 100>`",
-                    "search": "**Search**\nSearch for a song before playing.\n\n**Syntax**\n`/search <song title and artist>`",
+                    "search": "**Search**\nChoose from a list of songs.\n\n**Syntax**\n`/search <song title and artist>`",
                 }
 
                 embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
@@ -86,6 +87,7 @@ class Help(cmd.Cog):
         # Send message with dropdown menu
         message = await interaction.response.send_message(embed=help_menu, view=view)
         view.message = message  # Store message reference for timeout handling
+
 
 # Add cog
 def setup(bot):
