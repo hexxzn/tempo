@@ -50,12 +50,13 @@ class TempoView(nxt.ui.View):
         self.interaction = interaction
         self.message = None
         self.requester = interaction.user
+        self.used = False  # Track if the view has been interacted with
 
     async def on_timeout(self):
-        if self.message:
+        if not self.used and self.message:
             for item in self.children:
                 item.disabled = True
-            await self.message.edit(view=self)
+            await self.message.edit(view=self)  # Only disable if it was never used
 
 
 # ---------------------------- #
@@ -131,7 +132,7 @@ class Music(cmd.Cog):
         if not player.is_connected:
             permissions = interaction.user.voice.channel.permissions_for(interaction.guild.me)
             if not permissions.connect or not permissions.speak:
-                embed.description = "Tempo needs `Connect` and `Speak` permissions."
+                embed.description = "Tempo needs `Connect`, `Speak` and 'View Channel' permissions."
                 return await interaction.response.send_message(embed=embed, ephemeral=True)
 
             player.store('channel', interaction.channel_id)
@@ -537,7 +538,7 @@ class Music(cmd.Cog):
         # Send embed message
         await interaction.response.send_message(embed=embed)
 
-    @slash_command(description="Choose from a list of songs.", guild_ids=tempo_guild_ids)
+    @slash_command(description="Search for a song and choose which one to play.", guild_ids=tempo_guild_ids)
     async def search(self, interaction: Interaction, query: str):
 
         # Ensure player exists before fetching tracks
@@ -562,9 +563,21 @@ class Music(cmd.Cog):
             embed.description = "You must be in a voice channel to use this command."
             return await interaction.response.send_message(embed=embed, ephemeral=True)
 
-        # Create a view for buttons
-        view = TempoView(interaction)
-        view.requester = interaction.user  # Ensure only the requester can interact
+        # Custom View that disables itself after selection
+        class TempoView(nxt.ui.View):
+            def __init__(self, interaction: Interaction):
+                super().__init__(timeout=60)  # View expires after 60 seconds
+                self.interaction = interaction
+                self.message = None
+                self.requester = interaction.user
+                self.used = False  # Track if the view has been interacted with
+
+            # Disables buttons when timeout occurs, only if no selection was made
+            async def on_timeout(self):
+                if not self.used and self.message:
+                    for item in self.children:
+                        item.disabled = True
+                    await self.message.edit(view=self)  # Only disable if never used
 
         # Function to handle track selection
         async def track_select(interaction: Interaction):
@@ -592,10 +605,14 @@ class Music(cmd.Cog):
                 await player.play()
                 await player.set_volume(20)
 
+            # Mark the view as used to prevent buttons from reappearing
+            view.used = True
+
             # Remove buttons after selection
             await interaction.response.edit_message(embed=embed, view=None)  # Removes the view completely
 
-        # Add buttons for each track
+        # Create view and add buttons for each track
+        view = TempoView(interaction)
         for i, track in enumerate(results['tracks'][:5]):  # Limit to 5 results
             track_button = nxt.ui.Button(
                 label=track['info']['title'][:80],  # Limit button label length
@@ -608,8 +625,11 @@ class Music(cmd.Cog):
 
         # Send view and save as message
         try:
-            message = await interaction.response.send_message(view=view)
-            view.message = message
+            message = await interaction.response.send_message(embed=nxt.Embed(
+                color=nxt.Color.from_rgb(134, 194, 50),
+                description="Select a song from the list below."
+            ), view=view)
+            view.message = message  # Store message reference for timeout handling
         except:
             embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
             embed.description = "Invalid search query."

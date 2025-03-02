@@ -85,7 +85,7 @@ class Help(cmd.Cog):
         view = HelpView()
 
         # Send message with dropdown menu
-        message = await interaction.response.send_message(embed=help_menu, view=view)
+        message = await interaction.response.send_message(embed=help_menu, view=view, ephemeral=True)
         view.message = message  # Store message reference for timeout handling
 
 
