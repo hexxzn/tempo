@@ -102,9 +102,9 @@ class Music(cmd.Cog):
     async def track_hook(self, event):
         if isinstance(event, lavalink.events.QueueEndEvent):
             guild = self.bot.get_guild(int(event.player.guild_id))
-            await self.disconnect_timer(guild, event.player, 90)
+            await self.disconnect_timer(guild, event.player, 180)
 
-    # Handle user disconnects
+    # Runs when user joins, leaves or changes voice channel
     @cmd.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
         if member.id == self.bot.user.id or not member.guild.voice_client:
@@ -132,7 +132,7 @@ class Music(cmd.Cog):
         if not player.is_connected:
             permissions = interaction.user.voice.channel.permissions_for(interaction.guild.me)
             if not permissions.connect or not permissions.speak:
-                embed.description = "Tempo needs `Connect`, `Speak` and 'View Channel' permissions."
+                embed.description = "Tempo needs `Connect`, `Speak` and `View Channel` permissions."
                 return await interaction.response.send_message(embed=embed, ephemeral=True)
 
             player.store('channel', interaction.channel_id)
@@ -388,6 +388,7 @@ class Music(cmd.Cog):
         # Get current song title
         track = player.current
         embed.description = f"Now Playing: [{track['title']}]({track['uri']})"
+        embed.description += f"\nDuration: `{math.floor(track.duration/1000)} seconds`"
 
         # Send embed message
         await interaction.response.send_message(embed=embed)

@@ -31,34 +31,18 @@ async def on_ready():
 
     print(f'Tempo is online.\n')
 
-    statuses = ["Loading vibes…", 
-                "Song request? Fire away!", 
+    statuses = ["Song request? Fire away!", 
                 "Max volume. Ready?", 
-                "Bangers incoming…", 
-                "Music is my middle name.", 
                 "I'm your DJ. What's up?", 
                 "Tune in, vibe out.", 
-                "Chill vibes on deck!",
                 "Music on, world off.",
-                "Did someone say 'remix'?",
-                "Let's party!",
                 "It's a vibe, trust me.",
                 "Yo, pass me the aux.",
-                "The music never sleeps.",
-                "Jams: Now loading…",
-                "Turn it up!",
-                "One more song!",
-                "Rock out w/ your bot out!",
-                "Vibe check: You're good.",
+                "Vibe check. You're good.",
                 "Keep calm, music's here.",
-                "This beat hits different…",
                 "Bruh…",
-                "Let's get it.",
-                "It's lit!",
-                "Let's get this bread.",
-                "Let's gooooooo!",
-                "We out here vibin.",
-                "Straight fire…"]
+                "When in doubt, vibe out.",
+                "You up…?"]
     
     # # Testing: Messsages longer than 25 characters won't fit in status 
     # for status in statuses:

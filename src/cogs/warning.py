@@ -19,9 +19,9 @@ class Warning(commands.Cog):
             embed = nextcord.Embed(color=nextcord.Color.from_rgb(134, 194, 50))
             embed.title = "Prefix Commands Are No Longer Supported"
             embed.description = (
-                "Tempo now uses slash commands instead of prefix commands.\n\n"
-                "**Users:** You can type `/` in chat and select Tempo to see a list of all available commands.\n\n"
-                "**Admins:** If you haven't already done so, you'll need to reinvite Tempo to enable slash commands. Simply click the link below.\n\n"
+                "Tempo now uses slash commands instead of prefix commands.\nInstead of `!play` try `/play`\n\n"
+                "**Users:** Type `/` in chat and select Tempo to see a list of all available commands.\n\n"
+                "**Admins:** If you haven't already done so, you'll need to reinvite Tempo to enable slash commands.\n\n"
                 f"[Click Here to Invite Tempo]({tempo_invite_link})"
             )
             embed.set_thumbnail(url="https://raw.githubusercontent.com/hexxzn/tempo/refs/heads/main/resources/logo-transparent.png")
