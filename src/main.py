@@ -2,6 +2,7 @@ from nextcord.ext import commands as cmd
 import nextcord as nxt
 from tokens import *
 import asyncio
+import random
 
 
 intents = nxt.Intents.default()
@@ -30,11 +31,49 @@ async def on_ready():
 
     print(f'Tempo is online.\n')
 
-    while True:
-        # Set custom Discord status
-        await bot.change_presence(activity=nxt.CustomActivity(name="Loading: Bangers..."))
+    statuses = ["Loading vibes…", 
+                "Song request? Fire away!", 
+                "Max volume. Ready?", 
+                "Bangers incoming…", 
+                "Music is my middle name.", 
+                "I'm your DJ. What's up?", 
+                "Tune in, vibe out.", 
+                "Chill vibes on deck!",
+                "Music on, world off.",
+                "Did someone say 'remix'?",
+                "Let's party!",
+                "It's a vibe, trust me.",
+                "Yo, pass me the aux.",
+                "The music never sleeps.",
+                "Jams: Now loading…",
+                "Turn it up!",
+                "One more song!",
+                "Rock out w/ your bot out!",
+                "Vibe check: You're good.",
+                "Keep calm, music's here.",
+                "This beat hits different…",
+                "Bruh…",
+                "Let's get it.",
+                "It's lit!",
+                "Let's get this bread.",
+                "Let's gooooooo!",
+                "We out here vibin.",
+                "Straight fire…"]
+    
+    # # Testing: Messsages longer than 25 characters won't fit in status 
+    # for status in statuses:
+    #     if len(status) > 25:
+    #         print('"' + status + '"', "Exceeds 25 character max length.")
 
-        # Refresh custom Discord status
+    # Periodically update bot status
+    while True:
+        # Select random status
+        status = random.choice(statuses)
+
+        # Set custom status
+        await bot.change_presence(activity=nxt.CustomActivity(name=status))
+
+        # Refresh custom status
         await asyncio.sleep(3600)
 
 # Start Tempo

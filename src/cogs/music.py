@@ -466,7 +466,7 @@ class Music(cmd.Cog):
         # Send embed message
         await interaction.response.send_message(embed=embed)
 
-    @slash_command(description="Toggle repeat mode for the current song.", guild_ids=tempo_guild_ids)
+    @slash_command(description="Toggle repeat mode for the queue.", guild_ids=tempo_guild_ids)
     async def repeat(self, interaction: Interaction):
 
         # Get player for guild from guild cache

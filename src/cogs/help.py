@@ -58,7 +58,7 @@ class Help(cmd.Cog):
                     "seek": "**Seek**\nSeek to a specific position in the current song.\n\n**Syntax**\n`/seek <seconds>`",
                     "song": "**Song**\nGet the title of the current song.\n\n**Syntax**\n`/song`",
                     "queue": "**Queue**\nGet a list of all songs in the queue.\n\n**Syntax**\n`/queue`",
-                    "repeat": "**Repeat**\nToggle repeat mode for the current song.\n\n**Syntax**\n`/repeat`",
+                    "repeat": "**Repeat**\nToggle repeat mode for the queue.\n\n**Syntax**\n`/repeat`",
                     "shuffle": "**Shuffle**\nToggle shuffle mode for the queue.\n\n**Syntax**\n`/shuffle`",
                     "remove": "**Remove**\nRemove a song from the queue by its position.\n\n**Syntax**\n`/remove <queue number>`",
                     "volume": "**Volume**\nCheck current playback volume or adjust volume from 1 to 100.\nDefault volume is 20.\n\n**Syntax**\n`/volume`\n`/volume <1 - 100>`",
