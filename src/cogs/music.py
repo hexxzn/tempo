@@ -86,12 +86,15 @@ class Music(cmd.Cog):
     def cog_unload(self):
         self.bot.lavalink._event_hooks.clear()
 
-    # Automatically disconnect after inactivity
+    # Automatically inactivity disconnect
     async def disconnect_timer(self, guild, player, delay):
         for timer in range(delay):
             await asyncio.sleep(1)
-            if not guild.voice_client or player.is_playing:
+
+            # Cancel disconnect timer if player is playing and users are listening
+            if (not guild.voice_client or not player) or (player.is_playing and (len(guild.voice_client.channel.members) > 1)):
                 return
+
         player.set_repeat(False)
         player.set_shuffle(False)
         player.queue.clear()
@@ -102,17 +105,29 @@ class Music(cmd.Cog):
     async def track_hook(self, event):
         if isinstance(event, lavalink.events.QueueEndEvent):
             guild = self.bot.get_guild(int(event.player.guild_id))
-            await self.disconnect_timer(guild, event.player, 180)
+            await self.disconnect_timer(guild, event.player, 5)
 
     # Runs when user joins, leaves or changes voice channel
     @cmd.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
-        if member.id == self.bot.user.id or not member.guild.voice_client:
+        if (member.id == self.bot.user.id and after.channel) or not member.guild.voice_client:
             return
 
         player = self.bot.lavalink.player_manager.get(member.guild.id)
-        if before.channel == member.guild.voice_client.channel and len(member.guild.voice_client.channel.members) == 1:
-            await self.disconnect_timer(member.guild, player, 180)
+
+        # If bot is forcibly disconnected by guild member
+        if member.id == self.bot.user.id and not after.channel:
+            player.set_repeat(False)
+            player.set_shuffle(False)
+            player.queue.clear()
+            await player.stop()
+            await member.guild.voice_client.disconnect(force=True)
+            return
+        
+        # If bot is the only member in voice channel
+        guild = member.guild
+        if len(guild.voice_client.channel.members) == 1:
+            await self.disconnect_timer(member.guild, player, 5)
 
     @slash_command(description="Play a song or add it to the queue.", guild_ids=tempo_guild_ids)
     async def play(self, interaction: Interaction, query: str):
