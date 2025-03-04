@@ -86,13 +86,40 @@ class Music(cmd.Cog):
     def cog_unload(self):
         self.bot.lavalink._event_hooks.clear()
 
+    tempo_ambient_mode = False
+
+    async def ambient_mode(self, guild, player, channel_id, playlist_url):
+        # Passive mode only available in SourceFlow
+        if guild.id != sourceflow_guild_id:
+            return
+        
+        self.tempo_ambient_mode = True
+        embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+        embed.description = "Tempo is now in passive mode."
+
+        results = await player.node.get_tracks(passive_playlist)
+        tracks = results['tracks']
+
+        if not player.is_connected:
+            channel = guild.get_channel(ambient_channel_id_tempo)
+            await channel.connect(cls=LavalinkVoiceClient)
+
+        for song in tracks:
+            track = lavalink.models.AudioTrack(song, 488812651514691586, recommended=True)
+            player.add(requester=488812651514691586, track=track)
+
+        if not player.is_playing:
+            await player.play()
+            await player.set_volume(20)
+            player.set_repeat(True)
+
     # Automatically inactivity disconnect
     async def disconnect_timer(self, guild, player, delay):
         for timer in range(delay):
             await asyncio.sleep(1)
 
             # Cancel disconnect timer if player is playing and users are listening
-            if (not guild.voice_client or not player) or (player.is_playing and (len(guild.voice_client.channel.members) > 1)):
+            if (not guild.voice_client or not player) or (player.is_playing and (len(guild.voice_client.channel.members) > 1)) or self.tempo_ambient_mode == True:
                 return
 
         player.set_repeat(False)
@@ -105,15 +132,21 @@ class Music(cmd.Cog):
     async def track_hook(self, event):
         if isinstance(event, lavalink.events.QueueEndEvent):
             guild = self.bot.get_guild(int(event.player.guild_id))
-            await self.disconnect_timer(guild, event.player, 5)
+            await self.disconnect_timer(guild, event.player, 180)
 
     # Runs when user joins, leaves or changes voice channel
     @cmd.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
-        if (member.id == self.bot.user.id and after.channel) or not member.guild.voice_client:
+        if self.tempo_ambient_mode == True:
             return
-
         player = self.bot.lavalink.player_manager.get(member.guild.id)
+        if ((member.id == self.bot.user.id and after.channel) or not member.guild.voice_client):
+            if self.tempo_ambient_mode == True:
+                return
+            # If bot disconnects and is in SourceFlow
+            if (member.guild.id == sourceflow_guild_id and after.channel == None):
+                await self.ambient_mode(member.guild, player, ambient_channel_id_tempo, passive_playlist)
+            return
 
         # If bot is forcibly disconnected by guild member
         if member.id == self.bot.user.id and not after.channel:
@@ -127,14 +160,32 @@ class Music(cmd.Cog):
         # If bot is the only member in voice channel
         guild = member.guild
         if len(guild.voice_client.channel.members) == 1:
-            await self.disconnect_timer(member.guild, player, 5)
+            await self.disconnect_timer(member.guild, player, 180)
 
     @slash_command(description="Play a song or add it to the queue.", guild_ids=tempo_guild_ids)
     async def play(self, interaction: Interaction, query: str):
-        
         # Get or create the player
         player = self.bot.lavalink.player_manager.create(interaction.guild.id, endpoint=str(interaction.guild.region))
-        
+
+
+        # Quick debug
+        # print("\n")
+        # print("self.tempo_ambient_mode = ", self.tempo_ambient_mode)
+        # print("player = ", player)
+        # print("player.is_playing = ", player.is_playing)
+        # print("player.is_connected = ", player.is_connected)
+
+        # Refresh guild info (voice channel members in this case)
+        await interaction.guild.chunk()
+        # If Tempo is in passive mode AND there are no other users in its current voice channel, stop it and reset
+        if self.tempo_ambient_mode and interaction.guild.voice_client and (not len(interaction.guild.voice_client.channel.members) > 1 or interaction.user.voice.channel == interaction.guild.voice_client.channel):
+            # Stop any current music and clear the queue
+            player.set_repeat(False)
+            player.set_shuffle(False)
+            player.queue.clear()
+            await player.stop()
+            self.tempo_ambient_mode = False
+
         # Create embed message
         embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
 
@@ -144,14 +195,22 @@ class Music(cmd.Cog):
             return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         # Connect bot to voice channel if needed
-        if not player.is_connected:
+        if not interaction.guild.voice_client or interaction.user.voice.channel != interaction.guild.voice_client.channel:
             permissions = interaction.user.voice.channel.permissions_for(interaction.guild.me)
             if not permissions.connect or not permissions.speak:
                 embed.description = "Tempo needs `Connect`, `Speak` and `View Channel` permissions."
                 return await interaction.response.send_message(embed=embed, ephemeral=True)
 
             player.store('channel', interaction.channel_id)
-            await interaction.user.voice.channel.connect(cls=LavalinkVoiceClient)
+            # If not connected to a voice channel
+            if not interaction.guild.voice_client:
+                await interaction.user.voice.channel.connect(cls=LavalinkVoiceClient)
+            else:
+                if len(interaction.guild.voice_client.channel.members) > 1:
+                    embed.description = "Tempo cannot move to your channel while other users are listening."
+                    return await interaction.response.send_message(embed=embed, ephemeral=True)
+                else:    
+                    await interaction.guild.voice_client.move_to(interaction.user.voice.channel)
 
         # Search for the query
         query = query.strip('<>')
@@ -170,18 +229,14 @@ class Music(cmd.Cog):
         # If query returns a playlist
         if results['loadType'] == 'PLAYLIST_LOADED':
             tracks = results['tracks']
-
             for song in tracks:
                 track = lavalink.models.AudioTrack(song, interaction.user.id, recommended=True)
                 player.add(requester=interaction.user.id, track=track)
-
             embed.description = f'Playlist queued: [{results["playlistInfo"]["name"]}]({query}) ({len(tracks)} tracks)'
         else:
-            # Pick the first track (or non-music video)
             track = results['tracks'][0]
             track = lavalink.models.AudioTrack(track, interaction.user.id, recommended=True)
             player.add(requester=interaction.user.id, track=track)
-
             embed.description = f'Now Playing: [{track.title}]({track.uri})' if not player.is_playing else f'Queued: [{track.title}]({track.uri})'
 
         # Play the track
@@ -194,7 +249,6 @@ class Music(cmd.Cog):
 
     @slash_command(description="Stop playback, clear the queue, and disconnect.", guild_ids=tempo_guild_ids)
     async def stop(self, interaction: Interaction):
-
         # Get player for guild from guild cache
         player = interaction.client.lavalink.player_manager.get(interaction.guild.id)
 

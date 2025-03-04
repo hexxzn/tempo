@@ -7,6 +7,7 @@ import random
 
 intents = nxt.Intents.default()
 intents.message_content = True
+intents.members = True
 
 bot = cmd.Bot(command_prefix = '!', case_insensitive = True, help_command = None, intents = intents)
 
