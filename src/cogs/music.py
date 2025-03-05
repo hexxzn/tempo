@@ -67,6 +67,7 @@ class Music(cmd.Cog):
     # Initialize music cog and set up Lavalink for audio streaming
     def __init__(self, bot):
         self.bot = bot
+        self.tempo_ambient_mode = {897862146422104065: False}
 
         if not hasattr(bot, "lavalink"):
             bot.lavalink = lavalink.Client(bot.user.id)
@@ -87,9 +88,6 @@ class Music(cmd.Cog):
     def cog_unload(self):
         self.bot.lavalink._event_hooks.clear()
 
-    # Ambient mode flag
-    tempo_ambient_mode = False
-
     # Tempo can play music on its own (Only works in SourceFlow server)
     @log_calls
     async def ambient_mode(self, guild, player):
@@ -103,9 +101,9 @@ class Music(cmd.Cog):
         else:
             ambient_channel_id = ambient_channel_id_beta
         
-        self.tempo_ambient_mode = True
-        embed = nextcord.Embed(color=nextcord.Color.from_rgb(134, 194, 50))
-        embed.description = "Tempo is now in passive mode."
+        self.tempo_ambient_mode[guild.id] = True
+        # embed = nextcord.Embed(color=nextcord.Color.from_rgb(134, 194, 50))
+        # embed.description = "Tempo is now in passive mode."
 
         results = await player.node.get_tracks(passive_playlist)
         tracks = results['tracks']
@@ -130,7 +128,7 @@ class Music(cmd.Cog):
             await asyncio.sleep(1)
 
             # Cancel disconnect timer if player is playing and users are listening
-            if (not guild.voice_client or not player) or (player.is_playing and (len(guild.voice_client.channel.members) > 1)) or self.tempo_ambient_mode == True:
+            if (not guild.voice_client or not player) or (player.is_playing and (len(guild.voice_client.channel.members) > 1)) or self.tempo_ambient_mode.get(guild.id, False) == True:
                 return
 
         player.set_repeat(False)
@@ -148,11 +146,11 @@ class Music(cmd.Cog):
     # Runs when user joins, leaves or changes voice channel
     @cmd.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
-        if self.tempo_ambient_mode == True:
+        if self.tempo_ambient_mode.get(member.guild.id, False) == True:
             return
         player = self.bot.lavalink.player_manager.get(member.guild.id)
         if ((member.id == self.bot.user.id and after.channel) or not member.guild.voice_client):
-            if self.tempo_ambient_mode == True:
+            if self.tempo_ambient_mode.get(member.guild.id, False) == True:
                 return
             # If bot disconnects and is in SourceFlow
             if (member.guild.id == sourceflow_guild_id and after.channel == None):
@@ -181,7 +179,7 @@ class Music(cmd.Cog):
 
         # Quick debug
         # print("\n")
-        # print("self.tempo_ambient_mode = ", self.tempo_ambient_mode)
+        # print("self.tempo_ambient_mode[guild.id] = ", self.tempo_ambient_mode[guild.id])
         # print("player = ", player)
         # print("player.is_playing = ", player.is_playing)
         # print("player.is_connected = ", player.is_connected)
@@ -189,13 +187,13 @@ class Music(cmd.Cog):
         # Refresh guild info (voice channel members in this case)
         await interaction.guild.chunk()
         # If Tempo is in passive mode AND there are no other users in its current voice channel, stop it and reset
-        if self.tempo_ambient_mode and interaction.guild.voice_client and (not len(interaction.guild.voice_client.channel.members) > 1 or interaction.user.voice.channel == interaction.guild.voice_client.channel):
+        if self.tempo_ambient_mode.get(interaction.guild.id, False) and interaction.guild.voice_client and (not len(interaction.guild.voice_client.channel.members) > 1 or interaction.user.voice.channel == interaction.guild.voice_client.channel):
             # Stop any current music and clear the queue
             player.set_repeat(False)
             player.set_shuffle(False)
             player.queue.clear()
             await player.stop()
-            self.tempo_ambient_mode = False
+            self.tempo_ambient_mode[interaction.guild.id] = False
 
         # Create embed message
         embed = nextcord.Embed(color=nextcord.Color.from_rgb(134, 194, 50))
