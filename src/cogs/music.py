@@ -185,87 +185,86 @@ class Music(cmd.Cog):
     @log_calls
     @nextcord.slash_command(description="Play a song or add it to the queue.", guild_ids=tempo_guild_ids)
     async def play(self, interaction: nextcord.Interaction, query: str):
-        # Create embed message
         embed = nextcord.Embed(color=nextcord.Color.from_rgb(134, 194, 50))
-
-        # Get or create the player
+        
+        # Attempt to get or create the player.
         try:
             player = self.bot.lavalink.player_manager.create(interaction.guild.id, endpoint=str(interaction.guild.region))
         except NodeException as e:
             if "No available nodes" in str(e):
-                print("No nodes are available for audio streaming. Please try again shortly.")
-                embed.description = ("No nodes are available for audio streaming. Please try again shortly.")
+                embed.description = "No nodes are available for audio streaming. Please try again shortly."
                 return await interaction.response.send_message(embed=embed, ephemeral=True)
             else:
-                raise e  # Re-raise if it's a different NodeException
+                raise e
 
-        # Refresh guild info (voice channel members in this case)
+        # Refresh guild info to update voice channel member data.
         await interaction.guild.chunk()
-        # If Tempo is in passive mode AND there are no other users in its current voice channel, stop it and reset
-        if self.tempo_ambient_mode.get(interaction.guild.id, False) and interaction.guild.voice_client and (not len(interaction.guild.voice_client.channel.members) > 1 or interaction.user.voice.channel == interaction.guild.voice_client.channel):
-            # Stop any current music and clear the queue
+
+        # Reset ambient mode if needed.
+        if (self.tempo_ambient_mode.get(interaction.guild.id, False) and
+            interaction.guild.voice_client and
+            (len(interaction.guild.voice_client.channel.members) <= 1 or 
+            interaction.user.voice.channel == interaction.guild.voice_client.channel)):
             player.set_repeat(False)
             player.set_shuffle(False)
             player.queue.clear()
             await player.stop()
             self.tempo_ambient_mode[interaction.guild.id] = False
 
-        # If user is not in a voice channel
-        if not interaction.user.voice or not interaction.user.voice.channel:
+        # Check if user is in a voice channel.
+        if not (interaction.user.voice and interaction.user.voice.channel):
             embed.description = "You must be in a voice channel to use this command."
             return await interaction.response.send_message(embed=embed, ephemeral=True)
 
-        # Connect bot to voice channel if needed
-        if not interaction.guild.voice_client or interaction.user.voice.channel != interaction.guild.voice_client.channel:
-            permissions = interaction.user.voice.channel.permissions_for(interaction.guild.me)
-            if not permissions.connect or not permissions.speak:
+        # Check and connect/move bot if necessary.
+        user_vc = interaction.user.voice.channel
+        bot_vc = interaction.guild.voice_client
+        if not bot_vc or user_vc != bot_vc.channel:
+            perms = user_vc.permissions_for(interaction.guild.me)
+            if not (perms.connect and perms.speak):
                 embed.description = "Tempo needs `Connect`, `Speak` and `View Channel` permissions."
                 return await interaction.response.send_message(embed=embed, ephemeral=True)
-
             player.store('channel', interaction.channel_id)
-            # If not connected to a voice channel
-            if not interaction.guild.voice_client:
-                await interaction.user.voice.channel.connect(cls=LavalinkVoiceClient)
+            if not bot_vc:
+                await user_vc.connect(cls=LavalinkVoiceClient)
             else:
-                if len(interaction.guild.voice_client.channel.members) > 1:
+                # Prevent moving if there are other listeners.
+                if len(bot_vc.channel.members) > 1:
                     embed.description = "Tempo cannot move to your channel while other users are listening."
                     return await interaction.response.send_message(embed=embed, ephemeral=True)
-                else:    
-                    await interaction.guild.voice_client.move_to(interaction.user.voice.channel)
+                else:
+                    await bot_vc.move_to(user_vc)
 
-        # Search for the query
+        # Process the query: if not a URL, perform a YouTube search.
         query = query.strip('<>')
-        url_rx = re.compile(r'https?://(?:www\.)?.+')
-        
-        if not url_rx.match(query):
+        url_pattern = re.compile(r'https?://(?:www\.)?.+')
+        if not url_pattern.match(query):
             query = f'ytsearch:{query}'
 
         results = await player.node.get_tracks(query)
-
-        # Handle invalid search results
         if not results or not results['tracks']:
             embed.description = "No tracks found."
             return await interaction.response.send_message(embed=embed, ephemeral=True)
 
-        # If query returns a playlist
+        # Handle playlist or single track.
         if results['loadType'] == 'PLAYLIST_LOADED':
             tracks = results['tracks']
             for song in tracks:
-                track = lavalink.models.AudioTrack(song, interaction.user.id, recommended=True)
-                player.add(requester=interaction.user.id, track=track)
+                track_obj = lavalink.models.AudioTrack(song, interaction.user.id, recommended=True)
+                player.add(requester=interaction.user.id, track=track_obj)
             embed.description = f'Playlist queued: [{results["playlistInfo"]["name"]}]({query}) ({len(tracks)} tracks)'
         else:
-            track = results['tracks'][0]
-            track = lavalink.models.AudioTrack(track, interaction.user.id, recommended=True)
-            player.add(requester=interaction.user.id, track=track)
-            embed.description = f'Now Playing: [{track.title}]({track.uri})' if not player.is_playing else f'Queued: [{track.title}]({track.uri})'
+            track_obj = lavalink.models.AudioTrack(results['tracks'][0], interaction.user.id, recommended=True)
+            player.add(requester=interaction.user.id, track=track_obj)
+            embed.description = (f'Now Playing: [{track_obj.title}]({track_obj.uri})'
+                                if not player.is_playing else
+                                f'Queued: [{track_obj.title}]({track_obj.uri})')
 
-        # Play the track
+        # Start playback if not already playing.
         if not player.is_playing:
             await player.play()
             await player.set_volume(20)
 
-        # Send response
         await interaction.response.send_message(embed=embed)
 
     @log_calls
