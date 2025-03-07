@@ -24,7 +24,7 @@ class Warning(cmd.Cog):
                 "Tempo now uses slash commands instead of prefix commands.\n"
                 "Instead of `!play` try `/play`\n\n"
                 "**Users:** Type `/` in chat and select Tempo to see a list of all available commands.\n\n"
-                "**Admins:** You'll need to kick Tempo from your server and reinvite to enable slash commands.\n\n"
+                "**Admins:** You'll need to kick and reinvite Tempo to enable slash commands.\n\n"
                 f"[Click Here to Invite Tempo]({tempo_invite_link})"
             )
             embed.set_thumbnail(url="https://raw.githubusercontent.com/hexxzn/tempo/refs/heads/main/resources/logo-transparent.png")
