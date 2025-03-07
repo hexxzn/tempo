@@ -1,15 +1,15 @@
-from nextcord.ext import commands as cmd
-import nextcord as nxt
-from tokens import *
+import nextcord
+import nextcord.ext.commands as cmd
 import asyncio
 import random
+from tokens import *
 
 
-intents = nxt.Intents.default()
+intents = nextcord.Intents.default()
 intents.message_content = True
 intents.members = True
 
-bot = cmd.Bot(command_prefix = '!', case_insensitive = True, help_command = None, intents = intents)
+bot = cmd.Bot(intents = intents)
 
 @bot.event
 async def on_ready():
@@ -56,7 +56,7 @@ async def on_ready():
         status = random.choice(statuses)
 
         # Set custom status
-        await bot.change_presence(activity=nxt.CustomActivity(name=status))
+        await bot.change_presence(activity=nextcord.CustomActivity(name=status))
 
         # Refresh custom status
         await asyncio.sleep(3600)

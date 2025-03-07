@@ -1,6 +1,6 @@
-import nextcord as nxt
-from nextcord.ext import commands as cmd
-from nextcord import Interaction, slash_command
+import nextcord
+import nextcord.ext.commands as cmd
+from decorators import log_calls, developer_only
 from tokens import *
 
 
@@ -8,13 +8,10 @@ class General(cmd.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @slash_command(description="[Developer Only] Cross-server diagnostic info.", guild_ids=tempo_guild_ids)
-    async def status(self, interaction: Interaction):
-
-        # Command can only be used by developer
-        if interaction.user.id not in tempo_developer_ids:
-            return await interaction.response.send_message("You do not have permission to use this command.", ephemeral=True)
-
+    @log_calls
+    @developer_only
+    @nextcord.slash_command(description="[Developer Only] Cross-server diagnostic info.", guild_ids=tempo_guild_ids)
+    async def status(self, interaction: nextcord.Interaction):
         # Iterate through each guild Tempo is a member of
         guild_list = []
         playing = 0
@@ -44,7 +41,7 @@ class General(cmd.Cog):
             info_list += f'`{guild_info["status"]}` `[{guild_info["join_date_string"]}]` `{guild_info["guild_name"]}` `({guild_info["guild_owner"]})`\n'
 
         # Create embed and set border color
-        embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+        embed = nextcord.Embed(color=nextcord.Color.from_rgb(134, 194, 50))
         embed.add_field(name=f'__Guilds Joined__', value=f'`{len(self.bot.guilds)}`', inline=True)
         embed.add_field(name=f'__Active Players__', value=f'`{playing}`', inline=True)
         embed.add_field(name=f'__Guild Details__', value=info_list, inline=False)
@@ -52,18 +49,21 @@ class General(cmd.Cog):
         # Send embed message (Ephemeral to keep it private)
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
-    @slash_command(description="[Developer Only] Force reboot.", guild_ids=tempo_guild_ids)
-    async def bash(self, interaction: Interaction):
+    @log_calls
+    @developer_only
+    @nextcord.slash_command(description="[Developer Only] Force reboot.", guild_ids=tempo_guild_ids)
+    async def bash(self, interaction: nextcord.Interaction):
 
         # Command can only be used by developer
         if interaction.user.id not in tempo_developer_ids:
             return await interaction.response.send_message("You do not have permission to use this command.", ephemeral=True)
 
-    @slash_command(description="Get a link to invite the bot to another server.", guild_ids=tempo_guild_ids)
-    async def invite(self, interaction: Interaction):
+    @log_calls
+    @nextcord.slash_command(description="Get a link to invite the bot to another server.", guild_ids=tempo_guild_ids)
+    async def invite(self, interaction: nextcord.Interaction):
 
         # Create and send embed
-        embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+        embed = nextcord.Embed(color=nextcord.Color.from_rgb(134, 194, 50))
         embed.description = f"[Click Here to Invite Tempo]({tempo_invite_link})"
 
         await interaction.response.send_message(embed=embed)

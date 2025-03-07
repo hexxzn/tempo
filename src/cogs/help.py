@@ -1,6 +1,6 @@
-from nextcord import Interaction, slash_command, SelectOption
-from nextcord.ext import commands as cmd
-import nextcord as nxt
+import nextcord
+import nextcord.ext.commands as cmd
+from decorators import log_calls
 from tokens import *
 
 
@@ -8,11 +8,12 @@ class Help(cmd.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @slash_command(description="Select from a list of commands for additional info on what the command does and how to use it.", guild_ids=tempo_guild_ids)
-    async def help(self, interaction: Interaction):
+    @log_calls
+    @nextcord.slash_command(description="Select from a list of commands for additional info on what the command does and how to use it.", guild_ids=tempo_guild_ids)
+    async def help(self, interaction: nextcord.Interaction):
 
         # Help embed with thumbnail
-        help_menu = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+        help_menu = nextcord.Embed(color=nextcord.Color.from_rgb(134, 194, 50))
         help_menu.title = "Help Menu"
         help_menu.description = "Select a command from the dropdown below to view details.\n\n*The dropdown will disappear after 60 seconds of inactivity.*"
         help_menu.set_thumbnail(url="https://raw.githubusercontent.com/hexxzn/tempo/refs/heads/main/resources/logo-transparent.png")
@@ -36,15 +37,15 @@ class Help(cmd.Cog):
         }
 
         # Create a dropdown menu
-        class HelpDropdown(nxt.ui.Select):
+        class HelpDropdown(nextcord.ui.Select):
             def __init__(self):
                 options = [
-                    SelectOption(label=cmd, description=desc, value=cmd)
+                    nextcord.SelectOption(label=cmd, description=desc, value=cmd)
                     for cmd, desc in command_descriptions.items()
                 ]
                 super().__init__(placeholder="Select a command...", options=options, min_values=1, max_values=1)
 
-            async def callback(self, interaction: Interaction):
+            async def callback(self, interaction: nextcord.Interaction):
                 selected_command = self.values[0]
 
                 # Generate detailed help embed
@@ -65,14 +66,14 @@ class Help(cmd.Cog):
                     "search": "**Search**\nChoose from a list of songs.\n\n**Syntax**\n`/search <song title and artist>`",
                 }
 
-                embed = nxt.Embed(color=nxt.Color.from_rgb(134, 194, 50))
+                embed = nextcord.Embed(color=nextcord.Color.from_rgb(134, 194, 50))
                 embed.description = command_help[selected_command]
                 embed.set_thumbnail(url="https://raw.githubusercontent.com/hexxzn/tempo/refs/heads/main/resources/logo-transparent.png")  # Keeps thumbnail in responses
 
                 await interaction.response.edit_message(embed=embed)  # Dropdown remains for multiple selections
 
         # Create a view for the dropdown with timeout
-        class HelpView(nxt.ui.View):
+        class HelpView(nextcord.ui.View):
             def __init__(self):
                 super().__init__(timeout=60)  # Timeout set to 60 seconds
                 self.add_item(HelpDropdown())
