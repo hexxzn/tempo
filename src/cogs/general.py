@@ -1,5 +1,6 @@
 import nextcord
 import nextcord.ext.commands as cmd
+import subprocess
 from decorators import log_calls, developer_only
 from tokens import *
 
@@ -53,7 +54,33 @@ class General(cmd.Cog):
     @developer_only
     @nextcord.slash_command(description="[Developer Only] Force reboot.", guild_ids=tempo_guild_ids)
     async def bash(self, interaction: nextcord.Interaction):
-        return
+        # Attempt to run the restart.sh script.
+        # Assuming the file is located at tempo/src/restart.sh relative to your current working directory.
+        try:
+            # Use subprocess.run to execute the shell script.
+            result = subprocess.run(
+                ["bash", "restart.sh"],
+                cwd="tempo/src",  # set the working directory to where restart.sh is located
+                capture_output=True, 
+                text=True,
+                check=True  # Raise CalledProcessError if the command fails
+            )
+            output = result.stdout.strip() or "No output."
+            await interaction.response.send_message(
+                f"Restart script executed successfully:\n```\n{output}\n```",
+                ephemeral=True
+            )
+        except subprocess.CalledProcessError as e:
+            error_output = e.stderr.strip() or str(e)
+            await interaction.response.send_message(
+                f"Error executing restart script:\n```\n{error_output}\n```",
+                ephemeral=True
+            )
+        except Exception as e:
+            await interaction.response.send_message(
+                f"An unexpected error occurred: {e}",
+                ephemeral=True
+            )
 
     @log_calls
     @nextcord.slash_command(description="Get a link to invite the bot to another server.", guild_ids=tempo_guild_ids)
