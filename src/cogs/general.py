@@ -53,10 +53,7 @@ class General(cmd.Cog):
     @developer_only
     @nextcord.slash_command(description="[Developer Only] Force reboot.", guild_ids=tempo_guild_ids)
     async def bash(self, interaction: nextcord.Interaction):
-
-        # Command can only be used by developer
-        if interaction.user.id not in tempo_developer_ids:
-            return await interaction.response.send_message("You do not have permission to use this command.", ephemeral=True)
+        return
 
     @log_calls
     @nextcord.slash_command(description="Get a link to invite the bot to another server.", guild_ids=tempo_guild_ids)

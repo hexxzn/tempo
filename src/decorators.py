@@ -78,12 +78,16 @@ def log_calls(func):
 
 
 def developer_only(func):
+    # If this is a slash command object, hide it by default.
+    if hasattr(func, "default_permission"):
+        func.default_permission = False
+
     # Get the original callback if it exists (for slash commands)
     original_callback = func.callback if hasattr(func, "callback") else func
 
     @wraps(original_callback)
     async def wrapper(*args, **kwargs):
-        # Look for the Interaction object in args or kwargs
+        # Look for the Interaction object in args or kwargs.
         interaction = None
         for arg in args:
             if isinstance(arg, nextcord.Interaction):
@@ -94,15 +98,15 @@ def developer_only(func):
         if not interaction:
             raise RuntimeError("No interaction object found in command arguments.")
 
-        # Check if the user is a developer
+        # Check if the user is a developer.
         if interaction.user.id not in tempo_developer_ids:
             return await interaction.response.send_message(
                 "You do not have permission to use this command.", ephemeral=True
             )
-        # Call the original callback
+        # Call the original callback.
         return await original_callback(*args, **kwargs)
 
-    # If the original function has a callback (as with slash commands), replace it
+    # If the original function has a callback (slash command), replace it.
     if hasattr(func, "callback"):
         func.callback = wrapper
         return func
