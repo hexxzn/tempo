@@ -54,33 +54,33 @@ class General(cmd.Cog):
     @developer_only
     @nextcord.slash_command(description="[Developer Only] Force reboot.", guild_ids=tempo_guild_ids)
     async def bash(self, interaction: nextcord.Interaction):
-        # Attempt to run the restart.sh script.
-        # Assuming the file is located at tempo/src/restart.sh relative to your current working directory.
+        # Defer the response immediately to avoid timeout
+        await interaction.response.defer(ephemeral=True)
         try:
-            # Use subprocess.run to execute the shell script.
             result = subprocess.run(
                 ["bash", "restart.sh"],
-                cwd="git/tempo/src",  # set the working directory to where restart.sh is located
+                cwd="/home/gkilburg_biz/git/tempo/src",  # set the correct working directory
                 capture_output=True, 
                 text=True,
                 check=True  # Raise CalledProcessError if the command fails
             )
+            # Won't execute if reboot is successful, but leaving this here for possible future use
             output = result.stdout.strip() or "No output."
-            await interaction.response.send_message(
-                f"Restart script executed successfully:\n```\n{output}\n```",
-                ephemeral=True
-            )
+            embed = nextcord.Embed(color=nextcord.Color.green())
+            embed.title = "Restart Script Executed Successfully"
+            embed.description = f"Output:\n```\n{output}\n```"
+            await interaction.followup.send(embed=embed, ephemeral=True)
         except subprocess.CalledProcessError as e:
             error_output = e.stderr.strip() or str(e)
-            await interaction.response.send_message(
-                f"Error executing restart script:\n```\n{error_output}\n```",
-                ephemeral=True
-            )
+            embed = nextcord.Embed(color=nextcord.Color.red())
+            embed.title = "Error Executing Restart Script"
+            embed.description = f"Error Output:\n```\n{error_output}\n```"
+            await interaction.followup.send(embed=embed, ephemeral=True)
         except Exception as e:
-            await interaction.response.send_message(
-                f"An unexpected error occurred: {e}",
-                ephemeral=True
-            )
+            embed = nextcord.Embed(color=nextcord.Color.red())
+            embed.title = "Unexpected Error"
+            embed.description = f"An unexpected error occurred:\n```\n{e}\n```"
+            await interaction.followup.send(embed=embed, ephemeral=True)
 
     @log_calls
     @nextcord.slash_command(description="Get a link to invite the bot to another server.", guild_ids=tempo_guild_ids)

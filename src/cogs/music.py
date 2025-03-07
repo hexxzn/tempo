@@ -644,7 +644,6 @@ class Music(cmd.Cog):
     @log_calls
     @nextcord.slash_command(description="Search for a song and choose which one to play.", guild_ids=tempo_guild_ids)
     async def search(self, interaction: nextcord.Interaction, query: str):
-
         # Ensure player exists before fetching tracks
         player = self.bot.lavalink.player_manager.create(interaction.guild.id, endpoint=str(interaction.guild.region))
 
@@ -655,7 +654,7 @@ class Music(cmd.Cog):
         query = f'ytsearch:{query}'
         results = await player.node.get_tracks(query)
 
-        # If no results found
+        # If no results found, send error message.
         if not results or not results['tracks']:
             embed = nextcord.Embed(color=nextcord.Color.from_rgb(134, 194, 50))
             embed.description = "No tracks found."
@@ -667,74 +666,58 @@ class Music(cmd.Cog):
             embed.description = "You must be in a voice channel to use this command."
             return await interaction.response.send_message(embed=embed, ephemeral=True)
 
-        # Custom View that disables itself after selection
-        class TempoView(nextcord.ui.View):
-            def __init__(self, interaction: nextcord.Interaction):
-                super().__init__(timeout=60)  # View expires after 60 seconds
-                self.interaction = interaction
-                self.message = None
-                self.requester = interaction.user
-                self.used = False  # Track if the view has been interacted with
+        # Define a custom Select for choosing a track
+        class TrackDropdown(nextcord.ui.Select):
+            def __init__(self, tracks):
+                options = []
+                # Limit to first 10 results
+                for i, track in enumerate(tracks[:10]):
+                    # Shorten the title if necessary.
+                    label = track['info']['title'][:80]
+                    # Create an option for each track.
+                    options.append(nextcord.SelectOption(label=label, value=str(i)))
+                super().__init__(placeholder="Select a track...", min_values=1, max_values=1, options=options)
 
-            # Disables buttons when timeout occurs, only if no selection was made
-            async def on_timeout(self):
-                if not self.used and self.message:
-                    for item in self.children:
-                        item.disabled = True
-                    await self.message.edit(view=self)  # Only disable if never used
+            async def callback(self, select_interaction: nextcord.Interaction):
+                # Retrieve the selected track index
+                track_index = int(self.values[0])
+                selected_track = results['tracks'][track_index]
+                # Create an AudioTrack object
+                track_obj = lavalink.models.AudioTrack(selected_track, interaction.user.id, recommended=True)
+                # Add track to the queue
+                player.add(requester=interaction.user.id, track=track_obj)
+                embed = nextcord.Embed(color=nextcord.Color.from_rgb(134, 194, 50))
+                if not player.is_playing:
+                    embed.description = f"Now Playing: [{track_obj.title}]({track_obj.uri})"
+                else:
+                    embed.description = f"Queued: [{track_obj.title}]({track_obj.uri})"
+                # Ensure bot is connected to a voice channel
+                if not player.is_connected:
+                    permissions = interaction.user.voice.channel.permissions_for(interaction.guild.me)
+                    if not permissions.connect or not permissions.speak:
+                        embed.description = "Tempo needs `Connect` and `Speak` permissions."
+                        return await select_interaction.response.send_message(embed=embed, ephemeral=True)
+                    player.store('channel', interaction.channel_id)
+                    await interaction.user.voice.channel.connect(cls=LavalinkVoiceClient)
+                if not player.is_playing:
+                    await player.play()
+                    await player.set_volume(20)
+                # Edit the original message to remove the dropdown after selection
+                await select_interaction.response.edit_message(embed=embed, view=None)
 
-        # Function to handle track selection
-        async def track_select(interaction: nextcord.Interaction):
-            track_number = int(interaction.data['custom_id'])
-            track = results['tracks'][track_number]
-            track = lavalink.models.AudioTrack(track, interaction.user.id, recommended=True)
-            player.add(requester=interaction.user.id, track=track)
-
-            # Create embed for response
-            embed = nextcord.Embed(color=nextcord.Color.from_rgb(134, 194, 50))
-            embed.description = f"Now Playing: [{track.title}]({track.uri})" if not player.is_playing else f"Queued: [{track.title}]({track.uri})"
-
-            # Ensure bot joins the voice channel if not already connected
-            if not player.is_connected:
-                permissions = interaction.user.voice.channel.permissions_for(interaction.guild.me)
-                if not permissions.connect or not permissions.speak:
-                    embed.description = "Tempo needs `Connect` and `Speak` permissions."
-                    return await interaction.response.send_message(embed=embed, ephemeral=True)
-
-                player.store('channel', interaction.channel_id)
-                await interaction.user.voice.channel.connect(cls=LavalinkVoiceClient)
-
-            # Play track and set volume
-            if not player.is_playing:
-                await player.play()
-                await player.set_volume(20)
-
-            # Mark the view as used to prevent buttons from reappearing
-            view.used = True
-
-            # Remove buttons after selection
-            await interaction.response.edit_message(embed=embed, view=None)  # Removes the view completely
-
-        # Create view and add buttons for each track
-        view = TempoView(interaction)
-        for i, track in enumerate(results['tracks'][:5]):  # Limit to 5 results
-            track_button = nextcord.ui.Button(
-                label=track['info']['title'][:80],  # Limit button label length
-                custom_id=str(i),
-                row=i % 5,
-                style=nextcord.ButtonStyle.secondary  # Matches Dark Gray theme
-            )
-            track_button.callback = track_select  # Calls track_select when clicked
-            view.add_item(track_button)
-
-        # Send view and save as message
+        # Create a view and add the dropdown to it.
+        class TrackSelectView(nextcord.ui.View):
+            def __init__(self, tracks):
+                super().__init__(timeout=60)
+                self.add_item(TrackDropdown(tracks))
+        view = TrackSelectView(results['tracks'])
+        embed = nextcord.Embed(
+            color=nextcord.Color.from_rgb(134, 194, 50),
+            description="Select a track from the dropdown below."
+        )
         try:
-            message = await interaction.response.send_message(embed=nextcord.Embed(
-                color=nextcord.Color.from_rgb(134, 194, 50),
-                description="Select a song from the list below."
-            ), view=view)
-            view.message = message  # Store message reference for timeout handling
-        except:
+            await interaction.response.send_message(embed=embed, view=view)
+        except Exception:
             embed = nextcord.Embed(color=nextcord.Color.from_rgb(134, 194, 50))
             embed.description = "Invalid search query."
             return await interaction.response.send_message(embed=embed, ephemeral=True)
