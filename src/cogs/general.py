@@ -60,7 +60,7 @@ class General(cmd.Cog):
             # Use subprocess.run to execute the shell script.
             result = subprocess.run(
                 ["bash", "restart.sh"],
-                cwd="tempo/src",  # set the working directory to where restart.sh is located
+                cwd="git/tempo/src",  # set the working directory to where restart.sh is located
                 capture_output=True, 
                 text=True,
                 check=True  # Raise CalledProcessError if the command fails
