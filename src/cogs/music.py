@@ -163,6 +163,7 @@ class Music(cmd.Cog):
                 player.set_repeat(False)
                 player.set_shuffle(False)
                 player.queue.clear()
+                self.tempo_ambient_mode[member.guild.id] = False
                 await player.stop()
                 await member.guild.voice_client.disconnect(force=True)
                 return
