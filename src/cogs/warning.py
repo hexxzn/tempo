@@ -1,7 +1,6 @@
 import nextcord
 import nextcord.ext.commands as cmd
 from tokens import *
-import asyncio
 
 
 class Warning(cmd.Cog):

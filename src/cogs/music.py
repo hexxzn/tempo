@@ -124,7 +124,6 @@ class Music(cmd.Cog):
             print("Ambient Mode: Unknown Error")
             return
 
-
     # Automatically inactivity disconnect
     @log_calls
     async def disconnect_timer(self, guild, player, delay):
@@ -645,9 +644,11 @@ class Music(cmd.Cog):
     async def search(self, interaction: nextcord.Interaction, query: str):
         embed = nextcord.Embed(color=nextcord.Color.from_rgb(134, 194, 50))
         
-        # Attempt to get or create the player.
+        # Create or get player
         try:
-            player = self.bot.lavalink.player_manager.create(interaction.guild.id, endpoint=str(interaction.guild.region))
+            player = self.bot.lavalink.player_manager.create(
+                interaction.guild.id, endpoint=str(interaction.guild.region)
+            )
         except NodeException as e:
             if "No available nodes" in str(e):
                 embed.description = "No nodes are available for audio streaming. Please try again shortly."
@@ -655,116 +656,87 @@ class Music(cmd.Cog):
             else:
                 raise e
 
-        # Refresh guild info to update voice channel member data.
-        await interaction.guild.chunk()
-
-        # Reset ambient mode if needed.
-        if (self.tempo_ambient_mode.get(interaction.guild.id, False) and
-            interaction.guild.voice_client and
-            (len(interaction.guild.voice_client.channel.members) <= 1 or 
-            interaction.user.voice.channel == interaction.guild.voice_client.channel)):
-            player.set_repeat(False)
-            player.set_shuffle(False)
-            player.queue.clear()
-            await player.stop()
-            self.tempo_ambient_mode[interaction.guild.id] = False
-
-        # Check if user is in a voice channel.
+        # Process query
+        query = query.strip('<>')
+        url_pattern = re.compile(r'https?://(?:www\.)?.+')
+        if not url_pattern.match(query):
+            query = f'ytsearch:{query}'
+        
+        results = await player.node.get_tracks(query)
+        if not results or not results['tracks']:
+            embed.description = "No tracks found."
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
+        
+        # Ensure the user is in a voice channel
         if not (interaction.user.voice and interaction.user.voice.channel):
             embed.description = "You must be in a voice channel to use this command."
             return await interaction.response.send_message(embed=embed, ephemeral=True)
-
-        # Check and connect/move bot if necessary.
-        user_vc = interaction.user.voice.channel
-        bot_vc = interaction.guild.voice_client
-        if not bot_vc or user_vc != bot_vc.channel:
-            perms = user_vc.permissions_for(interaction.guild.me)
-            if not (perms.connect and perms.speak):
-                embed.description = "Tempo needs `Connect`, `Speak` and `View Channel` permissions."
-                return await interaction.response.send_message(embed=embed, ephemeral=True)
-            player.store('channel', interaction.channel_id)
-            if not bot_vc:
-                await user_vc.connect(cls=LavalinkVoiceClient)
-            else:
-                # Prevent moving if there are other listeners.
-                if len(bot_vc.channel.members) > 1:
-                    embed.description = "Tempo cannot move to your channel while other users are listening."
-                    return await interaction.response.send_message(embed=embed, ephemeral=True)
-                else:
-                    await bot_vc.move_to(user_vc)
-
-        # Remove leading and trailing <>. <> suppress embedding links.
-        query = query.strip('<>')
-
-        # Search for given query, get results
-        query = f'ytsearch:{query}'
-        results = await player.node.get_tracks(query)
-
-        # If no results found, send error message.
-        if not results or not results['tracks']:
-            embed = nextcord.Embed(color=nextcord.Color.from_rgb(134, 194, 50))
-            embed.description = "No tracks found."
-            return await interaction.response.send_message(embed=embed, ephemeral=True)
-
-        # Ensure user is in a voice channel
-        if not interaction.user.voice or not interaction.user.voice.channel:
-            embed = nextcord.Embed(color=nextcord.Color.from_rgb(134, 194, 50))
-            embed.description = "You must be in a voice channel to use this command."
-            return await interaction.response.send_message(embed=embed, ephemeral=True)
-
-        # Define a custom Select for choosing a track
+        
+        # Define a custom dropdown for choosing a track
         class TrackDropdown(nextcord.ui.Select):
             def __init__(self, tracks):
                 options = []
-                # Limit to first 10 results
+                # Limit to first 10 tracks
                 for i, track in enumerate(tracks[:10]):
-                    # Shorten the title if necessary.
                     label = track['info']['title'][:80]
-                    # Create an option for each track.
                     options.append(nextcord.SelectOption(label=label, value=str(i)))
                 super().__init__(placeholder="Select a track...", min_values=1, max_values=1, options=options)
 
-            async def callback(self, select_interaction: nextcord.Interaction):
-                # Retrieve the selected track index
+            async def callback(self, dropdown_interaction: nextcord.Interaction):
+                # Retrieve selected track index
                 track_index = int(self.values[0])
                 selected_track = results['tracks'][track_index]
-                # Create an AudioTrack object
+                # Create AudioTrack object
                 track_obj = lavalink.models.AudioTrack(selected_track, interaction.user.id, recommended=True)
-                # Add track to the queue
-                player.add(requester=interaction.user.id, track=track_obj)
-                embed = nextcord.Embed(color=nextcord.Color.from_rgb(134, 194, 50))
-                if not player.is_playing:
-                    embed.description = f"Now Playing: [{track_obj.title}]({track_obj.uri})"
+                
+                # Ensure bot joins voice channel
+                user_vc = interaction.user.voice.channel
+                bot_vc = interaction.guild.voice_client
+                if not bot_vc:
+                    await user_vc.connect(cls=LavalinkVoiceClient)
                 else:
-                    embed.description = f"Queued: [{track_obj.title}]({track_obj.uri})"
-                # Ensure bot is connected to a voice channel
-                if not player.is_connected:
-                    permissions = interaction.user.voice.channel.permissions_for(interaction.guild.me)
-                    if not permissions.connect or not permissions.speak:
-                        embed.description = "Tempo needs `Connect` and `Speak` permissions."
-                        return await select_interaction.response.send_message(embed=embed, ephemeral=True)
-                    player.store('channel', interaction.channel_id)
-                    await interaction.user.voice.channel.connect(cls=LavalinkVoiceClient)
+                    if bot_vc.channel != user_vc:
+                        await bot_vc.move_to(user_vc)
+                
+                # Add track to queue.
+                player.add(requester=interaction.user.id, track=track_obj)
+                
+                # If not currently playing, start playback
                 if not player.is_playing:
                     await player.play()
                     await player.set_volume(20)
-                # Edit the original message to remove the dropdown after selection
-                await select_interaction.response.edit_message(embed=embed, view=None)
-
-        # Create a view and add the dropdown to it.
-        class TrackSelectView(nextcord.ui.View):
+                
+                # Prepare confirmation embed
+                confirm_embed = nextcord.Embed(color=nextcord.Color.from_rgb(134, 194, 50))
+                if not player.is_playing:
+                    confirm_embed.description = f"Now Playing: [{track_obj.title}]({track_obj.uri})"
+                else:
+                    confirm_embed.description = f"Queued: [{track_obj.title}]({track_obj.uri})"
+                
+                # Edit dropdown interaction response
+                await dropdown_interaction.response.edit_message(embed=confirm_embed, view=None)
+        
+        # Create view that contains dropdown
+        class DropdownView(nextcord.ui.View):
             def __init__(self, tracks):
                 super().__init__(timeout=60)
                 self.add_item(TrackDropdown(tracks))
-        view = TrackSelectView(results['tracks'])
-        embed = nextcord.Embed(
-            color=nextcord.Color.from_rgb(134, 194, 50),
-            description="Select a track from the dropdown below."
-        )
+                self.message = None
+
+            async def on_timeout(self):
+                # If no selection made after 60 seconds, delete message
+                if self.message:
+                    try:
+                        await self.message.delete()
+                    except Exception as e:
+                        print(f"Error deleting message on timeout: {e}")
+        
+        view = DropdownView(results['tracks'])
+        embed.description = "Select a track from the dropdown below."
         try:
-            await interaction.response.send_message(embed=embed, view=view)
+            msg = await interaction.response.send_message(embed=embed, view=view)
+            view.message = msg
         except Exception:
-            embed = nextcord.Embed(color=nextcord.Color.from_rgb(134, 194, 50))
             embed.description = "Invalid search query."
             return await interaction.response.send_message(embed=embed, ephemeral=True)
 
