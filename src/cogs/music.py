@@ -643,8 +643,55 @@ class Music(cmd.Cog):
     @log_calls
     @nextcord.slash_command(description="Search for a song and choose which one to play.", guild_ids=tempo_guild_ids)
     async def search(self, interaction: nextcord.Interaction, query: str):
-        # Ensure player exists before fetching tracks
-        player = self.bot.lavalink.player_manager.create(interaction.guild.id, endpoint=str(interaction.guild.region))
+        embed = nextcord.Embed(color=nextcord.Color.from_rgb(134, 194, 50))
+        
+        # Attempt to get or create the player.
+        try:
+            player = self.bot.lavalink.player_manager.create(interaction.guild.id, endpoint=str(interaction.guild.region))
+        except NodeException as e:
+            if "No available nodes" in str(e):
+                embed.description = "No nodes are available for audio streaming. Please try again shortly."
+                return await interaction.response.send_message(embed=embed, ephemeral=True)
+            else:
+                raise e
+
+        # Refresh guild info to update voice channel member data.
+        await interaction.guild.chunk()
+
+        # Reset ambient mode if needed.
+        if (self.tempo_ambient_mode.get(interaction.guild.id, False) and
+            interaction.guild.voice_client and
+            (len(interaction.guild.voice_client.channel.members) <= 1 or 
+            interaction.user.voice.channel == interaction.guild.voice_client.channel)):
+            player.set_repeat(False)
+            player.set_shuffle(False)
+            player.queue.clear()
+            await player.stop()
+            self.tempo_ambient_mode[interaction.guild.id] = False
+
+        # Check if user is in a voice channel.
+        if not (interaction.user.voice and interaction.user.voice.channel):
+            embed.description = "You must be in a voice channel to use this command."
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
+
+        # Check and connect/move bot if necessary.
+        user_vc = interaction.user.voice.channel
+        bot_vc = interaction.guild.voice_client
+        if not bot_vc or user_vc != bot_vc.channel:
+            perms = user_vc.permissions_for(interaction.guild.me)
+            if not (perms.connect and perms.speak):
+                embed.description = "Tempo needs `Connect`, `Speak` and `View Channel` permissions."
+                return await interaction.response.send_message(embed=embed, ephemeral=True)
+            player.store('channel', interaction.channel_id)
+            if not bot_vc:
+                await user_vc.connect(cls=LavalinkVoiceClient)
+            else:
+                # Prevent moving if there are other listeners.
+                if len(bot_vc.channel.members) > 1:
+                    embed.description = "Tempo cannot move to your channel while other users are listening."
+                    return await interaction.response.send_message(embed=embed, ephemeral=True)
+                else:
+                    await bot_vc.move_to(user_vc)
 
         # Remove leading and trailing <>. <> suppress embedding links.
         query = query.strip('<>')
