@@ -105,7 +105,11 @@ class Music(cmd.Cog):
             
             self.tempo_ambient_mode[guild.id] = True
 
-            results = await player.node.get_tracks(ambient_playlist)
+            try:
+                results = await player.node.get_tracks(ambient_playlist)
+            except NodeException:
+                return
+            
             tracks = results['tracks']
 
             if not player.is_connected:
@@ -189,12 +193,9 @@ class Music(cmd.Cog):
         # Attempt to get or create the player.
         try:
             player = self.bot.lavalink.player_manager.create(interaction.guild.id, endpoint=str(interaction.guild.region))
-        except NodeException as e:
-            if "No available nodes" in str(e):
-                embed.description = "No nodes are available for audio streaming. Please try again shortly."
-                return await interaction.response.send_message(embed=embed, ephemeral=True)
-            else:
-                raise e
+        except NodeException:
+            embed.description = "No nodes are available for audio streaming. Please try again shortly."
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         # Refresh guild info to update voice channel member data.
         await interaction.guild.chunk()
@@ -240,7 +241,12 @@ class Music(cmd.Cog):
         if not url_pattern.match(query):
             query = f'ytsearch:{query}'
 
-        results = await player.node.get_tracks(query)
+        try:
+            results = await player.node.get_tracks(query)
+        except NodeException:
+            embed.description = "Error: No available Lavalink nodes. Please try again later."
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
+        
         if not results or not results['tracks']:
             embed.description = "No tracks found."
             return await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -646,15 +652,10 @@ class Music(cmd.Cog):
         
         # Create or get player
         try:
-            player = self.bot.lavalink.player_manager.create(
-                interaction.guild.id, endpoint=str(interaction.guild.region)
-            )
-        except NodeException as e:
-            if "No available nodes" in str(e):
-                embed.description = "No nodes are available for audio streaming. Please try again shortly."
-                return await interaction.response.send_message(embed=embed, ephemeral=True)
-            else:
-                raise e
+            player = self.bot.lavalink.player_manager.create(interaction.guild.id, endpoint=str(interaction.guild.region))
+        except NodeException:
+            embed.description = "Error: No available Lavalink nodes. Please try again later."
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         # Process query
         query = query.strip('<>')
@@ -662,7 +663,12 @@ class Music(cmd.Cog):
         if not url_pattern.match(query):
             query = f'ytsearch:{query}'
         
-        results = await player.node.get_tracks(query)
+        try:
+            results = await player.node.get_tracks(query)
+        except NodeException:
+            embed.description = "Error: No available Lavalink nodes. Please try again later."
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
+        
         if not results or not results['tracks']:
             embed.description = "No tracks found."
             return await interaction.response.send_message(embed=embed, ephemeral=True)
