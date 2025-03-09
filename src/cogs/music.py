@@ -88,52 +88,52 @@ class Music(cmd.Cog):
     def cog_unload(self):
         self.bot.lavalink._event_hooks.clear()
 
-    # Tempo can play music on its own (Only works in SourceFlow server)
-    @log_calls
-    async def ambient_mode(self, guild, player):
-        try:
-            # Check if guild is SourceFlow
-            if guild.id not in tempo_guild_ids or not player:
-                print("Ambient Mode: Guild ID not in tempo_guild_ids")
-                return
+    # # Tempo can play music on its own (Only works in SourceFlow server)
+    # @log_calls
+    # async def ambient_mode(self, guild, player):
+    #     try:
+    #         # Check if guild is SourceFlow
+    #         if guild.id not in tempo_guild_ids or not player:
+    #             print("Ambient Mode: Guild ID not in tempo_guild_ids")
+    #             return
             
-            # Check whether bot is Tempo or Beta
-            if self.bot.user.id == tempo_user_id:
-                ambient_channel_id = ambient_channel_id_tempo
-            else:
-                ambient_channel_id = ambient_channel_id_beta
+    #         # Check whether bot is Tempo or Beta
+    #         if self.bot.user.id == tempo_user_id:
+    #             ambient_channel_id = ambient_channel_id_tempo
+    #         else:
+    #             ambient_channel_id = ambient_channel_id_beta
             
-            self.tempo_ambient_mode[guild.id] = True
+    #         self.tempo_ambient_mode[guild.id] = True
 
-            try:
-                results = await player.node.get_tracks(ambient_playlist)
-            except NodeException:
-                return
+    #         try:
+    #             results = await player.node.get_tracks(ambient_playlist)
+    #         except:
+    #             return
             
-            tracks = results['tracks']
+    #         tracks = results['tracks']
 
-            if not player.is_connected:
-                channel = guild.get_channel(ambient_channel_id)
-                await channel.connect(cls=LavalinkVoiceClient)
+    #         if not player.is_connected:
+    #             channel = guild.get_channel(ambient_channel_id)
+    #             await channel.connect(cls=LavalinkVoiceClient)
 
-            for song in tracks:
-                track = lavalink.models.AudioTrack(song, 488812651514691586, recommended=True)
-                player.add(requester=488812651514691586, track=track)
+    #         for song in tracks:
+    #             track = lavalink.models.AudioTrack(song, 488812651514691586, recommended=True)
+    #             player.add(requester=488812651514691586, track=track)
 
-            if not player.is_playing:
-                await player.play()
-                await player.set_volume(20)
-                player.set_repeat(True)
-        except:
-            print("Ambient Mode: Unknown Error")
-            return
+    #         if not player.is_playing:
+    #             await player.play()
+    #             await player.set_volume(20)
+    #             player.set_repeat(True)
+    #     except:
+    #         print("Ambient Mode: Unknown Error")
+    #         return
 
     # Automatically inactivity disconnect
     @log_calls
     async def disconnect_timer(self, guild, player, delay):
-        if self.tempo_ambient_mode[guild.id] == True:
-            print("ambient mode. disconnect timer cancelled.")
-            return
+        # if self.tempo_ambient_mode[guild.id] == True:
+        #     print("ambient mode. disconnect timer cancelled.")
+        #     return
         
         for timer in range(delay):
             await asyncio.sleep(1)
@@ -166,7 +166,7 @@ class Music(cmd.Cog):
                 player.set_repeat(False)
                 player.set_shuffle(False)
                 player.queue.clear()
-                self.tempo_ambient_mode[member.guild.id] = False
+                # self.tempo_ambient_mode[member.guild.id] = False
                 await player.stop()
                 await member.guild.voice_client.disconnect(force=True)
                 return
@@ -174,11 +174,12 @@ class Music(cmd.Cog):
             # If bot disconnects
             if not after.channel or not member.guild.voice_client:
                 if self.tempo_ambient_mode.get(member.guild.id, False) == True:
-                    self.tempo_ambient_mode[member.guild.id] = False
+                    # self.tempo_ambient_mode[member.guild.id] = False
                     return
                 # If bot disconnects and is in SourceFlow
                 if (member.guild.id in tempo_guild_ids and after.channel == None):
-                    await self.ambient_mode(member.guild, player)
+                    # await self.ambient_mode(member.guild, player)
+                    pass
                 return
             
         # If bot is the only member in voice channel
@@ -193,23 +194,23 @@ class Music(cmd.Cog):
         # Attempt to get or create the player.
         try:
             player = self.bot.lavalink.player_manager.create(interaction.guild.id, endpoint=str(interaction.guild.region))
-        except NodeException:
-            embed.description = "No nodes are available for audio streaming. Please try again shortly."
+        except:
+            embed.description = "Error: Something went wrong. Please try again later."
             return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         # Refresh guild info to update voice channel member data.
         await interaction.guild.chunk()
 
         # Reset ambient mode if needed.
-        if (self.tempo_ambient_mode.get(interaction.guild.id, False) and
-            interaction.guild.voice_client and
-            (len(interaction.guild.voice_client.channel.members) <= 1 or 
-            interaction.user.voice.channel == interaction.guild.voice_client.channel)):
-            player.set_repeat(False)
-            player.set_shuffle(False)
-            player.queue.clear()
-            await player.stop()
-            self.tempo_ambient_mode[interaction.guild.id] = False
+        # if (self.tempo_ambient_mode.get(interaction.guild.id, False) and
+        #     interaction.guild.voice_client and
+        #     (len(interaction.guild.voice_client.channel.members) <= 1 or 
+        #     interaction.user.voice.channel == interaction.guild.voice_client.channel)):
+        #     player.set_repeat(False)
+        #     player.set_shuffle(False)
+        #     player.queue.clear()
+        #     await player.stop()
+        #     self.tempo_ambient_mode[interaction.guild.id] = False
 
         # Check if user is in a voice channel.
         if not (interaction.user.voice and interaction.user.voice.channel):
@@ -243,8 +244,8 @@ class Music(cmd.Cog):
 
         try:
             results = await player.node.get_tracks(query)
-        except NodeException:
-            embed.description = "Error: No available Lavalink nodes. Please try again later."
+        except:
+            embed.description = "Error: Something went wrong. Please try again later."
             return await interaction.response.send_message(embed=embed, ephemeral=True)
         
         if not results or not results['tracks']:
@@ -282,7 +283,7 @@ class Music(cmd.Cog):
         embed = nextcord.Embed(color=nextcord.Color.from_rgb(134, 194, 50))
 
         # If player does not exist or isn't playing
-        if not player or not player.is_playing:
+        if not player or not player.is_connected:
             embed.description = "Nothing is currently playing."
             return await interaction.response.send_message(embed=embed, ephemeral=True)
 
@@ -653,8 +654,8 @@ class Music(cmd.Cog):
         # Create or get player
         try:
             player = self.bot.lavalink.player_manager.create(interaction.guild.id, endpoint=str(interaction.guild.region))
-        except NodeException:
-            embed.description = "Error: No available Lavalink nodes. Please try again later."
+        except:
+            embed.description = "Error: Something went wrong. Please try again later."
             return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         # Process query
@@ -665,8 +666,8 @@ class Music(cmd.Cog):
         
         try:
             results = await player.node.get_tracks(query)
-        except NodeException:
-            embed.description = "Error: No available Lavalink nodes. Please try again later."
+        except:
+            embed.description = "Error: Something went wrong. Please try again later."
             return await interaction.response.send_message(embed=embed, ephemeral=True)
         
         if not results or not results['tracks']:
