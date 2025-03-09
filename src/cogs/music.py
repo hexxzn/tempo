@@ -7,8 +7,6 @@ import math
 import re
 from tokens import *
 from decorators import log_calls, developer_only
-from lavalink.exceptions import NodeException
-
 
 # ---------------------------- #
 # Lavalink Voice Client
@@ -82,7 +80,7 @@ class Music(cmd.Cog):
             lavalink_logger.addFilter(LavalinkFilter())  # Suppresses the specific message
             lavalink_logger.setLevel(logging.INFO)  # Reduces excessive debug logs
 
-            lavalink.add_event_hook(self.track_hook)
+            self.bot.lavalink.add_event_hook(self.track_hook)
 
     # Clean up event hooks when music cog is unloaded
     def cog_unload(self):
@@ -117,13 +115,13 @@ class Music(cmd.Cog):
     #             await channel.connect(cls=LavalinkVoiceClient)
 
     #         for song in tracks:
-    #             track = lavalink.models.AudioTrack(song, 488812651514691586, recommended=True)
+    #             track = lavalink.AudioTrack(song, 488812651514691586, recommended=True)
     #             player.add(requester=488812651514691586, track=track)
 
     #         if not player.is_playing:
     #             await player.play()
     #             await player.set_volume(20)
-    #             player.set_repeat(True)
+    #             player.repeat = True
     #     except:
     #         print("Ambient Mode: Unknown Error")
     #         return
@@ -142,8 +140,8 @@ class Music(cmd.Cog):
             if (not guild.voice_client or not player) or (player.is_playing and (len(guild.voice_client.channel.members) > 1)) or self.tempo_ambient_mode.get(guild.id, False) == True:
                 return
 
-        player.set_repeat(False)
-        player.set_shuffle(False)
+        player.repeat = False
+        player.shuffle = False
         player.queue.clear()
         await player.stop()
         await guild.voice_client.disconnect(force=True)
@@ -163,8 +161,8 @@ class Music(cmd.Cog):
         if member.id == self.bot.user.id:
             # If bot is forcibly disconnected by guild member
             if not after.channel and member.guild.voice_client:
-                player.set_repeat(False)
-                player.set_shuffle(False)
+                player.repeat = False
+                player.shuffle = False
                 player.queue.clear()
                 # self.tempo_ambient_mode[member.guild.id] = False
                 await player.stop()
@@ -206,8 +204,8 @@ class Music(cmd.Cog):
         #     interaction.guild.voice_client and
         #     (len(interaction.guild.voice_client.channel.members) <= 1 or 
         #     interaction.user.voice.channel == interaction.guild.voice_client.channel)):
-        #     player.set_repeat(False)
-        #     player.set_shuffle(False)
+        #     player.repeat = False
+        #     player.shuffle = False
         #     player.queue.clear()
         #     await player.stop()
         #     self.tempo_ambient_mode[interaction.guild.id] = False
@@ -256,11 +254,11 @@ class Music(cmd.Cog):
         if results['loadType'] == 'PLAYLIST_LOADED':
             tracks = results['tracks']
             for song in tracks:
-                track_obj = lavalink.models.AudioTrack(song, interaction.user.id, recommended=True)
+                track_obj = lavalink.AudioTrack(song, interaction.user.id, recommended=True)
                 player.add(requester=interaction.user.id, track=track_obj)
             embed.description = f'Playlist queued: [{results["playlistInfo"]["name"]}]({query}) ({len(tracks)} tracks)'
         else:
-            track_obj = lavalink.models.AudioTrack(results['tracks'][0], interaction.user.id, recommended=True)
+            track_obj = lavalink.AudioTrack(results['tracks'][0], interaction.user.id, recommended=True)
             player.add(requester=interaction.user.id, track=track_obj)
             embed.description = (f'Now Playing: [{track_obj.title}]({track_obj.uri})'
                                 if not player.is_playing else
@@ -300,8 +298,8 @@ class Music(cmd.Cog):
             embed.description += "The queue has been cleared. \n"
 
         # Disable repeat and shuffle
-        player.set_repeat(False)
-        player.set_shuffle(False)
+        player.repeat = False
+        player.shuffle = False
 
         # Stop current track
         await player.stop()
@@ -587,7 +585,7 @@ class Music(cmd.Cog):
             return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         # Toggle repeat
-        player.set_repeat(not player.repeat)
+        player.repeat = not player.repeat
         status = "enabled" if player.repeat else "disabled"
 
         # Send response
@@ -610,7 +608,7 @@ class Music(cmd.Cog):
             return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         # Toggle shuffle
-        player.set_shuffle(not player.shuffle)
+        player.shuffle = not player.shuffle
         status = "enabled" if player.shuffle else "disabled"
 
         # Send response
@@ -694,7 +692,7 @@ class Music(cmd.Cog):
                 track_index = int(self.values[0])
                 selected_track = results['tracks'][track_index]
                 # Create AudioTrack object
-                track_obj = lavalink.models.AudioTrack(selected_track, interaction.user.id, recommended=True)
+                track_obj = lavalink.AudioTrack(selected_track, interaction.user.id, recommended=True)
                 
                 # Ensure bot joins voice channel
                 user_vc = interaction.user.voice.channel

@@ -1,15 +1,19 @@
 import nextcord
 import nextcord.ext.commands as cmd
+import logging
 import asyncio
 import random
 from tokens import *
 
+# Set the logging level for nextcord state and http to ERROR so that EXPECTED Forbidden warnings are suppressed.
+logging.getLogger("nextcord.state").setLevel(logging.ERROR)
+logging.getLogger("nextcord.http").setLevel(logging.ERROR)
 
 intents = nextcord.Intents.default()
 intents.message_content = True
 intents.members = True
 
-bot = cmd.Bot(intents = intents)
+bot = cmd.Bot(intents=intents)
 
 @bot.event
 async def on_ready():
@@ -24,42 +28,40 @@ async def on_ready():
 
         # Explicitly register commands
         if bot.application_id:
-            await bot.sync_all_application_commands()
-            print("Slash commands synced successfully...")
+            try:
+                await bot.sync_all_application_commands()
+            except nextcord.Forbidden:
+                print("Error: Not member of guild.")
+            else:
+                print("Slash commands synced successfully...")
 
     except Exception as e:
         print(f"Error during bot startup: {e}")
 
-    print(f'Tempo is online.\n')
+    print("Tempo is online.\n")
 
-    statuses = ["Song request? Fire away!", 
-                "Max volume. Ready?", 
-                "I'm your DJ. What's up?", 
-                "Tune in, vibe out.", 
-                "Music on, world off.",
-                "It's a vibe, trust me.",
-                "Yo, pass me the aux.",
-                "Vibe check. You're good.",
-                "Keep calm, music's here.",
-                "Bruh…",
-                "When in doubt, vibe out.",
-                "You up…?"]
-    
-    # # Testing: Messsages longer than 25 characters won't fit in status 
-    # for status in statuses:
-    #     if len(status) > 25:
-    #         print('"' + status + '"', "Exceeds 25 character max length.")
+    statuses = [
+        "Song request? Fire away!", 
+        "Max volume. Ready?", 
+        "I'm your DJ. What's up?", 
+        "Tune in, vibe out.", 
+        "Music on, world off.",
+        "It's a vibe, trust me.",
+        "Yo, pass me the aux.",
+        "Vibe check. You're good.",
+        "Keep calm, music's here.",
+        "Bruh…",
+        "When in doubt, vibe out.",
+        "You up…?"
+    ]
 
-    # Periodically update bot status
+    # Dynamic, periodically updated status message loop
     while True:
-        # Select random status
         status = random.choice(statuses)
-
-        # Set custom status
-        await bot.change_presence(activity=nextcord.CustomActivity(name=status))
-
-        # Refresh custom status
+        try:
+            await bot.change_presence(activity=nextcord.CustomActivity(name=status))
+        except nextcord.Forbidden:
+            pass
         await asyncio.sleep(3600)
 
-# Start Tempo
 bot.run(beta_token)
