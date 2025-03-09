@@ -195,7 +195,7 @@ class Music(cmd.Cog):
         try:
             player = self.bot.lavalink.player_manager.create(interaction.guild.id, endpoint=str(interaction.guild.region))
         except:
-            embed.description = "Error: Something went wrong. Please try again later."
+            embed.description = "Error: Lost connection to audio streaming node. Please try again later."
             return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         # Refresh guild info to update voice channel member data.
@@ -245,7 +245,7 @@ class Music(cmd.Cog):
         try:
             results = await player.node.get_tracks(query)
         except:
-            embed.description = "Error: Something went wrong. Please try again later."
+            embed.description = "Error: Lost connection to audio streaming node. Please try again later."
             return await interaction.response.send_message(embed=embed, ephemeral=True)
         
         if not results or not results['tracks']:
@@ -655,7 +655,7 @@ class Music(cmd.Cog):
         try:
             player = self.bot.lavalink.player_manager.create(interaction.guild.id, endpoint=str(interaction.guild.region))
         except:
-            embed.description = "Error: Something went wrong. Please try again later."
+            embed.description = "Error: Lost connection to audio streaming node. Please try again later."
             return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         # Process query
@@ -667,7 +667,7 @@ class Music(cmd.Cog):
         try:
             results = await player.node.get_tracks(query)
         except:
-            embed.description = "Error: Something went wrong. Please try again later."
+            embed.description = "Error: Lost connection to audio streaming node. Please try again later."
             return await interaction.response.send_message(embed=embed, ephemeral=True)
         
         if not results or not results['tracks']:
