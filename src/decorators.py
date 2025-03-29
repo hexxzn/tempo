@@ -3,8 +3,12 @@ import pprint
 import logging
 import asyncio
 from datetime import datetime
+from utils import tempo_embed
 from functools import wraps
 from tokens import *
+
+
+# This entire file is a mess, but it works so I'll clean it up later.
 
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -112,3 +116,57 @@ def developer_only(func):
         return func
     else:
         return wrapper
+
+
+def catch_command_errors(func):
+    # If this is a slash command (has .callback), wrap the callback.
+    if hasattr(func, "callback"):
+        original_callback = func.callback
+
+        @wraps(original_callback)
+        async def async_callback_wrapper(*args, **kwargs):
+            try:
+                return await original_callback(*args, **kwargs)
+            except Exception as e:
+                logging.exception(f"[Command Error] {e}")
+                interaction = next((arg for arg in args if isinstance(arg, nextcord.Interaction)), None)
+                if interaction:
+                    try:
+                        embed = tempo_embed("An unexpected error occurred.")
+                        await interaction.response.send_message(embed=embed, ephemeral=True)
+                    except Exception as send_error:
+                        logging.warning(f"[Interaction Error] Failed to send error response: {send_error}")
+                else:
+                    logging.warning("No valid interaction object found in args.")
+
+        func.callback = async_callback_wrapper
+        return func
+
+    # Regular async function (not a slash command)
+    elif asyncio.iscoroutinefunction(func):
+        @wraps(func)
+        async def async_wrapper(*args, **kwargs):
+            try:
+                return await func(*args, **kwargs)
+            except Exception as e:
+                logging.exception(f"[Command Error] {e}")
+                interaction = next((arg for arg in args if isinstance(arg, nextcord.Interaction)), None)
+                if interaction:
+                    try:
+                        embed = tempo_embed("An unexpected error occurred.")
+                        await interaction.response.send_message(embed=embed, ephemeral=True)
+                    except Exception as send_error:
+                        logging.warning(f"[Interaction Error] Failed to send error response: {send_error}")
+                else:
+                    logging.warning("No valid interaction object found in args.")
+        return async_wrapper
+
+    else:
+        # Sync fallback (shouldn’t be used with slash commands)
+        @wraps(func)
+        def sync_wrapper(*args, **kwargs):
+            try:
+                return func(*args, **kwargs)
+            except Exception as e:
+                logging.exception(f"[Command Error - Sync] {e}")
+        return sync_wrapper

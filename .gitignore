@@ -4,6 +4,7 @@
 /src/cogs/Tempo 3 Cogs
 /txt
 /logs
+/old
 .vscode/launch.json
 .out
 lavalink.bat
@@ -17,3 +18,4 @@ lavalink-old2.jar
 README PLEASE DEAR GOD.txt
 application-old.yml
 lavalink(working).jar
+requirements.txt
