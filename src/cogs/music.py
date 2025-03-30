@@ -40,12 +40,6 @@ class LavalinkVoiceClient(nextcord.VoiceClient):
             player.channel_id = None
             self.cleanup()
 
-class CustomPlayer(lavalink.DefaultPlayer):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.repeat = False
-        self.shuffle = False
-
 # ---------------------------- #
 # UI View for Search Command
 # ---------------------------- #
@@ -132,21 +126,10 @@ class Music(cmd.Cog):
     #         if not player.is_playing:
     #             await player.play()
     #             await player.set_volume(20)
-    #             player.repeat = True
+    #             player.loop = 2
     #     except:
     #         print("Ambient Mode: Unknown Error")
     #         return
-
-    # Catch errors during track requests
-    
-        
-
-
-
-
-    # Series of internal functions
-
-    
 
     # Get lavalink player for guild
     async def _get_player(self, interaction):
@@ -202,17 +185,6 @@ class Music(cmd.Cog):
         
         return True
 
-
-
-
-
-
-
-
-
-
-
-
     # Automatic inactivity disconnect
     @log_calls
     async def disconnect_timer(self, guild, player, delay):
@@ -227,7 +199,7 @@ class Music(cmd.Cog):
             if (not guild.voice_client or not player) or (player.is_playing and (len(guild.voice_client.channel.members) > 1)) or self.tempo_ambient_mode.get(guild.id, False) == True:
                 return
 
-        player.repeat = False
+        player.loop = 0
         player.shuffle = False
         player.queue.clear()
         await player.stop()
@@ -254,7 +226,7 @@ class Music(cmd.Cog):
         if member.id == self.bot.user.id:
             # If bot is forcibly disconnected by guild member
             if not after.channel and member.guild.voice_client:
-                player.repeat = False
+                player.loop = 0
                 player.shuffle = False
                 player.queue.clear()
                 # self.tempo_ambient_mode[member.guild.id] = False
@@ -281,7 +253,7 @@ class Music(cmd.Cog):
     @log_calls
     @catch_command_errors
     @nextcord.slash_command(description="Play a song or add it to the queue.", guild_ids=tempo_guild_ids)
-    async def play(self, interaction: nextcord.Interaction, query: str):
+    async def play(self, interaction: nextcord.Interaction, query: str = nextcord.SlashOption(description="Song name or URL to play")):
         embed = tempo_embed()
         
         # Attempt to get or create the player.
@@ -299,7 +271,7 @@ class Music(cmd.Cog):
         #     interaction.guild.voice_client and
         #     (len(interaction.guild.voice_client.channel.members) <= 1 or 
         #     interaction.user.voice.channel == interaction.guild.voice_client.channel)):
-        #     player.repeat = False
+        #     player.loop = 0
         #     player.shuffle = False
         #     player.queue.clear()
         #     await player.stop()
@@ -376,7 +348,7 @@ class Music(cmd.Cog):
     @log_calls
     @catch_command_errors
     @nextcord.slash_command(description="Search for a song and choose which one to play.", guild_ids=tempo_guild_ids)
-    async def search(self, interaction: nextcord.Interaction, query: str):
+    async def search(self, interaction: nextcord.Interaction, query: str = nextcord.SlashOption(description="Search keywords or URL")):
         embed = tempo_embed()
         
         # Create or get player
@@ -500,7 +472,7 @@ class Music(cmd.Cog):
                 embed.description += "The queue has been cleared.\n"
 
             # Set player to default state
-            player.repeat = False
+            player.loop = 0
             player.shuffle = False
             player.queue.clear()
 
@@ -583,6 +555,11 @@ class Music(cmd.Cog):
         elif player.paused:
             embed = tempo_embed("Unable to skip while the player is paused.\nUse `/resume` to continue playing.")
             return await interaction.response.send_message(embed=embed, ephemeral=True)
+        
+        # If repeat (track) is enabled
+        elif player.loop == 1:
+            embed = tempo_embed("Unable to skip while loop mode is set to loop track.\nUse `/loop 0` to disable loop mode.\nUse `/loop 2` to loop queue.")
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         # Proceed with skip command
         else:
@@ -593,10 +570,8 @@ class Music(cmd.Cog):
                 track = player.queue[0]
                 embed.description += (f"\nNow Playing: [{track['title']}]({track['uri']})")
 
-                # if player.repeat:
-                #     embed.description += "\n Repeat is enabled. Use `/repeat` to disable."
-                # if player.shuffle:
-                #     embed.description += "\n Shuffle is enabled. Use `/shuffle` to disable."   
+                if player.shuffle:
+                    embed.description += "\n Shuffle is enabled. Use `/shuffle` to disable."   
 
             # Skip track and send response
             await player.skip()
@@ -636,7 +611,7 @@ class Music(cmd.Cog):
     @log_calls
     @catch_command_errors
     @nextcord.slash_command(description="Seek to a specific position in the current song.", guild_ids=tempo_guild_ids)
-    async def seek(self, interaction: nextcord.Interaction, position: int):
+    async def seek(self, interaction: nextcord.Interaction, position: int = nextcord.SlashOption(description="Time in seconds to seek to")):
         # Get player for guild from guild cache
         player = await self._get_player(interaction)
 
@@ -728,8 +703,17 @@ class Music(cmd.Cog):
     # Cleaned
     @log_calls
     @catch_command_errors
-    @nextcord.slash_command(description="Check current playback volume or adjust volume from 1 to 100.", guild_ids=tempo_guild_ids)
-    async def volume(self, interaction: nextcord.Interaction, volume: int = None):
+    @nextcord.slash_command(description="Check or change the playback volume.", guild_ids=tempo_guild_ids)
+    async def volume(
+        self, 
+        interaction: nextcord.Interaction, 
+        volume: int = nextcord.SlashOption(
+            description="Set volume level from 1 to 100 (leave blank to check current volume)",
+            required=False,
+            min_value=1,
+            max_value=100
+        )
+    ):
         # Get player for guild from guild cache
         player = await self._get_player(interaction)
 
@@ -750,11 +734,6 @@ class Music(cmd.Cog):
             if volume is None:
                 embed = tempo_embed(f"Current volume: {player.volume}%")
                 return await interaction.response.send_message(embed=embed)
-
-            # Validate volume range
-            if volume < 1 or volume > 100:
-                embed = tempo_embed("Enter a value from 1 to 100.\nExample: `/volume 25`.")
-                return await interaction.response.send_message(embed=embed, ephemeral=True)
 
             # Check if user has permission (server owner only)
             if interaction.user.id != owner:
@@ -779,7 +758,7 @@ class Music(cmd.Cog):
     @log_calls
     @catch_command_errors
     @nextcord.slash_command(description="Remove a song from the queue by its position.", guild_ids=tempo_guild_ids)
-    async def remove(self, interaction: nextcord.Interaction, index: int):
+    async def remove(self, interaction: nextcord.Interaction, index: int = nextcord.SlashOption(description="Track number to remove from queue.")):
         # Get player for guild from guild cache
         player = await self._get_player(interaction)
 
@@ -803,44 +782,49 @@ class Music(cmd.Cog):
             embed = tempo_embed(f"Removed: [{track['title']}]({track['uri']})")
             await interaction.response.send_message(embed=embed)
 
-    # Disabled (Temporarily)
+    # Cleaned
     @log_calls
     @catch_command_errors
-    @nextcord.slash_command(description="Toggle repeat mode for the queue.", guild_ids=tempo_guild_ids)
-    async def repeat(self, interaction: nextcord.Interaction):
-        embed = tempo_embed("Repeat function currently not available.")
-        return await interaction.response.send_message(embed=embed)
+    @nextcord.slash_command(description="Set loop mode.", guild_ids=tempo_guild_ids)
+    async def loop(
+        self, 
+        interaction: nextcord.Interaction , 
+        mode: int = nextcord.SlashOption(
+            description="Set loop mode (0: Loop disabled, 1: Loop track, 2: Loop queue)",
+            required=True,
+            min_value=0,
+            max_value=2
+        )
+    ):
+        # Get player for current guild
+        player = await self._get_player(interaction)
 
-        # Get player for guild from guild cache
-        player = self.bot.lavalink.player_manager.get(interaction.guild.id)
+        # If Tempo is not connected to voice channel or not in same voice channel as user
+        if not player or not await self._check_voice_state(interaction, player): return
 
-        # Create embed and set border color
-        embed = tempo_embed()
-
-        # If player does not exist or isn't playing
-        if not player or not player.is_playing:
-            embed.description = "No music is currently playing."
+        # If Tempo is not playing music
+        elif not player.is_playing:
+            embed = tempo_embed("No music is currently playing.")
             return await interaction.response.send_message(embed=embed, ephemeral=True)
 
-        # Toggle repeat
-        if player.repeat:
-            player.repeat = not player.repeat
+        # Proceed with loop command
         else:
-            player.repeat = True
-        status = "enabled" if player.repeat else "disabled"
+            if mode == 0:
+                embed = tempo_embed("Loop mode `disabled`")
+            if mode == 1:
+                embed = tempo_embed("Loop mode set to `loop track`")
+            if mode == 2:
+                embed = tempo_embed("Loop mode set to `loop queue`")
 
-        # Send response
-        embed.description = f"Repeat mode has been **{status}**."
-        await interaction.response.send_message(embed=embed)
+            # Set repeat mode and send response
+            player.loop = mode
+            await interaction.response.send_message(embed=embed)
 
     # Disabled (Temporarily)
     @log_calls
     @catch_command_errors
     @nextcord.slash_command(description="Toggle shuffle mode for the queue.", guild_ids=tempo_guild_ids)
     async def shuffle(self, interaction: nextcord.Interaction):
-        embed = tempo_embed("Shuffle function currently not available.")
-        return await interaction.response.send_message(embed=embed)
-
         # Get player for guild from guild cache
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
@@ -866,7 +850,7 @@ class Music(cmd.Cog):
     @log_calls
     @developer_only
     @catch_command_errors
-    @nextcord.slash_command(description="[Developer Only] Test command that calls the play command (multiple tracks)", guild_ids=tempo_guild_ids)
+    @nextcord.slash_command(description="[Developer Only] Test multiple-track playback.", guild_ids=tempo_guild_ids)
     async def test(self, interaction: nextcord.Interaction):
         test_query = "https://www.youtube.com/playlist?list=PLkq4HKf72undqxj6cKoIE0Ur7970NFSi1"
         await self.play(interaction, test_query)
@@ -874,7 +858,7 @@ class Music(cmd.Cog):
     @log_calls
     @developer_only
     @catch_command_errors
-    @nextcord.slash_command(description="[Developer Only] Test command that calls the play command (single track)", guild_ids=tempo_guild_ids)
+    @nextcord.slash_command(description="[Developer Only] Test single-track playback.", guild_ids=tempo_guild_ids)
     async def testsn(self, interaction: nextcord.Interaction):
         test_query = "fade oscuro"
         await self.play(interaction, test_query)

@@ -21,6 +21,7 @@ class Help(cmd.Cog):
         # Command descriptions (Dropdown options)
         command_descriptions = {
             "play": "Play a song or add it to the queue.",
+            "search": "Search for a song before playing.",
             "stop": "Stop playback, clear the queue, and disconnect.",
             "pause": "Pause playback.",
             "resume": "Resume playback.",
@@ -29,11 +30,10 @@ class Help(cmd.Cog):
             "seek": "Seek to a position in a song.",
             "song": "Get the title of the current song.",
             "queue": "Show the song queue.",
-            "repeat": "Toggle repeat mode.",
+            "loop": "Set loop mode.",
             "shuffle": "Toggle shuffle mode.",
             "remove": "Remove a song from the queue.",
             "volume": "Adjust playback volume.",
-            "search": "Search for a song before playing.",
         }
 
         # Create a dropdown menu
@@ -59,10 +59,10 @@ class Help(cmd.Cog):
                     "seek": "**Seek**\nSeek to a specific position in the current song.\n\n**Syntax**\n`/seek <seconds>`",
                     "song": "**Song**\nGet the title of the current song.\n\n**Syntax**\n`/song`",
                     "queue": "**Queue**\nGet a list of all songs in the queue.\n\n**Syntax**\n`/queue`",
-                    "repeat": "**Repeat**\nToggle repeat mode for the queue.\n\n**Syntax**\n`/repeat`",
+                    "loop": "**Loop**\nSet loop mode.\n\n**Syntax**\n`/loop 0` disable loop mode\n`/loop 1` loop track\n`/loop 2` loop queue",
                     "shuffle": "**Shuffle**\nToggle shuffle mode for the queue.\n\n**Syntax**\n`/shuffle`",
                     "remove": "**Remove**\nRemove a song from the queue by its position.\n\n**Syntax**\n`/remove <queue number>`",
-                    "volume": "**Volume**\nCheck current playback volume or adjust volume from 1 to 100.\nDefault volume is 20.\n\n**Syntax**\n`/volume`\n`/volume <1 - 100>`",
+                    "volume": "**Volume**\nCheck or change the playback volume from 1 to 100.\nDefault volume is 20.\n\n**Syntax**\n`/volume`\n`/volume <1 - 100>`",
                     "search": "**Search**\nChoose from a list of songs.\n\n**Syntax**\n`/search <song title and artist>`",
                 }
 
