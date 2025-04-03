@@ -9,7 +9,7 @@ class Help(cmd.Cog):
         self.bot = bot
 
     @log_calls
-    @dynamic_slash_command(description="Select from a list of commands for additional info on what the command does and how to use it.", guild_ids=tempo_guild_ids)
+    @dynamic_slash_command(description="Select from a list of commands for additional info on what the command does and how to use it.")
     async def help(self, interaction: nextcord.Interaction):
 
         # Help embed with thumbnail

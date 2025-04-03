@@ -12,7 +12,7 @@ class General(cmd.Cog):
 
     @log_calls
     @developer_only
-    @dynamic_slash_command(description="[Developer Only] Cross-server diagnostic info.", guild_ids=tempo_guild_ids)
+    @dynamic_slash_command(description="[Developer Only] Cross-server diagnostic info.")
     async def status(self, interaction: nextcord.Interaction):
         # Iterate through each guild Tempo is a member of
         guild_list = []
@@ -53,7 +53,7 @@ class General(cmd.Cog):
 
     @log_calls
     @developer_only
-    @dynamic_slash_command(description="[Developer Only] Force reboot.", guild_ids=tempo_guild_ids)
+    @dynamic_slash_command(description="[Developer Only] Force reboot.")
     async def bash(self, interaction: nextcord.Interaction):
         # Defer the response immediately to avoid timeout
         await interaction.response.defer(ephemeral=True)
@@ -84,7 +84,7 @@ class General(cmd.Cog):
             await interaction.followup.send(embed=embed, ephemeral=True)
 
     @log_calls
-    @dynamic_slash_command(description="Get a link to invite the bot to another server.", guild_ids=tempo_guild_ids)
+    @dynamic_slash_command(description="Get a link to invite the bot to another server.")
     async def invite(self, interaction: nextcord.Interaction):
 
         # Create and send embed
