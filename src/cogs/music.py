@@ -6,7 +6,7 @@ import logging
 import math
 import re
 from decorators import log_calls, developer_only, catch_command_errors
-from utils import tempo_embed
+from utils import tempo_embed, dynamic_slash_command
 from tokens import *
 
 # ---------------------------- #
@@ -65,7 +65,7 @@ class Music(cmd.Cog):
     # Initialize music cog and set up Lavalink for audio streaming
     def __init__(self, bot):
         self.bot = bot
-        self.tempo_ambient_mode = {sourceflow_guild_id: False, dev_guild_id: False}
+        self.tempo_ambient_mode = {sourceflow_guild_id: False, developer_guild_id: False}
 
         if not hasattr(bot, "lavalink"):
             bot.lavalink = lavalink.Client(bot.user.id)
@@ -252,7 +252,7 @@ class Music(cmd.Cog):
     # Needs cleaning
     @log_calls
     @catch_command_errors
-    @nextcord.slash_command(description="Play a song or add it to the queue.", guild_ids=tempo_guild_ids)
+    @dynamic_slash_command(description="Play a song or add it to the queue.", guild_ids=tempo_guild_ids)
     async def play(self, interaction: nextcord.Interaction, query: str = nextcord.SlashOption(description="Song name or URL to play")):
         embed = tempo_embed()
         
@@ -347,7 +347,7 @@ class Music(cmd.Cog):
     # Needs cleaning
     @log_calls
     @catch_command_errors
-    @nextcord.slash_command(description="Search for a song and choose which one to play.", guild_ids=tempo_guild_ids)
+    @dynamic_slash_command(description="Search for a song and choose which one to play.", guild_ids=tempo_guild_ids)
     async def search(self, interaction: nextcord.Interaction, query: str = nextcord.SlashOption(description="Search keywords or URL")):
         embed = tempo_embed()
         
@@ -456,7 +456,7 @@ class Music(cmd.Cog):
     # Cleaned
     @log_calls
     @catch_command_errors
-    @nextcord.slash_command(description="Stop playback, clear the queue, and disconnect.", guild_ids=tempo_guild_ids)
+    @dynamic_slash_command(description="Stop playback, clear the queue, and disconnect.", guild_ids=tempo_guild_ids)
     async def stop(self, interaction: nextcord.Interaction):
         # Get player for current guild
         player = await self._get_player(interaction)
@@ -484,7 +484,7 @@ class Music(cmd.Cog):
     # Cleaned
     @log_calls
     @catch_command_errors
-    @nextcord.slash_command(description="Pause the current song.", guild_ids=tempo_guild_ids)
+    @dynamic_slash_command(description="Pause the current song.", guild_ids=tempo_guild_ids)
     async def pause(self, interaction: nextcord.Interaction):
         # Get player for current guild
         player = await self._get_player(interaction)
@@ -511,7 +511,7 @@ class Music(cmd.Cog):
     # Cleaned
     @log_calls
     @catch_command_errors
-    @nextcord.slash_command(description="Resume the paused song.", guild_ids=tempo_guild_ids)
+    @dynamic_slash_command(description="Resume the paused song.", guild_ids=tempo_guild_ids)
     async def resume(self, interaction: nextcord.Interaction):
         # Get player for current guild
         player = await self._get_player(interaction)
@@ -538,7 +538,7 @@ class Music(cmd.Cog):
     # Cleaned
     @log_calls
     @catch_command_errors
-    @nextcord.slash_command(description="Skip the current song.", guild_ids=tempo_guild_ids)
+    @dynamic_slash_command(description="Skip the current song.", guild_ids=tempo_guild_ids)
     async def skip(self, interaction: nextcord.Interaction):
         # Get player for current guild
         player = await self._get_player(interaction)
@@ -580,7 +580,7 @@ class Music(cmd.Cog):
     # Cleaned
     @log_calls
     @catch_command_errors
-    @nextcord.slash_command(description="Restart the current song.", guild_ids=tempo_guild_ids)
+    @dynamic_slash_command(description="Restart the current song.", guild_ids=tempo_guild_ids)
     async def restart(self, interaction: nextcord.Interaction):
         # Get player for guild from guild cache
         player = await self._get_player(interaction)
@@ -610,7 +610,7 @@ class Music(cmd.Cog):
     # Cleaned
     @log_calls
     @catch_command_errors
-    @nextcord.slash_command(description="Seek to a specific position in the current song.", guild_ids=tempo_guild_ids)
+    @dynamic_slash_command(description="Seek to a specific position in the current song.", guild_ids=tempo_guild_ids)
     async def seek(self, interaction: nextcord.Interaction, position: int = nextcord.SlashOption(description="Time in seconds to seek to")):
         # Get player for guild from guild cache
         player = await self._get_player(interaction)
@@ -647,7 +647,7 @@ class Music(cmd.Cog):
     # Cleaned
     @log_calls
     @catch_command_errors
-    @nextcord.slash_command(description="Get the title of the current song.", guild_ids=tempo_guild_ids)
+    @dynamic_slash_command(description="Get the title of the current song.", guild_ids=tempo_guild_ids)
     async def song(self, interaction: nextcord.Interaction):
         # Get player for guild from guild cache
         player = await self._get_player(interaction)
@@ -671,7 +671,7 @@ class Music(cmd.Cog):
     # Cleaned
     @log_calls
     @catch_command_errors
-    @nextcord.slash_command(description="Get a list of all songs in the queue.", guild_ids=tempo_guild_ids)
+    @dynamic_slash_command(description="Get a list of all songs in the queue.", guild_ids=tempo_guild_ids)
     async def queue(self, interaction: nextcord.Interaction):
         # Get player for guild from guild cache
         player = await self._get_player(interaction)
@@ -703,7 +703,7 @@ class Music(cmd.Cog):
     # Cleaned
     @log_calls
     @catch_command_errors
-    @nextcord.slash_command(description="Check or change the playback volume.", guild_ids=tempo_guild_ids)
+    @dynamic_slash_command(description="Check or change the playback volume.", guild_ids=tempo_guild_ids)
     async def volume(
         self, 
         interaction: nextcord.Interaction, 
@@ -757,7 +757,7 @@ class Music(cmd.Cog):
     # Cleaned
     @log_calls
     @catch_command_errors
-    @nextcord.slash_command(description="Remove a song from the queue by its position.", guild_ids=tempo_guild_ids)
+    @dynamic_slash_command(description="Remove a song from the queue by its position.", guild_ids=tempo_guild_ids)
     async def remove(self, interaction: nextcord.Interaction, index: int = nextcord.SlashOption(description="Track number to remove from queue.")):
         # Get player for guild from guild cache
         player = await self._get_player(interaction)
@@ -785,7 +785,7 @@ class Music(cmd.Cog):
     # Cleaned
     @log_calls
     @catch_command_errors
-    @nextcord.slash_command(description="Set loop mode.", guild_ids=tempo_guild_ids)
+    @dynamic_slash_command(description="Set loop mode.", guild_ids=tempo_guild_ids)
     async def loop(
         self, 
         interaction: nextcord.Interaction , 
@@ -823,7 +823,7 @@ class Music(cmd.Cog):
     # Disabled (Temporarily)
     @log_calls
     @catch_command_errors
-    @nextcord.slash_command(description="Toggle shuffle mode for the queue.", guild_ids=tempo_guild_ids)
+    @dynamic_slash_command(description="Toggle shuffle mode for the queue.", guild_ids=tempo_guild_ids)
     async def shuffle(self, interaction: nextcord.Interaction):
         # Get player for guild from guild cache
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
@@ -850,7 +850,7 @@ class Music(cmd.Cog):
     @log_calls
     @developer_only
     @catch_command_errors
-    @nextcord.slash_command(description="[Developer Only] Test multiple-track playback.", guild_ids=tempo_guild_ids)
+    @dynamic_slash_command(description="[Developer Only] Test multiple-track playback.", guild_ids=tempo_guild_ids)
     async def test(self, interaction: nextcord.Interaction):
         test_query = "https://www.youtube.com/playlist?list=PLkq4HKf72undqxj6cKoIE0Ur7970NFSi1"
         await self.play(interaction, test_query)
@@ -858,7 +858,7 @@ class Music(cmd.Cog):
     @log_calls
     @developer_only
     @catch_command_errors
-    @nextcord.slash_command(description="[Developer Only] Test single-track playback.", guild_ids=tempo_guild_ids)
+    @dynamic_slash_command(description="[Developer Only] Test single-track playback.", guild_ids=tempo_guild_ids)
     async def testsn(self, interaction: nextcord.Interaction):
         test_query = "fade oscuro"
         await self.play(interaction, test_query)

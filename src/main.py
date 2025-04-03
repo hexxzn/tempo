@@ -64,4 +64,5 @@ async def on_ready():
             pass
         await asyncio.sleep(3600)
 
-bot.run(beta_token)
+token = beta_token if development_mode else tempo_token
+bot.run(token)
