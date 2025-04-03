@@ -2,6 +2,7 @@ import nextcord
 import nextcord.ext.commands as cmd
 from decorators import log_calls
 from tokens import *
+from utils import tempo_embed, dynamic_slash_command
 
 
 class Help(cmd.Cog):
