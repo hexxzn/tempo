@@ -1,11 +1,5 @@
 #!/bin/bash
 
-# Attempt to kill processes
-echo "Stopping Lavalink and Tempo..."
-pkill -f lavalink.jar && echo "Lavalink stopped..." || echo "Lavalink not running..."
-pkill -f main.py && echo "Tempo stopped..." || echo "Tempo not running..."
-sleep 3
-
 # Specify output/log file name
 _now=$(date +"%m_%d_%Y")
 _file="$_now.out"
