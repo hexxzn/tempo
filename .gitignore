@@ -19,4 +19,6 @@ README PLEASE DEAR GOD.txt
 application-old.yml
 lavalink(working).jar
 requirements.txt
+update_old.sh
 update.sh
+src/restart_old.sh
