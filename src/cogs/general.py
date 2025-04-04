@@ -1,7 +1,7 @@
 import nextcord
 import nextcord.ext.commands as cmd
 import subprocess
-from decorators import log_calls, developer_only
+from decorators import log_calls, developer_only, catch_command_errors
 from tokens import *
 from utils import tempo_embed, dynamic_slash_command
 
@@ -12,6 +12,7 @@ class General(cmd.Cog):
 
     @log_calls
     @developer_only
+    @catch_command_errors
     @dynamic_slash_command(description="[Developer Only] Cross-server diagnostic info.")
     async def status(self, interaction: nextcord.Interaction):
         # Iterate through each guild Tempo is a member of
@@ -49,10 +50,12 @@ class General(cmd.Cog):
         embed.add_field(name=f'__Guild Details__', value=info_list, inline=False)
 
         # Send embed message (Ephemeral to keep it private)
-        await interaction.response.send_message(embed=embed, ephemeral=True)
+        await interaction.response.defer(ephemeral=True)
+        await interaction.followup.send(embed=embed, ephemeral=True)
 
     @log_calls
     @developer_only
+    @catch_command_errors
     @dynamic_slash_command(description="[Developer Only] Force reboot.")
     async def bash(self, interaction: nextcord.Interaction):
         # Defer the response immediately to avoid timeout
@@ -84,6 +87,7 @@ class General(cmd.Cog):
             await interaction.followup.send(embed=embed, ephemeral=True)
 
     @log_calls
+    @catch_command_errors
     @dynamic_slash_command(description="Get a link to invite the bot to another server.")
     async def invite(self, interaction: nextcord.Interaction):
 

@@ -1,6 +1,6 @@
 import nextcord
 import nextcord.ext.commands as cmd
-from decorators import log_calls
+from decorators import log_calls, catch_command_errors
 from tokens import *
 from utils import tempo_embed, dynamic_slash_command
 
@@ -10,6 +10,7 @@ class Help(cmd.Cog):
         self.bot = bot
 
     @log_calls
+    @catch_command_errors
     @dynamic_slash_command(description="Select from a list of commands for additional info on what the command does and how to use it.")
     async def help(self, interaction: nextcord.Interaction):
 

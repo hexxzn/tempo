@@ -57,7 +57,6 @@ class TempoView(nextcord.ui.View):
                 item.disabled = True
             await self.message.edit(view=self)  # Only disable if it was never used
 
-
 # ---------------------------- #
 # Music Cog
 # ---------------------------- #
@@ -324,14 +323,26 @@ class Music(cmd.Cog):
                 track_obj = self._create_track(song, interaction.user.id)
                 if not track_obj:
                     embed.description = "Error loading track."
-                    return await interaction.response.send_message(embed=embed, ephemeral=True)
+                    await interaction.response.send_message(embed=embed, ephemeral=True)
+
+                    # Start disconnect timer if necessary
+                    if interaction.guild.voice_client:
+                        await self.disconnect_timer(interaction.guild, player, 30)
+                    return
+                
                 player.add(requester=interaction.user.id, track=track_obj)
             embed.description = f'Playlist queued: [{results["playlistInfo"]["name"]}]({query}) ({len(tracks)} tracks)'
         else:
             track_obj = self._create_track(results['tracks'][0], interaction.user.id)
             if not track_obj:
                 embed.description = "Error loading track."
-                return await interaction.response.send_message(embed=embed, ephemeral=True)
+                await interaction.response.send_message(embed=embed, ephemeral=True)
+
+                # Start disconnect timer if necessary
+                if interaction.guild.voice_client:
+                    await self.disconnect_timer(interaction.guild, player, 30)
+                return
+            
             player.add(requester=interaction.user.id, track=track_obj)
             embed.description = (f'Now Playing: [{track_obj.title}]({track_obj.uri})'
                                 if not player.is_playing else
@@ -381,10 +392,11 @@ class Music(cmd.Cog):
         
         # Define a custom dropdown for choosing a track
         class TrackDropdown(nextcord.ui.Select):
-            def __init__(self, tracks, interaction, music_cog):
+            def __init__(self, tracks, interaction, music_cog, player):
                 self.tracks = tracks
                 self.interaction = interaction
-                self.music_cog = music_cog  # Store reference to Music class
+                self.music_cog = music_cog
+                self.player = player
 
                 options = [
                     nextcord.SelectOption(label=track['info']['title'][:80], value=str(i))
@@ -396,10 +408,12 @@ class Music(cmd.Cog):
                 track_index = int(self.values[0])
                 selected_track = self.tracks[track_index]
 
-                # ✅ Use Music class to create track safely
+                # Use Music class to create track safely
                 track_obj = self.music_cog._create_track(selected_track, self.interaction.user.id)
                 if not track_obj:
                     await dropdown_interaction.response.send_message("Failed to load track.", ephemeral=True)
+                    if interaction.guild.voice_client:
+                        await self.music_cog.disconnect_timer(interaction.guild, self.player, 30)
                     return
                 
                 # Ensure bot joins voice channel
@@ -415,7 +429,7 @@ class Music(cmd.Cog):
                 player.add(requester=interaction.user.id, track=track_obj)
                 
                 # If not currently playing, start playback
-                if not player.is_playing:
+                if not self.player.is_playing:
                     await player.play()
                     await player.set_volume(20)
                 
@@ -433,7 +447,7 @@ class Music(cmd.Cog):
         class DropdownView(nextcord.ui.View):
             def __init__(self, tracks, interaction, music_cog):
                 super().__init__(timeout=60)
-                self.add_item(TrackDropdown(tracks, interaction, music_cog))
+                self.add_item(TrackDropdown(tracks, interaction, music_cog, player))
                 self.message = None
 
             async def on_timeout(self):
@@ -453,7 +467,6 @@ class Music(cmd.Cog):
             embed.description = "Invalid search query."
             return await interaction.response.send_message(embed=embed, ephemeral=True)
 
-    # Cleaned
     @log_calls
     @catch_command_errors
     @dynamic_slash_command(description="Stop playback, clear the queue, and disconnect.")
@@ -481,7 +494,6 @@ class Music(cmd.Cog):
             await interaction.guild.voice_client.disconnect(force=True)
             await interaction.response.send_message(embed=embed)
 
-    # Cleaned
     @log_calls
     @catch_command_errors
     @dynamic_slash_command(description="Pause the current song.")
@@ -508,7 +520,6 @@ class Music(cmd.Cog):
             embed = tempo_embed("Playback has been paused.\nUse `/resume` to continue playing.")
             await interaction.response.send_message(embed=embed)
 
-    # Cleaned
     @log_calls
     @catch_command_errors
     @dynamic_slash_command(description="Resume the paused song.")
@@ -535,7 +546,6 @@ class Music(cmd.Cog):
             embed = tempo_embed("Playback has been resumed.")
             await interaction.response.send_message(embed=embed)
 
-    # Cleaned
     @log_calls
     @catch_command_errors
     @dynamic_slash_command(description="Skip the current song.")
@@ -577,7 +587,6 @@ class Music(cmd.Cog):
             await player.skip()
             await interaction.response.send_message(embed=embed)
 
-    # Cleaned
     @log_calls
     @catch_command_errors
     @dynamic_slash_command(description="Restart the current song.")
@@ -607,7 +616,6 @@ class Music(cmd.Cog):
             await player.seek(0)
             await interaction.response.send_message(embed=embed)
 
-    # Cleaned
     @log_calls
     @catch_command_errors
     @dynamic_slash_command(description="Seek to a specific position in the current song.")
@@ -644,7 +652,6 @@ class Music(cmd.Cog):
             await player.seek(position * 1000)
             await interaction.response.send_message(embed=embed)
 
-    # Cleaned
     @log_calls
     @catch_command_errors
     @dynamic_slash_command(description="Get the title of the current song.")
@@ -668,7 +675,6 @@ class Music(cmd.Cog):
             embed = tempo_embed(f"Now Playing: [{track['title']}]({track['uri']})\nDuration: `{duration} seconds`")
             await interaction.response.send_message(embed=embed)
 
-    # Cleaned
     @log_calls
     @catch_command_errors
     @dynamic_slash_command(description="Get a list of all songs in the queue.")
@@ -700,7 +706,6 @@ class Music(cmd.Cog):
 
             await interaction.response.send_message(embed=embed)
 
-    # Cleaned
     @log_calls
     @catch_command_errors
     @dynamic_slash_command(description="Check or change the playback volume.")
@@ -754,7 +759,6 @@ class Music(cmd.Cog):
 
             await interaction.response.send_message(embed=embed)
 
-    # Cleaned
     @log_calls
     @catch_command_errors
     @dynamic_slash_command(description="Remove a song from the queue by its position.")
@@ -820,7 +824,6 @@ class Music(cmd.Cog):
             player.loop = mode
             await interaction.response.send_message(embed=embed)
 
-    # Disabled (Temporarily)
     @log_calls
     @catch_command_errors
     @dynamic_slash_command(description="Toggle shuffle mode for the queue.")
