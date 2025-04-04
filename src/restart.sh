@@ -6,18 +6,18 @@ pkill -f lavalink.jar && echo "Lavalink stopped..." || echo "Lavalink not runnin
 pkill -f main.py && echo "Tempo stopped..." || echo "Tempo not running..."
 sleep 3
 
-# Specify output/log file name
-_now=$(date +"%m_%d_%Y")
-_file="$_now.out"
-
-# Run Lavalink and create log file
+# Run Lavalink
 cd ~/git/tempo
 echo "Starting Lavalink..."
-nohup java -jar lavalink.jar &> "$_file" &
+nohup java -jar lavalink.jar >> lavalink.out 2>&1 &
 sleep 3
 
-# Run Tempo and create log file
+# Run Tempo
 cd src
 echo "Starting Tempo..."
-nohup python3 main.py &> "$_file" &
+nohup python3 main.py >> tempo.out 2>&1 &
 sleep 3
+
+# Synatx reminder (nohup)
+    # >>: append to existing log file
+    # 2>&1: include stderr(2) and stdout(1)
