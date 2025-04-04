@@ -27,13 +27,13 @@ async def on_ready():
         print("\nCogs loaded successfully...")
 
         # Explicitly register commands
-        if bot.application_id:
-            try:
-                await bot.sync_all_application_commands()
-            except nextcord.Forbidden:
-                print("Error: Not member of guild.")
-            else:
-                print("Slash commands synced successfully...")
+        await asyncio.sleep(1)
+        try:
+            await bot.sync_all_application_commands()
+        except nextcord.Forbidden:
+            print("Error: Not member of guild.")
+        else:
+            print("Slash commands synced successfully...")
 
     except Exception as e:
         print(f"Error during bot startup: {e}")
