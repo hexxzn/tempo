@@ -248,6 +248,16 @@ class Music(cmd.Cog):
         if member.guild.voice_client and len(member.guild.voice_client.channel.members) == 1:
             await self.disconnect_timer(member.guild, player, 180)
 
+    @cmd.Cog.listener()
+    async def on_socket_response(self, payload):
+        if payload.get("t") == "RESUMED":
+            print("Discord connection lost and resumed. Checking Lavalink playback state...")
+            for guild in self.bot.guilds:
+                player = self.bot.lavalink.player_manager.get(guild.id)
+                if player and player.is_playing and not player.connected:
+                    print(f"Stuck player detected in {guild.name}. Stopping player...")
+                    await player.stop()
+
     # Needs cleaning
     @log_calls
     @catch_command_errors
