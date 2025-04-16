@@ -120,7 +120,7 @@ def developer_only(func):
 
 def catch_command_errors(func):
     # If this is a slash command (has .callback), wrap the callback.
-    if hasattr(func, "callback"):
+    if hasattr(func, "callback") and asyncio.iscoroutinefunction(func.callback):
         original_callback = func.callback
 
         @wraps(original_callback)
@@ -133,7 +133,10 @@ def catch_command_errors(func):
                 if interaction:
                     try:
                         embed = tempo_embed("An unexpected error occurred.")
-                        await interaction.response.send_message(embed=embed, ephemeral=True)
+                        if interaction.response.is_done():
+                            await interaction.followup.send(embed=embed, ephemeral=True)
+                        else:
+                            await interaction.response.send_message(embed=embed, ephemeral=True)
                     except Exception as send_error:
                         logging.warning(f"[Interaction Error] Failed to send error response: {send_error}")
                 else:
@@ -142,7 +145,7 @@ def catch_command_errors(func):
         func.callback = async_callback_wrapper
         return func
 
-    # Regular async function (not a slash command)
+    # Regular async function (not a slash command object)
     elif asyncio.iscoroutinefunction(func):
         @wraps(func)
         async def async_wrapper(*args, **kwargs):
