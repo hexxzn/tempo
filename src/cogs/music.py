@@ -213,8 +213,9 @@ class Music(cmd.Cog):
 
         # If Tempo can't play a song
         elif isinstance(event, lavalink.events.TrackExceptionEvent):
-            await event.player.skip()
-            logging.error(f"[TrackException] Error on track: {event.track.identifier}\n{event.error}")
+            track_id = getattr(event.track, 'identifier', 'Unknown')
+            error_info = getattr(event, 'error', 'No additional error info')
+            logging.error(f"[TrackException] Error on track: {track_id}\n{error_info}")
 
     # Runs when user joins, leaves or changes voice channel
     @cmd.Cog.listener()
